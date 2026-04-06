@@ -8,6 +8,8 @@ const path = require("path");
 
 const { PORT, CLIENT_URL } = require("./config/env");
 const connectDB = require("./config/db");
+const errorHandler = require("./middlewares/errorHandler");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -78,7 +80,12 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// TODO: Routes will be added in upcoming steps
+app.use("/api/auth", authRoutes);
+
+// TODO: More routes will be added in upcoming steps
+
+// --- Global error handler (must be last middleware) ---
+app.use(errorHandler);
 
 // --- Server start ---
 
