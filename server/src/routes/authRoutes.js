@@ -9,6 +9,7 @@ const {
   changePassword,
   deleteAccount,
 } = require("../controllers/authController");
+const { updatePreferences } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get("/me", protect, getMe);
 router.put("/me", protect, updateProfile);
 router.put("/me/password", protect, changePassword);
 router.delete("/me", protect, deleteAccount);
+router.put("/me/preferences", protect, updatePreferences);
 
 module.exports = router;
