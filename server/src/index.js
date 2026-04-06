@@ -5,49 +5,82 @@ const hpp = require("hpp");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
-require("dotenv").config();
 
+const { PORT, CLIENT_URL } = require("./config/env");
 const connectDB = require("./config/db");
 
 const app = express();
 
-// Security middlewares
+app.disable("x-powered-by");
+
+// --- Global middlewares (order matters) ---
+
+// 1. Secure HTTP headers
 app.use(helmet());
-app.use(hpp());
+
+// 2. CORS — strict origin, credentials enabled
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
+
+// 3. JSON body parser with size limit
+app.use(express.json({ limit: "10kb" }));
+
+// 4. URL-encoded parser with size limit
+app.use(express.urlencoded({ extended: false, limit: "10kb" }));
+
+// 5. NoSQL injection prevention
 app.use(mongoSanitize());
 
-// Rate limiting
-const limiter = rateLimit({
+// 6. HTTP parameter pollution protection
+app.use(hpp());
+
+// 7. Static file serving for uploads
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+// --- Rate limiters ---
+
+const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(limiter);
 
-// CORS
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-  })
-);
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Body parsers
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Static files (uploads)
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+const likeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Health check
+app.use("/api", apiLimiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/admin", adminLimiter);
+app.use("/api/posts/:id/guest-like", likeLimiter);
+
+// --- Routes ---
+
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({ status: "ok" });
 });
 
 // TODO: Routes will be added in upcoming steps
 
-const PORT = process.env.PORT || 5000;
+// --- Server start ---
 
 const startServer = async () => {
   await connectDB();
