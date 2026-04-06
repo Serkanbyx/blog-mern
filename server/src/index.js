@@ -4,8 +4,6 @@ const helmet = require("helmet");
 const hpp = require("hpp");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
-const path = require("path");
-
 const { PORT, CLIENT_URL } = require("./config/env");
 const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/errorHandler");
@@ -14,6 +12,7 @@ const postRoutes = require("./routes/postRoutes");
 const likeRoutes = require("./routes/likeRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const authorRequestRoutes = require("./routes/authorRequestRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 
@@ -38,9 +37,6 @@ app.use(mongoSanitize());
 
 // 6. HTTP parameter pollution protection
 app.use(hpp());
-
-// 7. Static file serving for uploads
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // --- Rate limiters ---
 
@@ -89,6 +85,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api", likeRoutes);
 app.use("/api", commentRoutes);
 app.use("/api", authorRequestRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // --- Global error handler (must be last middleware) ---
 app.use(errorHandler);
