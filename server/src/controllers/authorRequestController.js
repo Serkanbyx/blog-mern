@@ -13,18 +13,6 @@ const submitRequest = async (req, res, next) => {
         .json({ success: false, message: "Only users can submit author requests." });
     }
 
-    if (!message || message.trim().length < 10) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Message must be at least 10 characters." });
-    }
-
-    if (message.trim().length > 500) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Message cannot exceed 500 characters." });
-    }
-
     const existingPending = await AuthorRequest.findOne({
       user: req.user._id,
       status: "pending",
@@ -44,7 +32,7 @@ const submitRequest = async (req, res, next) => {
 
     const authorRequest = await AuthorRequest.create({
       user: req.user._id,
-      message: message.trim(),
+      message,
     });
 
     res.status(201).json({ success: true, data: authorRequest });

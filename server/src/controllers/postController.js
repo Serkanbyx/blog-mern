@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const escapeRegex = require("../utils/escapeRegex");
 
 /**
  * Validates image URL — only allows internal /uploads/ paths or HTTP(S) URLs.
@@ -27,11 +28,6 @@ const sanitizeTags = (tags) => {
     .map((tag) => String(tag).trim().slice(0, 30))
     .filter(Boolean);
 };
-
-/**
- * Escapes regex special characters to prevent ReDoS attacks.
- */
-const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // POST /api/posts
 const createPost = async (req, res, next) => {

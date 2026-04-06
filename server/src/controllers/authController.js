@@ -1,21 +1,5 @@
-const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-
-// Shared validation rules
-const registerValidation = [
-  body("name")
-    .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage("Name must be between 2 and 50 characters"),
-  body("email")
-    .isEmail()
-    .withMessage("Please provide a valid email")
-    .normalizeEmail(),
-  body("password")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters"),
-];
 
 // Format user payload for API response (never expose password)
 const formatUserResponse = (user) => ({
@@ -30,13 +14,6 @@ const formatUserResponse = (user) => ({
 // POST /api/auth/register
 const register = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Validation failed", errors: errors.array() });
-    }
-
     const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -59,12 +36,6 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please provide email and password" });
-    }
 
     const user = await User.findOne({ email }).select("+password");
 
@@ -115,20 +86,6 @@ const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide current password and new password",
-      });
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "New password must be at least 6 characters",
-      });
-    }
-
     const user = await User.findById(req.user._id).select("+password");
 
     const isMatch = await user.comparePassword(currentPassword);
@@ -158,12 +115,6 @@ const changePassword = async (req, res, next) => {
 const deleteAccount = async (req, res, next) => {
   try {
     const { password } = req.body;
-
-    if (!password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please provide your password to confirm" });
-    }
 
     const user = await User.findById(req.user._id).select("+password");
 
@@ -205,7 +156,6 @@ const deleteAccount = async (req, res, next) => {
 };
 
 module.exports = {
-  registerValidation,
   register,
   login,
   getMe,

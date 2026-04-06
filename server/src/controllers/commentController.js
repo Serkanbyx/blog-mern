@@ -49,18 +49,6 @@ const createComment = async (req, res, next) => {
     const { postId } = req.params;
     const { text } = req.body;
 
-    if (!text || !text.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Comment text is required." });
-    }
-
-    if (text.length > 500) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Comment cannot exceed 500 characters." });
-    }
-
     const post = await Post.findOne({ _id: postId, status: "published" });
     if (!post) {
       return res
@@ -71,7 +59,7 @@ const createComment = async (req, res, next) => {
     const comment = await Comment.create({
       postId,
       user: req.user._id,
-      text: text.trim(),
+      text,
     });
 
     await Post.findByIdAndUpdate(postId, { $inc: { commentsCount: 1 } });

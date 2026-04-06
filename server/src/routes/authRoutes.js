@@ -1,7 +1,13 @@
 const express = require("express");
 const { protect } = require("../middlewares/auth");
+const validate = require("../middlewares/validate");
 const {
-  registerValidation,
+  registerRules,
+  loginRules,
+  changePasswordRules,
+  deleteAccountRules,
+} = require("../validators");
+const {
   register,
   login,
   getMe,
@@ -13,12 +19,12 @@ const { updatePreferences } = require("../controllers/userController");
 
 const router = express.Router();
 
-router.post("/register", registerValidation, register);
-router.post("/login", login);
+router.post("/register", registerRules, validate, register);
+router.post("/login", loginRules, validate, login);
 router.get("/me", protect, getMe);
 router.put("/me", protect, updateProfile);
-router.put("/me/password", protect, changePassword);
-router.delete("/me", protect, deleteAccount);
+router.put("/me/password", protect, changePasswordRules, validate, changePassword);
+router.delete("/me", protect, deleteAccountRules, validate, deleteAccount);
 router.put("/me/preferences", protect, updatePreferences);
 
 module.exports = router;

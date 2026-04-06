@@ -3,6 +3,7 @@ const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const AuthorRequest = require("../models/AuthorRequest");
 const GuestLike = require("../models/GuestLike");
+const escapeRegex = require("../utils/escapeRegex");
 
 // ─── Dashboard ───────────────────────────────────────────────
 
@@ -90,8 +91,11 @@ const getAllUsers = async (req, res, next) => {
     }
 
     if (req.query.search) {
-      const searchRegex = new RegExp(req.query.search, "i");
-      filter.$or = [{ name: searchRegex }, { email: searchRegex }];
+      const safeSearch = escapeRegex(req.query.search);
+      filter.$or = [
+        { name: { $regex: safeSearch, $options: "i" } },
+        { email: { $regex: safeSearch, $options: "i" } },
+      ];
     }
 
     const [users, totalUsers] = await Promise.all([
@@ -154,14 +158,6 @@ const getUserById = async (req, res, next) => {
 const updateUserRole = async (req, res, next) => {
   try {
     const { role } = req.body;
-    const validRoles = ["user", "author", "admin"];
-
-    if (!role || !validRoles.includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid role. Must be one of: ${validRoles.join(", ")}`,
-      });
-    }
 
     // Admin cannot change their own role
     if (req.params.id === req.user._id.toString()) {
@@ -348,17 +344,6 @@ const rejectAuthorRequest = async (req, res, next) => {
   try {
     const { rejectionReason } = req.body;
 
-    if (
-      !rejectionReason ||
-      rejectionReason.trim().length < 1 ||
-      rejectionReason.trim().length > 300
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Rejection reason is required (1-300 characters).",
-      });
-    }
-
     const request = await AuthorRequest.findById(req.params.id);
 
     if (!request) {
@@ -375,7 +360,7 @@ const rejectAuthorRequest = async (req, res, next) => {
     }
 
     request.status = "rejected";
-    request.rejectionReason = rejectionReason.trim();
+    request.rejectionReason = rejectionReason;
     request.reviewedBy = req.user._id;
     request.reviewedAt = new Date();
     await request.save();
@@ -444,8 +429,11 @@ const getAllPostsAdmin = async (req, res, next) => {
     }
 
     if (req.query.search) {
-      const searchRegex = new RegExp(req.query.search, "i");
-      filter.$or = [{ title: searchRegex }, { tags: searchRegex }];
+      const safeSearch = escapeRegex(req.query.search);
+      filter.$or = [
+        { title: { $regex: safeSearch, $options: "i" } },
+        { tags: { $regex: safeSearch, $options: "i" } },
+      ];
     }
 
     if (req.query.author) {
@@ -516,17 +504,6 @@ const rejectPost = async (req, res, next) => {
   try {
     const { rejectionReason } = req.body;
 
-    if (
-      !rejectionReason ||
-      rejectionReason.trim().length < 1 ||
-      rejectionReason.trim().length > 500
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Rejection reason is required (1-500 characters).",
-      });
-    }
-
     const post = await Post.findById(req.params.id);
 
     if (!post) {
@@ -543,7 +520,7 @@ const rejectPost = async (req, res, next) => {
     }
 
     post.status = "rejected";
-    post.rejectionReason = rejectionReason.trim();
+    post.rejectionReason = rejectionReason;
     await post.save();
 
     const populatedPost = await Post.findById(post._id).populate(

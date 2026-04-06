@@ -56,13 +56,7 @@ const toggleGuestLike = async (req, res, next) => {
   try {
     const { fingerprint } = req.body;
 
-    if (!fingerprint || typeof fingerprint !== "string") {
-      return res
-        .status(400)
-        .json({ success: false, message: "Fingerprint is required." });
-    }
-
-    if (fingerprint.length > 64 || !UUID_REGEX.test(fingerprint)) {
+    if (!UUID_REGEX.test(fingerprint)) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid fingerprint format." });

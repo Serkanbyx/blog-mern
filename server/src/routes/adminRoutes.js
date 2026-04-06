@@ -1,5 +1,7 @@
 const express = require("express");
 const { protect, adminOnly } = require("../middlewares/auth");
+const validate = require("../middlewares/validate");
+const { updateRoleRules, rejectionRules } = require("../validators");
 const {
   getDashboardStats,
   getAllUsers,
@@ -29,19 +31,19 @@ router.get("/dashboard", getDashboardStats);
 // User management
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
-router.patch("/users/:id/role", updateUserRole);
+router.patch("/users/:id/role", updateRoleRules, validate, updateUserRole);
 router.delete("/users/:id", deleteUser);
 
 // Author request management
 router.get("/author-requests", getPendingAuthorRequests);
 router.patch("/author-requests/:id/approve", approveAuthorRequest);
-router.patch("/author-requests/:id/reject", rejectAuthorRequest);
+router.patch("/author-requests/:id/reject", rejectionRules, validate, rejectAuthorRequest);
 
 // Post moderation
 router.get("/posts", getAllPostsAdmin);
 router.get("/posts/pending", getPendingPosts);
 router.patch("/posts/:id/approve", approvePost);
-router.patch("/posts/:id/reject", rejectPost);
+router.patch("/posts/:id/reject", rejectionRules, validate, rejectPost);
 router.delete("/posts/:id", adminDeletePost);
 
 // Comment moderation
