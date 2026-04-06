@@ -10,6 +10,7 @@ const { PORT, CLIENT_URL } = require("./config/env");
 const connectDB = require("./config/db");
 const errorHandler = require("./middlewares/errorHandler");
 const authRoutes = require("./routes/authRoutes");
+const postRoutes = require("./routes/postRoutes");
 
 const app = express();
 
@@ -81,6 +82,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
 
 // TODO: More routes will be added in upcoming steps
 
