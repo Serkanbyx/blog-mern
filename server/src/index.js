@@ -12,6 +12,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
 const likeRoutes = require("./routes/likeRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 const app = express();
 
@@ -85,6 +86,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api", likeRoutes);
+app.use("/api", commentRoutes);
 
 // --- Global error handler (must be last middleware) ---
 app.use(errorHandler);
