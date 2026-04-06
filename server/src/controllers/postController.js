@@ -307,7 +307,7 @@ const deletePost = async (req, res, next) => {
 
     const deletionTasks = [post.deleteOne()];
     if (Comment) deletionTasks.push(Comment.deleteMany({ post: post._id }));
-    if (GuestLike) deletionTasks.push(GuestLike.deleteMany({ post: post._id }));
+    if (GuestLike) deletionTasks.push(GuestLike.deleteMany({ postId: post._id }));
 
     await Promise.all(deletionTasks);
 
