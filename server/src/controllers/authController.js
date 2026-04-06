@@ -7,6 +7,7 @@ const formatUserResponse = (user) => ({
   name: user.name,
   email: user.email,
   avatar: user.avatar,
+  bio: user.bio || "",
   role: user.role,
   preferences: user.preferences,
 });

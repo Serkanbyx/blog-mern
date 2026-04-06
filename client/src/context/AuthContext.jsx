@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const { data } = await getMe();
-        setUser(data.data);
+        setUser(data.user);
       } catch {
         localStorage.removeItem("token");
         setToken(null);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(async (credentials) => {
     const { data } = await loginUser(credentials);
-    const { token: newToken, user: userData } = data.data;
+    const { token: newToken, user: userData } = data;
 
     localStorage.setItem("token", newToken);
     setToken(newToken);
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(async (userData) => {
     const { data } = await registerUser(userData);
-    const { token: newToken, user: newUser } = data.data;
+    const { token: newToken, user: newUser } = data;
 
     localStorage.setItem("token", newToken);
     setToken(newToken);
@@ -75,17 +75,17 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = useCallback(async (profileData) => {
     const { data } = await updateProfile(profileData);
-    setUser(data.data);
-    return data.data;
+    setUser(data.user);
+    return data.user;
   }, []);
 
   const updateUserPreferences = useCallback(async (preferences) => {
     const { data } = await updatePreferences(preferences);
     setUser((prev) => ({
       ...prev,
-      preferences: data.data.preferences,
+      preferences: data.preferences,
     }));
-    return data.data.preferences;
+    return data.preferences;
   }, []);
 
   const value = useMemo(() => {
