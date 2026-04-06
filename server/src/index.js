@@ -13,6 +13,7 @@ const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
 const likeRoutes = require("./routes/likeRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const authorRequestRoutes = require("./routes/authorRequestRoutes");
 
 const app = express();
 
@@ -87,6 +88,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api", likeRoutes);
 app.use("/api", commentRoutes);
+app.use("/api", authorRequestRoutes);
 
 // --- Global error handler (must be last middleware) ---
 app.use(errorHandler);
