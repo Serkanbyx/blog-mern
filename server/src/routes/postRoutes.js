@@ -7,6 +7,7 @@ const {
   getAllPosts,
   getPostBySlug,
   getMyPosts,
+  getMyPostById,
   updatePost,
   submitPost,
   deletePost,
@@ -16,6 +17,7 @@ const router = express.Router();
 
 router.get("/", optionalAuth, getAllPosts);
 router.get("/mine", protect, authorOrAdmin, getMyPosts);
+router.get("/mine/:id", protect, authorOrAdmin, getMyPostById);
 router.get("/:slug", optionalAuth, getPostBySlug);
 router.post("/", protect, authorOrAdmin, createPostRules, validate, createPost);
 router.put("/:id", protect, authorOrAdmin, updatePostRules, validate, updatePost);

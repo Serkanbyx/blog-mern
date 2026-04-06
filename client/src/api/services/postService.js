@@ -12,4 +12,6 @@ export const deletePost = (id) => api.delete(`/posts/${id}`);
 
 export const getMyPosts = (params) => api.get("/posts/mine", { params });
 
+export const getMyPostById = (id) => api.get(`/posts/mine/${id}`);
+
 export const submitPost = (id) => api.patch(`/posts/${id}/submit`);

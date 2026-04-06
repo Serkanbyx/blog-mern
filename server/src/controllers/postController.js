@@ -185,6 +185,26 @@ const getMyPosts = async (req, res, next) => {
   }
 };
 
+// GET /api/posts/mine/:id
+const getMyPostById = async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      _id: req.params.id,
+      author: req.user._id,
+    }).populate("author", "name avatar");
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found." });
+    }
+
+    res.json({ success: true, post });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // PUT /api/posts/:id
 const updatePost = async (req, res, next) => {
   try {
@@ -318,6 +338,7 @@ module.exports = {
   getAllPosts,
   getPostBySlug,
   getMyPosts,
+  getMyPostById,
   updatePost,
   submitPost,
   deletePost,
