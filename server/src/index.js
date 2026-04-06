@@ -14,6 +14,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const authorRequestRoutes = require("./routes/authorRequestRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const userRoutes = require("./routes/userRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use("/api", commentRoutes);
 app.use("/api", authorRequestRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 // --- Global error handler (must be last middleware) ---
 app.use(errorHandler);
