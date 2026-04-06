@@ -394,6 +394,262 @@ const rejectAuthorRequest = async (req, res, next) => {
   }
 };
 
+// ─── Post Moderation ─────────────────────────────────────────
+
+const getPendingPosts = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+    const skip = (page - 1) * limit;
+
+    const filter = { status: "pending" };
+
+    const [posts, totalPosts] = await Promise.all([
+      Post.find(filter)
+        .sort({ createdAt: 1 }) // FIFO — oldest first
+        .skip(skip)
+        .limit(limit)
+        .populate("author", "name email avatar"),
+      Post.countDocuments(filter),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        posts,
+        page,
+        limit,
+        totalPages: Math.ceil(totalPosts / limit),
+        totalPosts,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllPostsAdmin = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+
+    if (
+      req.query.status &&
+      ["draft", "pending", "published", "rejected"].includes(req.query.status)
+    ) {
+      filter.status = req.query.status;
+    }
+
+    if (req.query.search) {
+      const searchRegex = new RegExp(req.query.search, "i");
+      filter.$or = [{ title: searchRegex }, { tags: searchRegex }];
+    }
+
+    if (req.query.author) {
+      filter.author = req.query.author;
+    }
+
+    const [posts, totalPosts] = await Promise.all([
+      Post.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("author", "name email avatar"),
+      Post.countDocuments(filter),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        posts,
+        page,
+        limit,
+        totalPages: Math.ceil(totalPosts / limit),
+        totalPosts,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const approvePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found." });
+    }
+
+    if (post.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: `Only pending posts can be approved. Current status: '${post.status}'.`,
+      });
+    }
+
+    post.status = "published";
+    post.rejectionReason = "";
+    await post.save();
+
+    const populatedPost = await Post.findById(post._id).populate(
+      "author",
+      "name email avatar"
+    );
+
+    res.json({
+      success: true,
+      message: "Post approved and published.",
+      data: populatedPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const rejectPost = async (req, res, next) => {
+  try {
+    const { rejectionReason } = req.body;
+
+    if (
+      !rejectionReason ||
+      rejectionReason.trim().length < 1 ||
+      rejectionReason.trim().length > 500
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Rejection reason is required (1-500 characters).",
+      });
+    }
+
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found." });
+    }
+
+    if (post.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: `Only pending posts can be rejected. Current status: '${post.status}'.`,
+      });
+    }
+
+    post.status = "rejected";
+    post.rejectionReason = rejectionReason.trim();
+    await post.save();
+
+    const populatedPost = await Post.findById(post._id).populate(
+      "author",
+      "name email avatar"
+    );
+
+    res.json({
+      success: true,
+      message: "Post rejected.",
+      data: populatedPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const adminDeletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found." });
+    }
+
+    const [deletedComments, deletedGuestLikes] = await Promise.all([
+      Comment.deleteMany({ postId: post._id }),
+      GuestLike.deleteMany({ postId: post._id }),
+    ]);
+
+    await Post.findByIdAndDelete(post._id);
+
+    res.json({
+      success: true,
+      message: "Post and all related data deleted.",
+      data: {
+        deletedComments: deletedComments.deletedCount,
+        deletedGuestLikes: deletedGuestLikes.deletedCount,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ─── Comment Moderation ──────────────────────────────────────
+
+const getAllCommentsAdmin = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+    const skip = (page - 1) * limit;
+
+    const [comments, totalComments] = await Promise.all([
+      Comment.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("user", "name email avatar")
+        .populate("postId", "title slug"),
+      Comment.countDocuments(),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        comments,
+        page,
+        limit,
+        totalPages: Math.ceil(totalComments / limit),
+        totalComments,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const adminDeleteComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Comment not found." });
+    }
+
+    await Promise.all([
+      Comment.findByIdAndDelete(comment._id),
+      Post.findByIdAndUpdate(comment.postId, {
+        $inc: { commentsCount: -1 },
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      message: "Comment deleted.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getAllUsers,
@@ -403,4 +659,11 @@ module.exports = {
   getPendingAuthorRequests,
   approveAuthorRequest,
   rejectAuthorRequest,
+  getPendingPosts,
+  getAllPostsAdmin,
+  approvePost,
+  rejectPost,
+  adminDeletePost,
+  getAllCommentsAdmin,
+  adminDeleteComment,
 };

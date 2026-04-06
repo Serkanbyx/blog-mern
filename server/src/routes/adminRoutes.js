@@ -9,6 +9,13 @@ const {
   getPendingAuthorRequests,
   approveAuthorRequest,
   rejectAuthorRequest,
+  getPendingPosts,
+  getAllPostsAdmin,
+  approvePost,
+  rejectPost,
+  adminDeletePost,
+  getAllCommentsAdmin,
+  adminDeleteComment,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -29,5 +36,16 @@ router.delete("/users/:id", deleteUser);
 router.get("/author-requests", getPendingAuthorRequests);
 router.patch("/author-requests/:id/approve", approveAuthorRequest);
 router.patch("/author-requests/:id/reject", rejectAuthorRequest);
+
+// Post moderation
+router.get("/posts", getAllPostsAdmin);
+router.get("/posts/pending", getPendingPosts);
+router.patch("/posts/:id/approve", approvePost);
+router.patch("/posts/:id/reject", rejectPost);
+router.delete("/posts/:id", adminDeletePost);
+
+// Comment moderation
+router.get("/comments", getAllCommentsAdmin);
+router.delete("/comments/:id", adminDeleteComment);
 
 module.exports = router;
