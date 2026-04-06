@@ -1,1 +1,111 @@
 @import "tailwindcss";
+
+/* ===== Custom Theme (TailwindCSS v4) ===== */
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  --color-bg: var(--color-background);
+  --color-text: var(--color-foreground);
+  --color-card: var(--color-card-surface);
+  --color-card-foreground: var(--color-card-text);
+  --color-muted: var(--color-muted-surface);
+  --color-muted-foreground: var(--color-muted-text);
+  --color-accent: var(--color-accent-surface);
+  --color-accent-foreground: var(--color-accent-text);
+  --color-border: var(--color-border-line);
+  --color-destructive: var(--color-destructive-surface);
+  --color-destructive-foreground: var(--color-destructive-text);
+}
+
+/* ===== Light Theme (default) ===== */
+:root {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-card-surface: #ffffff;
+  --color-card-text: #1e293b;
+  --color-muted-surface: #f1f5f9;
+  --color-muted-text: #64748b;
+  --color-accent-surface: #eff6ff;
+  --color-accent-text: #2563eb;
+  --color-border-line: #e2e8f0;
+  --color-destructive-surface: #ef4444;
+  --color-destructive-text: #ffffff;
+}
+
+/* ===== Dark Theme ===== */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f1f5f9;
+  --color-card-surface: #1e293b;
+  --color-card-text: #e2e8f0;
+  --color-muted-surface: #334155;
+  --color-muted-text: #94a3b8;
+  --color-accent-surface: #1e3a8a;
+  --color-accent-text: #93c5fd;
+  --color-border-line: #334155;
+  --color-destructive-surface: #dc2626;
+  --color-destructive-text: #fef2f2;
+}
+
+/* ===== Font Size Utilities ===== */
+.text-size-small {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-size-medium {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.text-size-large {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+/* ===== Content Density Utilities ===== */
+.density-compact {
+  --density-padding: 0.5rem;
+  --density-gap: 0.5rem;
+  --density-margin: 0.5rem;
+}
+
+.density-comfortable {
+  --density-padding: 1rem;
+  --density-gap: 1rem;
+  --density-margin: 1rem;
+}
+
+.density-spacious {
+  --density-padding: 1.5rem;
+  --density-gap: 1.5rem;
+  --density-margin: 1.5rem;
+}
+
+/* ===== Animation Utilities ===== */
+.animations-enabled * {
+  transition-duration: 200ms;
+}
+
+.animations-disabled,
+.animations-disabled * {
+  animation-duration: 0ms !important;
+  transition-duration: 0ms !important;
+}
+
+/* ===== Base Styles ===== */
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  transition: background-color 200ms ease, color 200ms ease;
+}
