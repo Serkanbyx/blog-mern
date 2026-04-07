@@ -21,6 +21,8 @@ import Pagination from "../../components/Pagination";
 import StatusBadge from "../../components/ui/StatusBadge";
 import ConfirmModal from "../../components/ui/ConfirmModal";
 import EmptyState from "../../components/ui/EmptyState";
+import { formatDate } from "../../utils/formatDate";
+import { getAvatarUrl } from "../../utils/helpers";
 
 const STATUS_FILTER_OPTIONS = [
   { value: "", label: "Tüm Durumlar" },
@@ -29,17 +31,6 @@ const STATUS_FILTER_OPTIONS = [
   { value: "published", label: "Yayında" },
   { value: "rejected", label: "Reddedildi" },
 ];
-
-const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-
-const getAvatarUrl = (user) =>
-  user?.avatar ||
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "U")}&background=6366f1&color=fff`;
 
 /* ═══════════════════════════════════════════════════════════════ */
 

@@ -21,6 +21,8 @@ import {
   updateUserRole,
   deleteUser,
 } from "../../api/services/adminService";
+import { formatDate } from "../../utils/formatDate";
+import { getAvatarUrl } from "../../utils/helpers";
 
 const ROLE_CONFIG = {
   user: {
@@ -80,17 +82,6 @@ const REQUEST_STATUS_CONFIG = {
       "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   },
 };
-
-const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-
-const getAvatarUrl = (user) =>
-  user.avatar ||
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
 
 /* ═══════════════════════════════════════════════════════════════ */
 

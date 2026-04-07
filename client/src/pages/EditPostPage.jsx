@@ -11,16 +11,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { getMyPostById, updatePost, submitPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
-
-const TITLE_MAX = 150;
-const TAGS_MAX = 10;
-
-const STATUS_LABELS = {
-  draft: "Taslak",
-  pending: "İncelemede",
-  published: "Yayında",
-  rejected: "Reddedildi",
-};
+import { TITLE_MAX, TAGS_MAX, STATUS_LABELS } from "../utils/constants";
 
 const EditPostPage = () => {
   const { id } = useParams();

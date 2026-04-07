@@ -12,17 +12,8 @@ import {
   createComment,
   deleteComment,
 } from "../api/services/commentService";
-
-const COMMENTS_PER_PAGE = 10;
-
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+import { formatDate } from "../utils/formatDate";
+import { COMMENTS_PER_PAGE } from "../utils/constants";
 
 const CommentSection = ({ postId }) => {
   const { user, isAuthenticated, isAdmin } = useAuth();

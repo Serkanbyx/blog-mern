@@ -10,9 +10,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { createPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
-
-const TITLE_MAX = 150;
-const TAGS_MAX = 10;
+import { TITLE_MAX, TAGS_MAX } from "../utils/constants";
 
 const CreatePostPage = () => {
   const { isAdmin } = useAuth();

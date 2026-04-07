@@ -14,17 +14,8 @@ import {
   approveAuthorRequest,
   rejectAuthorRequest,
 } from "../../api/services/adminService";
-
-const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-
-const getAvatarUrl = (user) =>
-  user?.avatar ||
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "U")}&background=6366f1&color=fff`;
+import { formatDate } from "../../utils/formatDate";
+import { getAvatarUrl } from "../../utils/helpers";
 
 /* ═══════════════════════════════════════════════════════════════ */
 

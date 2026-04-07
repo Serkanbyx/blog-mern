@@ -13,6 +13,7 @@ import {
   HiOutlineUserGroup,
 } from "react-icons/hi";
 import { getDashboardStats } from "../../api/services/adminService";
+import { formatDate } from "../../utils/formatDate";
 
 const STAT_CARDS = [
   {
@@ -72,14 +73,6 @@ const ROLE_BADGES = {
   admin: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
   author: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400",
   reader: "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-400",
-};
-
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 };
 
 const AdminDashboardPage = () => {

@@ -100,6 +100,63 @@ const rejectionRules = [
     .escape(),
 ];
 
+// ─── Preferences ─────────────────────────────────────────────
+
+const preferencesRules = [
+  body("theme")
+    .optional()
+    .isIn(["light", "dark", "system"])
+    .withMessage("Theme must be one of: light, dark, system"),
+  body("fontSize")
+    .optional()
+    .isIn(["small", "medium", "large"])
+    .withMessage("Font size must be one of: small, medium, large"),
+  body("contentDensity")
+    .optional()
+    .isIn(["compact", "comfortable", "spacious"])
+    .withMessage("Content density must be one of: compact, comfortable, spacious"),
+  body("animationsEnabled")
+    .optional()
+    .isBoolean()
+    .withMessage("Animations enabled must be a boolean"),
+  body("language")
+    .optional()
+    .isIn(["en", "tr"])
+    .withMessage("Language must be one of: en, tr"),
+  body("privacy.showLikedPosts")
+    .optional()
+    .isBoolean()
+    .withMessage("Show liked posts must be a boolean"),
+  body("privacy.showComments")
+    .optional()
+    .isBoolean()
+    .withMessage("Show comments must be a boolean"),
+  body("privacy.showEmail")
+    .optional()
+    .isBoolean()
+    .withMessage("Show email must be a boolean"),
+  body("notifications.postApproved")
+    .optional()
+    .isBoolean()
+    .withMessage("Post approved notification must be a boolean"),
+  body("notifications.postRejected")
+    .optional()
+    .isBoolean()
+    .withMessage("Post rejected notification must be a boolean"),
+  body("notifications.newCommentOnPost")
+    .optional()
+    .isBoolean()
+    .withMessage("New comment notification must be a boolean"),
+  body("postsPerPage")
+    .optional()
+    .isInt({ min: 5, max: 50 })
+    .withMessage("Posts per page must be between 5 and 50"),
+  body("defaultSort")
+    .optional()
+    .isIn(["newest", "popular", "mostCommented"])
+    .withMessage("Default sort must be one of: newest, popular, mostCommented"),
+];
+
 // ─── Likes ────────────────────────────────────────────────────
 
 const guestLikeRules = [
@@ -120,5 +177,6 @@ module.exports = {
   authorRequestRules,
   updateRoleRules,
   rejectionRules,
+  preferencesRules,
   guestLikeRules,
 };

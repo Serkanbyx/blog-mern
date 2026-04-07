@@ -6,6 +6,7 @@ const {
   loginRules,
   changePasswordRules,
   deleteAccountRules,
+  preferencesRules,
 } = require("../validators");
 const {
   register,
@@ -25,6 +26,6 @@ router.get("/me", protect, getMe);
 router.put("/me", protect, updateProfile);
 router.put("/me/password", protect, changePasswordRules, validate, changePassword);
 router.delete("/me", protect, deleteAccountRules, validate, deleteAccount);
-router.put("/me/preferences", protect, updatePreferences);
+router.put("/me/preferences", protect, preferencesRules, validate, updatePreferences);
 
 module.exports = router;

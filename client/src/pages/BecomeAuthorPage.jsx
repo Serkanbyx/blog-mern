@@ -7,6 +7,7 @@ import {
   cancelAuthorRequest,
 } from "../api/services/authorRequestService";
 import toast from "react-hot-toast";
+import { formatDateLong } from "../utils/formatDate";
 import {
   FiEdit3,
   FiUsers,
@@ -269,11 +270,7 @@ const BecomeAuthorPage = () => {
               {/* Submitted date */}
               <p className="mt-3 text-xs text-amber-600 dark:text-amber-500">
                 Gönderim tarihi:{" "}
-                {new Date(existingRequest.createdAt).toLocaleDateString("tr-TR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {formatDateLong(existingRequest.createdAt)}
               </p>
 
               {/* Cancel button */}
@@ -331,11 +328,7 @@ const BecomeAuthorPage = () => {
                 {/* Rejected date */}
                 <p className="mt-3 text-xs text-red-600 dark:text-red-500">
                   Red tarihi:{" "}
-                  {new Date(existingRequest.updatedAt).toLocaleDateString("tr-TR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDateLong(existingRequest.updatedAt)}
                 </p>
 
                 {/* Retry button */}

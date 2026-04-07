@@ -16,43 +16,9 @@ import { getPostBySlug, deletePost } from "../api/services/postService";
 import { toggleLike, toggleGuestLike } from "../api/services/likeService";
 import CommentSection from "../components/CommentSection";
 import ConfirmModal from "../components/ui/ConfirmModal";
-
-const GUEST_LIKES_KEY = "guestLikedPosts";
-
-const getGuestLikedSet = (fingerprint) => {
-  try {
-    const stored = localStorage.getItem(`${GUEST_LIKES_KEY}_${fingerprint}`);
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  } catch {
-    return new Set();
-  }
-};
-
-const persistGuestLikedSet = (fingerprint, likedSet) => {
-  try {
-    localStorage.setItem(
-      `${GUEST_LIKES_KEY}_${fingerprint}`,
-      JSON.stringify([...likedSet])
-    );
-  } catch {
-    /* localStorage full or unavailable */
-  }
-};
-
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
-
-const calculateReadingTime = (content) => {
-  if (!content) return 1;
-  const wordCount = content.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(wordCount / 200));
-};
+import { formatDateLong } from "../utils/formatDate";
+import { calculateReadingTime } from "../utils/helpers";
+import { getGuestLikedSet, persistGuestLikedSet } from "../utils/guestLikes";
 
 const PostDetailPage = () => {
   const { slug } = useParams();
@@ -228,7 +194,7 @@ const PostDetailPage = () => {
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <HiOutlineCalendar className="w-4 h-4" />
-            <time dateTime={post.createdAt}>{formatDate(post.createdAt)}</time>
+            <time dateTime={post.createdAt}>{formatDateLong(post.createdAt)}</time>
           </span>
           <span className="flex items-center gap-1.5">
             <HiOutlineClock className="w-4 h-4" />

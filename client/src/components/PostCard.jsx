@@ -4,44 +4,9 @@ import { HiHeart, HiOutlineHeart, HiOutlineChatAlt } from "react-icons/hi";
 import { useAuth } from "../context/AuthContext";
 import useGuestFingerprint from "../hooks/useGuestFingerprint";
 import { toggleLike, toggleGuestLike } from "../api/services/likeService";
-
-const GUEST_LIKES_KEY = "guestLikedPosts";
-
-const getGuestLikedSet = (fingerprint) => {
-  try {
-    const stored = localStorage.getItem(`${GUEST_LIKES_KEY}_${fingerprint}`);
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  } catch {
-    return new Set();
-  }
-};
-
-const persistGuestLikedSet = (fingerprint, likedSet) => {
-  try {
-    localStorage.setItem(
-      `${GUEST_LIKES_KEY}_${fingerprint}`,
-      JSON.stringify([...likedSet])
-    );
-  } catch {
-    /* localStorage full or unavailable */
-  }
-};
-
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const truncateContent = (content, maxLength = 150) => {
-  if (!content) return "";
-  const stripped = content.replace(/<[^>]*>/g, "");
-  if (stripped.length <= maxLength) return stripped;
-  return stripped.slice(0, maxLength).trimEnd() + "…";
-};
+import { formatDate } from "../utils/formatDate";
+import { truncateContent } from "../utils/helpers";
+import { getGuestLikedSet, persistGuestLikedSet } from "../utils/guestLikes";
 
 const PostCard = ({ post, onLikeUpdate }) => {
   const { user, isAuthenticated } = useAuth();

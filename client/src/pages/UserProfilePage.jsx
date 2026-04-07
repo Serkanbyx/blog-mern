@@ -22,26 +22,10 @@ import RoleBadge from "../components/ui/RoleBadge";
 import EmptyState from "../components/ui/EmptyState";
 import Pagination from "../components/Pagination";
 import toast from "react-hot-toast";
+import { formatJoinDate, formatDate } from "../utils/formatDate";
+import { COMMENTS_PER_PAGE } from "../utils/constants";
 
 const POSTS_PER_PAGE = 9;
-const COMMENTS_PER_PAGE = 10;
-
-const formatJoinDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "long",
-  });
-};
-
-const formatCommentDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
 
 const UserProfilePage = () => {
   const { userId } = useParams();
@@ -610,7 +594,7 @@ const CommentsTab = ({
                 {comment.postId?.title || "Silinmiş yazı"}
               </Link>
               <time className="text-xs text-muted-foreground shrink-0 ml-3">
-                {formatCommentDate(comment.createdAt)}
+                {formatDate(comment.createdAt)}
               </time>
             </div>
             <p className="text-sm text-text leading-relaxed">{comment.text}</p>

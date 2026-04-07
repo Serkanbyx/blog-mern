@@ -7,6 +7,12 @@ const submitRequest = async (req, res, next) => {
   try {
     const { message } = req.body;
 
+    if (req.user.role === "author") {
+      return res
+        .status(400)
+        .json({ success: false, message: "You are already an author." });
+    }
+
     if (req.user.role !== "user") {
       return res
         .status(400)
@@ -22,12 +28,6 @@ const submitRequest = async (req, res, next) => {
       return res
         .status(400)
         .json({ success: false, message: "You already have a pending author request." });
-    }
-
-    if (req.user.role === "author") {
-      return res
-        .status(400)
-        .json({ success: false, message: "You are already an author." });
     }
 
     const authorRequest = await AuthorRequest.create({

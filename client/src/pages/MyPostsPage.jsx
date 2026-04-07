@@ -14,6 +14,7 @@ import Pagination from "../components/Pagination";
 import StatusBadge from "../components/ui/StatusBadge";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import EmptyState from "../components/ui/EmptyState";
+import { formatDate } from "../utils/formatDate";
 
 const TABS = [
   { key: "all", label: "Tümü" },
@@ -22,14 +23,6 @@ const TABS = [
   { key: "published", label: "Yayında" },
   { key: "rejected", label: "Reddedildi" },
 ];
-
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
 
 const MyPostsPage = () => {
   const [posts, setPosts] = useState([]);
