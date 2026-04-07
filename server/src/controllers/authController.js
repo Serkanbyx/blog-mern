@@ -3,7 +3,7 @@ const generateToken = require("../utils/generateToken");
 
 // Format user payload for API response (never expose password)
 const formatUserResponse = (user) => ({
-  id: user._id,
+  _id: user._id,
   name: user.name,
   email: user.email,
   avatar: user.avatar,
