@@ -47,10 +47,19 @@ router.post("/", protect, (req, res) => {
         success: true,
         url: result.secure_url,
       });
-    } catch {
+    } catch (error) {
+      console.error("Cloudinary upload error:", error?.message || error);
+
+      const isConfigError =
+        !process.env.CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET;
+
       res.status(500).json({
         success: false,
-        message: "Image upload to cloud failed.",
+        message: isConfigError
+          ? "Cloud storage is not configured. Please set Cloudinary credentials."
+          : "Image upload to cloud failed.",
       });
     }
   });
