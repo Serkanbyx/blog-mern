@@ -44,7 +44,7 @@ const SettingsContentPage = () => {
                   key={count}
                   type="button"
                   onClick={() => handleChange("postsPerPage", count)}
-                  className={`min-w-[3.5rem] rounded-lg px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
+                  className={`min-w-14 rounded-lg px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
                     isActive
                       ? "bg-primary-600 text-white"
                       : "bg-muted text-muted-foreground hover:text-text hover:bg-muted/80"
