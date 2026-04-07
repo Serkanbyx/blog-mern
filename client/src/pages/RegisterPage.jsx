@@ -42,7 +42,7 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      const { confirmPassword, ...registerData } = formData;
+      const { confirmPassword: _confirmPassword, ...registerData } = formData;
       await register(registerData);
       toast.success("Kayıt başarılı! Hoş geldiniz.");
       navigate("/", { replace: true });
