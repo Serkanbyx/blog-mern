@@ -68,8 +68,8 @@ postSchema.virtual("totalLikes").get(function () {
   return this.likes.length + this.guestLikeCount;
 });
 
-postSchema.pre("save", async function (next) {
-  if (!this.isModified("title")) return next();
+postSchema.pre("save", async function () {
+  if (!this.isModified("title")) return;
 
   let baseSlug = slugify(this.title, { lower: true, strict: true });
 
@@ -78,8 +78,6 @@ postSchema.pre("save", async function (next) {
   this.slug = existing
     ? `${baseSlug}-${crypto.randomBytes(3).toString("hex")}`
     : baseSlug;
-
-  next();
 });
 
 postSchema.index({ createdAt: -1 });
