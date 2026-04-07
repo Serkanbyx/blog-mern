@@ -43,7 +43,7 @@ const BENEFITS = [
 
 const BecomeAuthorPage = () => {
   const navigate = useNavigate();
-  const { user, isAuthor, isAdmin } = useAuth();
+  const { isAuthor, isAdmin } = useAuth();
 
   const [status, setStatus] = useState("loading"); // loading | no-request | pending | rejected
   const [existingRequest, setExistingRequest] = useState(null);
