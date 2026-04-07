@@ -84,7 +84,6 @@ postSchema.pre("save", async function (next) {
 
 postSchema.index({ createdAt: -1 });
 postSchema.index({ author: 1 });
-postSchema.index({ slug: 1 });
 postSchema.index({ status: 1 });
 postSchema.index({ likes: 1 });
 
