@@ -138,7 +138,7 @@ const SettingsAppearancePage = () => {
                 onClick={() => handleChange("contentDensity", value)}
                 label={label}
                 description={description}
-                className="!flex-row !items-center !p-4 !rounded-lg !border gap-3"
+                className="flex-row! items-center! p-4! rounded-lg! border! gap-3"
               />
             );
           })}
