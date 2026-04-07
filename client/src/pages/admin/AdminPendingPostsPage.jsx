@@ -46,7 +46,8 @@ const AdminPendingPostsPage = () => {
     setError(null);
     try {
       const { data } = await getPendingPosts();
-      setPosts(data.data || data.posts || []);
+      const result = data.data || data;
+      setPosts(result.posts || []);
     } catch (err) {
       setError(err.message || "Yazılar yüklenirken bir hata oluştu.");
     } finally {

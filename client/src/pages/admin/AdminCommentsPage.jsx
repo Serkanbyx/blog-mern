@@ -43,8 +43,9 @@ const AdminCommentsPage = () => {
       if (debouncedSearch) params.search = debouncedSearch;
 
       const { data } = await getAllCommentsAdmin(params);
-      setComments(data.data || data.comments || []);
-      setTotalPages(data.totalPages || 1);
+      const result = data.data || data;
+      setComments(result.comments || []);
+      setTotalPages(result.totalPages || 1);
     } catch (err) {
       setError(err.message || "Yorumlar yüklenirken bir hata oluştu.");
     } finally {
@@ -178,10 +179,10 @@ const AdminCommentsPage = () => {
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        to={`/post/${comment.post?.slug || comment.post?._id}`}
+                        to={`/post/${comment.postId?.slug || comment.postId?._id}`}
                         className="text-sm text-primary-600 dark:text-primary-400 hover:underline truncate block max-w-[180px]"
                       >
-                        {comment.post?.title || "Silinmiş yazı"}
+                        {comment.postId?.title || "Silinmiş yazı"}
                       </Link>
                     </td>
                     <td className="px-4 py-3">
@@ -274,10 +275,10 @@ const CommentCard = ({ comment, isLoading, onDelete }) => (
     </p>
 
     <Link
-      to={`/post/${comment.post?.slug || comment.post?._id}`}
+      to={`/post/${comment.postId?.slug || comment.postId?._id}`}
       className="text-xs text-primary-600 dark:text-primary-400 hover:underline truncate block"
     >
-      {comment.post?.title || "Silinmiş yazı"}
+      {comment.postId?.title || "Silinmiş yazı"}
     </Link>
   </div>
 );

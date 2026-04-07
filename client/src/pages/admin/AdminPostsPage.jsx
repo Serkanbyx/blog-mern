@@ -86,8 +86,9 @@ const AdminPostsPage = () => {
       if (statusFilter) params.status = statusFilter;
 
       const { data } = await getAllPostsAdmin(params);
-      setPosts(data.data || data.posts || []);
-      setTotalPages(data.totalPages || 1);
+      const result = data.data || data;
+      setPosts(result.posts || []);
+      setTotalPages(result.totalPages || 1);
     } catch (err) {
       setError(err.message || "Yazılar yüklenirken bir hata oluştu.");
     } finally {

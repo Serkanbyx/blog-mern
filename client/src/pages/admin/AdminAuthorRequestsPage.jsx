@@ -37,7 +37,8 @@ const AdminAuthorRequestsPage = () => {
     setError(null);
     try {
       const { data } = await getPendingAuthorRequests();
-      setRequests(data.data || data.requests || []);
+      const result = data.data || data;
+      setRequests(result.requests || []);
     } catch (err) {
       setError(err.message || "Başvurular yüklenirken bir hata oluştu.");
     } finally {

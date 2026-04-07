@@ -158,18 +158,25 @@ const BecomeAuthorPage = () => {
         <>
           {/* Benefits */}
           <div className="mb-10 grid gap-4 sm:grid-cols-3">
-            {BENEFITS.map(({ icon: Icon, title, description }) => (
-              <div
-                key={title}
-                className="rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md"
-              >
-                <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                  <Icon className="h-5 w-5 text-primary-600" />
+            {BENEFITS.map((benefit) => {
+              const Icon = benefit.icon;
+              return (
+                <div
+                  key={benefit.title}
+                  className="rounded-xl border border-border bg-card p-5 text-center transition-shadow hover:shadow-md"
+                >
+                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
+                    <Icon className="h-5 w-5 text-primary-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-card-foreground">
+                    {benefit.title}
+                  </h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {benefit.description}
+                  </p>
                 </div>
-                <h3 className="text-sm font-semibold text-card-foreground">{title}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Application Form */}
