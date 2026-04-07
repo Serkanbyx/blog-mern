@@ -1,6 +1,8 @@
 import { usePreferences } from "../../context/PreferencesContext";
 import toast from "react-hot-toast";
-import { FiSun, FiMoon, FiMonitor, FiCheck } from "react-icons/fi";
+import { FiSun, FiMoon, FiMonitor } from "react-icons/fi";
+import ToggleSwitch from "../../components/ui/ToggleSwitch";
+import SelectableCard from "../../components/ui/SelectableCard";
 
 const THEME_OPTIONS = [
   {
@@ -69,40 +71,16 @@ const SettingsAppearancePage = () => {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {THEME_OPTIONS.map(({ value, label, description, icon: Icon }) => {
-            const isActive = theme === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => handleChange("theme", value)}
-                className={`relative flex flex-col items-center gap-2 rounded-xl border-2 p-5 transition-all cursor-pointer ${
-                  isActive
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
-                    : "border-border bg-bg hover:border-primary-300 hover:bg-muted"
-                }`}
-              >
-                {isActive && (
-                  <span className="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-white">
-                    <FiCheck className="h-3 w-3" />
-                  </span>
-                )}
-                <Icon
-                  className={`h-7 w-7 ${
-                    isActive ? "text-primary-600" : "text-muted-foreground"
-                  }`}
-                />
-                <span
-                  className={`text-sm font-semibold ${
-                    isActive ? "text-primary-600" : "text-text"
-                  }`}
-                >
-                  {label}
-                </span>
-                <span className="text-xs text-muted-foreground">{description}</span>
-              </button>
-            );
-          })}
+          {THEME_OPTIONS.map(({ value, label, description, icon }) => (
+            <SelectableCard
+              key={value}
+              selected={theme === value}
+              onClick={() => handleChange("theme", value)}
+              icon={icon}
+              label={label}
+              description={description}
+            />
+          ))}
         </div>
       </section>
 
@@ -154,36 +132,14 @@ const SettingsAppearancePage = () => {
           {DENSITY_OPTIONS.map(({ value, label, description }) => {
             const isActive = contentDensity === value;
             return (
-              <button
+              <SelectableCard
                 key={value}
-                type="button"
+                selected={isActive}
                 onClick={() => handleChange("contentDensity", value)}
-                className={`w-full flex items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all cursor-pointer ${
-                  isActive
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
-                    : "border-border bg-bg hover:border-primary-300"
-                }`}
-              >
-                <span
-                  className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
-                    isActive
-                      ? "border-primary-600 bg-primary-600"
-                      : "border-muted-foreground"
-                  }`}
-                >
-                  {isActive && <FiCheck className="h-3 w-3 text-white" />}
-                </span>
-                <div>
-                  <span
-                    className={`text-sm font-medium ${
-                      isActive ? "text-primary-600" : "text-text"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                  <p className="text-xs text-muted-foreground">{description}</p>
-                </div>
-              </button>
+                label={label}
+                description={description}
+                className="!flex-row !items-center !p-4 !rounded-lg !border gap-3"
+              />
             );
           })}
         </div>
@@ -203,21 +159,11 @@ const SettingsAppearancePage = () => {
               Sayfa geçişleri ve hover efektlerini aç/kapat.
             </p>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={animationsEnabled}
-            onClick={() => handleChange("animationsEnabled", !animationsEnabled)}
-            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
-              animationsEnabled ? "bg-primary-600" : "bg-muted-foreground/30"
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                animationsEnabled ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
+          <ToggleSwitch
+            checked={animationsEnabled}
+            onChange={(val) => handleChange("animationsEnabled", val)}
+            ariaLabel="Animasyonları aç/kapat"
+          />
         </div>
       </section>
     </div>

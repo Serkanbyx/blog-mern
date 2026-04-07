@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { uploadImage } from "../../api/services/uploadService";
 import toast from "react-hot-toast";
 import { FiCamera, FiSave, FiUser } from "react-icons/fi";
+import CharacterCounter from "../../components/ui/CharacterCounter";
 
 const BIO_MAX = 200;
 const NAME_MIN = 2;
@@ -141,9 +142,9 @@ const SettingsProfilePage = () => {
             placeholder="Adınız"
             className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            {name.trim().length}/{NAME_MAX} karakter
-          </p>
+          <div className="mt-1 flex justify-end">
+            <CharacterCounter current={name.trim().length} max={NAME_MAX} />
+          </div>
         </div>
 
         {/* Bio */}
@@ -160,11 +161,11 @@ const SettingsProfilePage = () => {
             placeholder="Kendinizden kısaca bahsedin..."
             className="w-full resize-none rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
-          <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-            <span>Profilinizde görünecek kısa açıklama.</span>
-            <span className={bio.length >= BIO_MAX ? "text-red-500 font-medium" : ""}>
-              {bio.length}/{BIO_MAX}
+          <div className="mt-1 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              Profilinizde görünecek kısa açıklama.
             </span>
+            <CharacterCounter current={bio.length} max={BIO_MAX} />
           </div>
         </div>
 

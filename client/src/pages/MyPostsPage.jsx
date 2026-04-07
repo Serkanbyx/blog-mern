@@ -6,12 +6,14 @@ import {
   HiOutlineExternalLink,
   HiOutlineUpload,
   HiOutlineDocumentText,
-  HiOutlineExclamation,
   HiPlus,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
 import { getMyPosts, deletePost, submitPost } from "../api/services/postService";
 import Pagination from "../components/Pagination";
+import StatusBadge from "../components/ui/StatusBadge";
+import ConfirmModal from "../components/ui/ConfirmModal";
+import EmptyState from "../components/ui/EmptyState";
 
 const TABS = [
   { key: "all", label: "Tümü" },
@@ -20,25 +22,6 @@ const TABS = [
   { key: "published", label: "Yayında" },
   { key: "rejected", label: "Reddedildi" },
 ];
-
-const STATUS_CONFIG = {
-  draft: {
-    label: "Taslak",
-    className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  },
-  pending: {
-    label: "İncelemede",
-    className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  },
-  published: {
-    label: "Yayında",
-    className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  },
-  rejected: {
-    label: "Reddedildi",
-    className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-  },
-};
 
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString("tr-TR", {
@@ -55,6 +38,11 @@ const MyPostsPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [actionLoading, setActionLoading] = useState(null);
+
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    postId: null,
+  });
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -87,23 +75,20 @@ const MyPostsPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const handleDelete = useCallback(
-    async (postId) => {
-      if (!window.confirm("Bu yazıyı silmek istediğinize emin misiniz?")) return;
-
-      setActionLoading(postId);
-      try {
-        await deletePost(postId);
-        toast.success("Yazı silindi.");
-        fetchPosts();
-      } catch (err) {
-        toast.error(err.message || "Yazı silinemedi.");
-      } finally {
-        setActionLoading(null);
-      }
-    },
-    [fetchPosts]
-  );
+  const handleDelete = useCallback(async () => {
+    const { postId } = deleteModal;
+    setActionLoading(postId);
+    try {
+      await deletePost(postId);
+      toast.success("Yazı silindi.");
+      setDeleteModal({ open: false, postId: null });
+      fetchPosts();
+    } catch (err) {
+      toast.error(err.message || "Yazı silinemedi.");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [deleteModal, fetchPosts]);
 
   const handleSubmit = useCallback(
     async (postId) => {
@@ -120,6 +105,14 @@ const MyPostsPage = () => {
     },
     [fetchPosts]
   );
+
+  const emptyMessages = {
+    all: "Henüz hiç yazınız yok. Yeni bir yazı oluşturarak başlayın!",
+    draft: "Taslak yazınız bulunmuyor.",
+    pending: "İncelemede bekleyen yazınız yok.",
+    published: "Henüz yayınlanmış yazınız yok.",
+    rejected: "Reddedilmiş yazınız bulunmuyor.",
+  };
 
   return (
     <div className="py-8 space-y-6">
@@ -163,7 +156,13 @@ const MyPostsPage = () => {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <EmptyState activeTab={activeTab} />
+        <EmptyState
+          icon={HiOutlineDocumentText}
+          title="Yazı Bulunamadı"
+          message={emptyMessages[activeTab]}
+          actionLabel={activeTab === "all" ? "Yeni Yazı Oluştur" : undefined}
+          actionTo={activeTab === "all" ? "/posts/new" : undefined}
+        />
       ) : (
         <>
           <div className="space-y-3">
@@ -172,7 +171,9 @@ const MyPostsPage = () => {
                 key={post._id}
                 post={post}
                 actionLoading={actionLoading}
-                onDelete={handleDelete}
+                onDelete={(postId) =>
+                  setDeleteModal({ open: true, postId })
+                }
                 onSubmit={handleSubmit}
               />
             ))}
@@ -185,27 +186,35 @@ const MyPostsPage = () => {
           />
         </>
       )}
+
+      {/* Delete Modal */}
+      {deleteModal.open && (
+        <ConfirmModal
+          title="Yazıyı Sil"
+          message="Bu yazıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+          confirmLabel="Evet, Sil"
+          icon={HiOutlineTrash}
+          variant="danger"
+          loading={actionLoading === deleteModal.postId}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteModal({ open: false, postId: null })}
+        />
+      )}
     </div>
   );
 };
 
 const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
-  const config = STATUS_CONFIG[post.status];
   const isLoading = actionLoading === post._id;
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 bg-card border border-border rounded-xl">
-      {/* Post Info */}
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center gap-2.5 flex-wrap">
           <h3 className="text-base font-semibold text-text truncate">
             {post.title}
           </h3>
-          <span
-            className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full shrink-0 ${config.className}`}
-          >
-            {config.label}
-          </span>
+          <StatusBadge status={post.status} />
         </div>
         <p className="text-xs text-muted-foreground">
           {formatDate(post.createdAt)}
@@ -223,7 +232,6 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
         )}
       </div>
 
-      {/* Actions */}
       <div className="flex items-center gap-2 shrink-0">
         {post.status === "draft" && (
           <>
@@ -308,36 +316,5 @@ const SkeletonRow = () => (
     </div>
   </div>
 );
-
-const EmptyState = ({ activeTab }) => {
-  const messages = {
-    all: "Henüz hiç yazınız yok. Yeni bir yazı oluşturarak başlayın!",
-    draft: "Taslak yazınız bulunmuyor.",
-    pending: "İncelemede bekleyen yazınız yok.",
-    published: "Henüz yayınlanmış yazınız yok.",
-    rejected: "Reddedilmiş yazınız bulunmuyor.",
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
-        <HiOutlineDocumentText className="w-7 h-7 text-muted-foreground" />
-      </div>
-      <h3 className="text-lg font-semibold text-text mb-1">Yazı Bulunamadı</h3>
-      <p className="text-sm text-muted-foreground max-w-sm mb-6">
-        {messages[activeTab]}
-      </p>
-      {activeTab === "all" && (
-        <Link
-          to="/posts/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors"
-        >
-          <HiPlus className="w-5 h-5" />
-          Yeni Yazı Oluştur
-        </Link>
-      )}
-    </div>
-  );
-};
 
 export default MyPostsPage;

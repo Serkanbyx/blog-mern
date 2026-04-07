@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { usePreferences } from "./context/PreferencesContext";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Layouts
 import MainLayout from "./layouts/MainLayout";
@@ -46,8 +48,12 @@ import AdminPendingPostsPage from "./pages/admin/AdminPendingPostsPage";
 import AdminCommentsPage from "./pages/admin/AdminCommentsPage";
 
 const App = () => {
+  const { animationsEnabled } = usePreferences();
+
   return (
     <>
+      <ScrollToTop />
+
       <Toaster
         position="top-right"
         toastOptions={{
@@ -57,6 +63,9 @@ const App = () => {
             color: "var(--color-card-text)",
             border: "1px solid var(--color-border-line)",
           },
+        }}
+        containerStyle={{
+          transition: animationsEnabled ? undefined : "none",
         }}
       />
 

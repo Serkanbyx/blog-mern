@@ -18,29 +18,9 @@ import {
   adminDeletePost,
 } from "../../api/services/adminService";
 import Pagination from "../../components/Pagination";
-
-const STATUS_CONFIG = {
-  draft: {
-    label: "Taslak",
-    className:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  },
-  pending: {
-    label: "Beklemede",
-    className:
-      "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  },
-  published: {
-    label: "Yayında",
-    className:
-      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  },
-  rejected: {
-    label: "Reddedildi",
-    className:
-      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-  },
-};
+import StatusBadge from "../../components/ui/StatusBadge";
+import ConfirmModal from "../../components/ui/ConfirmModal";
+import EmptyState from "../../components/ui/EmptyState";
 
 const STATUS_FILTER_OPTIONS = [
   { value: "", label: "Tüm Durumlar" },
@@ -80,6 +60,16 @@ const AdminPostsPage = () => {
     postId: null,
   });
   const [rejectionReason, setRejectionReason] = useState("");
+
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    postId: null,
+  });
+
+  const [approveModal, setApproveModal] = useState({
+    open: false,
+    postId: null,
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -128,25 +118,25 @@ const AdminPostsPage = () => {
     setPage(1);
   }, []);
 
-  const handleApprove = useCallback(
-    async (postId) => {
-      setOpenDropdown(null);
-      if (!window.confirm("Bu yazıyı onaylamak istediğinize emin misiniz?"))
-        return;
+  const handleApprove = useCallback(async () => {
+    const { postId } = approveModal;
+    setActionLoading(postId);
+    try {
+      await approvePost(postId);
+      toast.success("Yazı onaylandı.");
+      setApproveModal({ open: false, postId: null });
+      fetchPosts();
+    } catch (err) {
+      toast.error(err.message || "Yazı onaylanamadı.");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [approveModal, fetchPosts]);
 
-      setActionLoading(postId);
-      try {
-        await approvePost(postId);
-        toast.success("Yazı onaylandı.");
-        fetchPosts();
-      } catch (err) {
-        toast.error(err.message || "Yazı onaylanamadı.");
-      } finally {
-        setActionLoading(null);
-      }
-    },
-    [fetchPosts]
-  );
+  const openApproveModal = useCallback((postId) => {
+    setOpenDropdown(null);
+    setApproveModal({ open: true, postId });
+  }, []);
 
   const openRejectModal = useCallback((postId) => {
     setOpenDropdown(null);
@@ -179,29 +169,25 @@ const AdminPostsPage = () => {
     }
   }, [rejectModal, rejectionReason, closeRejectModal, fetchPosts]);
 
-  const handleDelete = useCallback(
-    async (postId) => {
-      setOpenDropdown(null);
-      if (
-        !window.confirm(
-          "Bu yazıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-        )
-      )
-        return;
+  const openDeleteModal = useCallback((postId) => {
+    setOpenDropdown(null);
+    setDeleteModal({ open: true, postId });
+  }, []);
 
-      setActionLoading(postId);
-      try {
-        await adminDeletePost(postId);
-        toast.success("Yazı silindi.");
-        fetchPosts();
-      } catch (err) {
-        toast.error(err.message || "Yazı silinemedi.");
-      } finally {
-        setActionLoading(null);
-      }
-    },
-    [fetchPosts]
-  );
+  const handleDelete = useCallback(async () => {
+    const { postId } = deleteModal;
+    setActionLoading(postId);
+    try {
+      await adminDeletePost(postId);
+      toast.success("Yazı silindi.");
+      setDeleteModal({ open: false, postId: null });
+      fetchPosts();
+    } catch (err) {
+      toast.error(err.message || "Yazı silinemedi.");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [deleteModal, fetchPosts]);
 
   const getAvailableActions = useCallback((status) => {
     const actions = ["view"];
@@ -210,8 +196,6 @@ const AdminPostsPage = () => {
     actions.push("delete");
     return actions;
   }, []);
-
-  /* ── Error state ─────────────────────────────────────────── */
 
   if (error && posts.length === 0) {
     return (
@@ -226,8 +210,6 @@ const AdminPostsPage = () => {
       </div>
     );
   }
-
-  /* ── Main render ─────────────────────────────────────────── */
 
   return (
     <div className="space-y-6">
@@ -269,7 +251,15 @@ const AdminPostsPage = () => {
       {loading ? (
         <PostsSkeleton />
       ) : posts.length === 0 ? (
-        <EmptyState hasFilters={!!(debouncedSearch || statusFilter)} />
+        <EmptyState
+          icon={HiOutlineDocumentText}
+          title="Yazı Bulunamadı"
+          message={
+            debouncedSearch || statusFilter
+              ? "Arama kriterlerinize uygun yazı bulunamadı."
+              : "Henüz hiç yazı yok."
+          }
+        />
       ) : (
         <>
           {/* Desktop Table */}
@@ -336,9 +326,9 @@ const AdminPostsPage = () => {
                             openDropdown === post._id ? null : post._id
                           )
                         }
-                        onApprove={handleApprove}
+                        onApprove={openApproveModal}
                         onReject={openRejectModal}
-                        onDelete={handleDelete}
+                        onDelete={openDeleteModal}
                       />
                     </td>
                   </tr>
@@ -350,7 +340,7 @@ const AdminPostsPage = () => {
           {/* Mobile Cards */}
           <div className="md:hidden space-y-3">
             {posts.map((post) => (
-              <PostCard
+              <PostMobileCard
                 key={post._id}
                 post={post}
                 availableActions={getAvailableActions(post.status)}
@@ -361,9 +351,9 @@ const AdminPostsPage = () => {
                     openDropdown === post._id ? null : post._id
                   )
                 }
-                onApprove={handleApprove}
+                onApprove={openApproveModal}
                 onReject={openRejectModal}
-                onDelete={handleDelete}
+                onDelete={openDeleteModal}
               />
             ))}
           </div>
@@ -376,14 +366,54 @@ const AdminPostsPage = () => {
         </>
       )}
 
+      {/* Approve Modal */}
+      {approveModal.open && (
+        <ConfirmModal
+          title="Yazıyı Onayla"
+          message="Bu yazıyı onaylamak istediğinize emin misiniz?"
+          confirmLabel="Onayla"
+          icon={HiOutlineCheck}
+          variant="primary"
+          loading={actionLoading === approveModal.postId}
+          onConfirm={handleApprove}
+          onCancel={() => setApproveModal({ open: false, postId: null })}
+        />
+      )}
+
       {/* Reject Modal */}
       {rejectModal.open && (
-        <RejectModal
-          rejectionReason={rejectionReason}
-          setRejectionReason={setRejectionReason}
-          isLoading={actionLoading === rejectModal.postId}
+        <ConfirmModal
+          title="Yazıyı Reddet"
+          message="Ret sebebini belirtin. Bu mesaj yazara iletilecektir."
+          confirmLabel="Reddet"
+          icon={HiOutlineX}
+          variant="danger"
+          loading={actionLoading === rejectModal.postId}
           onConfirm={handleReject}
-          onClose={closeRejectModal}
+          onCancel={closeRejectModal}
+        >
+          <textarea
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Ret sebebini yazın..."
+            rows={4}
+            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
+            autoFocus
+          />
+        </ConfirmModal>
+      )}
+
+      {/* Delete Modal */}
+      {deleteModal.open && (
+        <ConfirmModal
+          title="Yazıyı Sil"
+          message="Bu yazıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+          confirmLabel="Evet, Sil"
+          icon={HiOutlineTrash}
+          variant="danger"
+          loading={actionLoading === deleteModal.postId}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteModal({ open: false, postId: null })}
         />
       )}
     </div>
@@ -391,19 +421,6 @@ const AdminPostsPage = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════ */
-/*  Sub-components                                                */
-/* ═══════════════════════════════════════════════════════════════ */
-
-const StatusBadge = ({ status }) => {
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.draft;
-  return (
-    <span
-      className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${config.className}`}
-    >
-      {config.label}
-    </span>
-  );
-};
 
 const PostActionsDropdown = ({
   post,
@@ -481,7 +498,7 @@ const PostActionsDropdown = ({
   </div>
 );
 
-const PostCard = ({
+const PostMobileCard = ({
   post,
   availableActions,
   isLoading,
@@ -528,81 +545,10 @@ const PostCard = ({
   </div>
 );
 
-const RejectModal = ({
-  rejectionReason,
-  setRejectionReason,
-  isLoading,
-  onConfirm,
-  onClose,
-}) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-    <div className="relative bg-card border border-border rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold text-text">Yazıyı Reddet</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Ret sebebini belirtin. Bu mesaj yazara iletilecektir.
-        </p>
-      </div>
-
-      <textarea
-        value={rejectionReason}
-        onChange={(e) => setRejectionReason(e.target.value)}
-        placeholder="Ret sebebini yazın..."
-        rows={4}
-        className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
-        autoFocus
-      />
-
-      <div className="flex items-center justify-end gap-3">
-        <button
-          onClick={onClose}
-          disabled={isLoading}
-          className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-text transition-colors cursor-pointer disabled:opacity-50"
-        >
-          İptal
-        </button>
-        <button
-          onClick={onConfirm}
-          disabled={isLoading || !rejectionReason.trim()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-        >
-          {isLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Reddediliyor...
-            </>
-          ) : (
-            <>
-              <HiOutlineX className="w-4 h-4" />
-              Reddet
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
-const EmptyState = ({ hasFilters }) => (
-  <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
-      <HiOutlineDocumentText className="w-7 h-7 text-muted-foreground" />
-    </div>
-    <h3 className="text-lg font-semibold text-text mb-1">Yazı Bulunamadı</h3>
-    <p className="text-sm text-muted-foreground max-w-sm">
-      {hasFilters
-        ? "Arama kriterlerinize uygun yazı bulunamadı."
-        : "Henüz hiç yazı yok."}
-    </p>
-  </div>
-);
-
 /* ─── Skeleton ────────────────────────────────────────────── */
 
 const PostsSkeleton = () => (
   <div className="space-y-4 animate-pulse">
-    {/* Desktop Skeleton */}
     <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
       <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4">
         {[160, 100, 70, 80, 60].map((w, i) => (
@@ -626,7 +572,6 @@ const PostsSkeleton = () => (
       ))}
     </div>
 
-    {/* Mobile Skeleton */}
     <div className="md:hidden space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
         <div

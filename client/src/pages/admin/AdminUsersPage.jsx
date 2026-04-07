@@ -16,24 +16,9 @@ import {
   deleteUser,
 } from "../../api/services/adminService";
 import Pagination from "../../components/Pagination";
-
-const ROLE_CONFIG = {
-  user: {
-    label: "Kullanıcı",
-    className:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  },
-  author: {
-    label: "Yazar",
-    className:
-      "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  },
-  admin: {
-    label: "Admin",
-    className:
-      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  },
-};
+import RoleBadge, { ROLE_CONFIG } from "../../components/ui/RoleBadge";
+import ConfirmModal from "../../components/ui/ConfirmModal";
+import EmptyState from "../../components/ui/EmptyState";
 
 const ROLE_FILTER_OPTIONS = [
   { value: "", label: "Tüm Roller" },
@@ -69,7 +54,12 @@ const AdminUsersPage = () => {
   const [actionLoading, setActionLoading] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  // Debounce search input
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    userId: null,
+    userName: "",
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -78,7 +68,6 @@ const AdminUsersPage = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Close dropdown on any outside click
   useEffect(() => {
     if (!openDropdown) return;
     const close = () => setOpenDropdown(null);
@@ -135,36 +124,30 @@ const AdminUsersPage = () => {
     [fetchUsers]
   );
 
-  const handleDelete = useCallback(
-    async (userId) => {
-      setOpenDropdown(null);
-      if (
-        !window.confirm(
-          "Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-        )
-      )
-        return;
+  const openDeleteConfirm = useCallback((userId, userName) => {
+    setOpenDropdown(null);
+    setDeleteModal({ open: true, userId, userName });
+  }, []);
 
-      setActionLoading(userId);
-      try {
-        await deleteUser(userId);
-        toast.success("Kullanıcı silindi.");
-        fetchUsers();
-      } catch (err) {
-        toast.error(err.message || "Kullanıcı silinemedi.");
-      } finally {
-        setActionLoading(null);
-      }
-    },
-    [fetchUsers]
-  );
+  const handleDelete = useCallback(async () => {
+    const { userId } = deleteModal;
+    setActionLoading(userId);
+    try {
+      await deleteUser(userId);
+      toast.success("Kullanıcı silindi.");
+      setDeleteModal({ open: false, userId: null, userName: "" });
+      fetchUsers();
+    } catch (err) {
+      toast.error(err.message || "Kullanıcı silinemedi.");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [deleteModal, fetchUsers]);
 
   const isSelf = useCallback(
     (userId) => currentUser?._id === userId,
     [currentUser]
   );
-
-  /* ── Error state ─────────────────────────────────────────── */
 
   if (error && users.length === 0) {
     return (
@@ -179,8 +162,6 @@ const AdminUsersPage = () => {
       </div>
     );
   }
-
-  /* ── Main render ─────────────────────────────────────────── */
 
   return (
     <div className="space-y-6">
@@ -222,7 +203,15 @@ const AdminUsersPage = () => {
       {loading ? (
         <UsersSkeleton />
       ) : users.length === 0 ? (
-        <EmptyState hasFilters={!!(debouncedSearch || roleFilter)} />
+        <EmptyState
+          icon={HiOutlineUsers}
+          title="Kullanıcı Bulunamadı"
+          message={
+            debouncedSearch || roleFilter
+              ? "Arama kriterlerinize uygun kullanıcı bulunamadı."
+              : "Henüz kayıtlı kullanıcı yok."
+          }
+        />
       ) : (
         <>
           {/* Desktop Table */}
@@ -293,7 +282,7 @@ const AdminUsersPage = () => {
                           )
                         }
                         onRoleChange={handleRoleChange}
-                        onDelete={handleDelete}
+                        onDelete={() => openDeleteConfirm(user._id, user.name)}
                       />
                     </td>
                   </tr>
@@ -317,7 +306,7 @@ const AdminUsersPage = () => {
                   )
                 }
                 onRoleChange={handleRoleChange}
-                onDelete={handleDelete}
+                onDelete={() => openDeleteConfirm(user._id, user.name)}
               />
             ))}
           </div>
@@ -329,24 +318,27 @@ const AdminUsersPage = () => {
           />
         </>
       )}
+
+      {/* Delete Confirm Modal */}
+      {deleteModal.open && (
+        <ConfirmModal
+          title="Kullanıcıyı Sil"
+          message={`"${deleteModal.userName}" adlı kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+          confirmLabel="Evet, Sil"
+          icon={HiOutlineTrash}
+          variant="danger"
+          loading={actionLoading === deleteModal.userId}
+          onConfirm={handleDelete}
+          onCancel={() =>
+            setDeleteModal({ open: false, userId: null, userName: "" })
+          }
+        />
+      )}
     </div>
   );
 };
 
 /* ═══════════════════════════════════════════════════════════════ */
-/*  Sub-components                                                */
-/* ═══════════════════════════════════════════════════════════════ */
-
-const RoleBadge = ({ role }) => {
-  const config = ROLE_CONFIG[role] || ROLE_CONFIG.user;
-  return (
-    <span
-      className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${config.className}`}
-    >
-      {config.label}
-    </span>
-  );
-};
 
 const ActionsDropdown = ({
   user,
@@ -401,7 +393,7 @@ const ActionsDropdown = ({
           <div className="border-t border-border my-1" />
 
           <button
-            onClick={() => onDelete(user._id)}
+            onClick={onDelete}
             className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer flex items-center gap-2"
           >
             <HiOutlineTrash className="w-4 h-4" />
@@ -459,27 +451,10 @@ const UserCard = ({
   </div>
 );
 
-const EmptyState = ({ hasFilters }) => (
-  <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
-      <HiOutlineUsers className="w-7 h-7 text-muted-foreground" />
-    </div>
-    <h3 className="text-lg font-semibold text-text mb-1">
-      Kullanıcı Bulunamadı
-    </h3>
-    <p className="text-sm text-muted-foreground max-w-sm">
-      {hasFilters
-        ? "Arama kriterlerinize uygun kullanıcı bulunamadı."
-        : "Henüz kayıtlı kullanıcı yok."}
-    </p>
-  </div>
-);
-
 /* ─── Skeleton ────────────────────────────────────────────── */
 
 const UsersSkeleton = () => (
   <div className="space-y-4 animate-pulse">
-    {/* Desktop Skeleton */}
     <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
       <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4">
         {[120, 160, 60, 80, 60].map((w, i) => (
@@ -501,7 +476,6 @@ const UsersSkeleton = () => (
       ))}
     </div>
 
-    {/* Mobile Skeleton */}
     <div className="md:hidden space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
         <div

@@ -3,6 +3,8 @@ import { HiSearch } from "react-icons/hi";
 import { usePreferences } from "../context/PreferencesContext";
 import { getAllPosts } from "../api/services/postService";
 import PostCard from "../components/PostCard";
+import PostCardSkeleton from "../components/ui/PostCardSkeleton";
+import EmptyState from "../components/ui/EmptyState";
 import Pagination from "../components/Pagination";
 
 const SORT_OPTIONS = [
@@ -26,7 +28,6 @@ const HomePage = () => {
   const debounceTimer = useRef(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Debounce search input
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
       setDebouncedSearch(search);
@@ -36,7 +37,6 @@ const HomePage = () => {
     return () => clearTimeout(debounceTimer.current);
   }, [search]);
 
-  // Fetch posts when params change
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
@@ -75,6 +75,8 @@ const HomePage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const hasSearch = !!debouncedSearch.trim();
+
   return (
     <div className="py-8 space-y-6">
       {/* Header */}
@@ -87,7 +89,6 @@ const HomePage = () => {
 
       {/* Search & Sort Controls */}
       <div className="flex flex-col sm:flex-row gap-3">
-        {/* Search Bar */}
         <div className="relative flex-1">
           <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
           <input
@@ -100,7 +101,6 @@ const HomePage = () => {
           />
         </div>
 
-        {/* Sort Dropdown */}
         <select
           value={sort}
           onChange={handleSortChange}
@@ -117,13 +117,17 @@ const HomePage = () => {
 
       {/* Content Area */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: postsPerPage || 6 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-        </div>
+        <PostCardSkeleton count={postsPerPage || 6} />
       ) : posts.length === 0 ? (
-        <EmptyState hasSearch={!!debouncedSearch.trim()} />
+        <EmptyState
+          icon={HiSearch}
+          title={hasSearch ? "Sonuç bulunamadı" : "Henüz yazı yok"}
+          message={
+            hasSearch
+              ? "Arama kriterlerinize uygun yazı bulunamadı. Farklı bir anahtar kelime deneyin."
+              : "İlk yazıyı yazmak için cesaret gösterin!"
+          }
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -142,45 +146,5 @@ const HomePage = () => {
     </div>
   );
 };
-
-const SkeletonCard = () => (
-  <div className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse">
-    <div className="aspect-video bg-muted" />
-    <div className="p-4 space-y-3">
-      <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-full bg-muted" />
-        <div className="space-y-1.5 flex-1">
-          <div className="h-3 w-24 bg-muted rounded" />
-          <div className="h-2.5 w-16 bg-muted rounded" />
-        </div>
-      </div>
-      <div className="h-5 w-3/4 bg-muted rounded" />
-      <div className="space-y-1.5">
-        <div className="h-3 w-full bg-muted rounded" />
-        <div className="h-3 w-2/3 bg-muted rounded" />
-      </div>
-      <div className="flex items-center justify-between pt-2 border-t border-border">
-        <div className="h-4 w-12 bg-muted rounded" />
-        <div className="h-4 w-12 bg-muted rounded" />
-      </div>
-    </div>
-  </div>
-);
-
-const EmptyState = ({ hasSearch }) => (
-  <div className="flex flex-col items-center justify-center py-20 text-center">
-    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-      <HiSearch className="w-7 h-7 text-muted-foreground" />
-    </div>
-    <h3 className="text-lg font-semibold text-text mb-1">
-      {hasSearch ? "Sonuç bulunamadı" : "Henüz yazı yok"}
-    </h3>
-    <p className="text-sm text-muted-foreground max-w-sm">
-      {hasSearch
-        ? "Arama kriterlerinize uygun yazı bulunamadı. Farklı bir anahtar kelime deneyin."
-        : "Blog yazıları burada görünecek. İlk yazıyı eklemeyi bekleyin!"}
-    </p>
-  </div>
-);
 
 export default HomePage;

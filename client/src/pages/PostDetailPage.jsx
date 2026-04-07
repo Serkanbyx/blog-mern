@@ -15,6 +15,7 @@ import useGuestFingerprint from "../hooks/useGuestFingerprint";
 import { getPostBySlug, deletePost } from "../api/services/postService";
 import { toggleLike, toggleGuestLike } from "../api/services/likeService";
 import CommentSection from "../components/CommentSection";
+import ConfirmModal from "../components/ui/ConfirmModal";
 
 const GUEST_LIKES_KEY = "guestLikedPosts";
 
@@ -63,12 +64,10 @@ const PostDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Like state
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [likeLoading, setLikeLoading] = useState(false);
 
-  // Delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -313,7 +312,12 @@ const PostDetailPage = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <DeleteModal
+        <ConfirmModal
+          title="Yazıyı Sil"
+          message="Bu yazıyı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+          confirmLabel="Evet, Sil"
+          icon={HiOutlineTrash}
+          variant="danger"
           loading={deleteLoading}
           onConfirm={handleDelete}
           onCancel={() => setShowDeleteModal(false)}
@@ -322,47 +326,6 @@ const PostDetailPage = () => {
     </article>
   );
 };
-
-/* ─── Delete Confirmation Modal ─── */
-const DeleteModal = ({ loading, onConfirm, onCancel }) => (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-    onClick={onCancel}
-  >
-    <div
-      className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-xl"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="flex flex-col items-center text-center">
-        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-          <HiOutlineTrash className="w-6 h-6 text-red-600 dark:text-red-400" />
-        </div>
-        <h3 className="text-lg font-semibold text-text mb-2">
-          Yazıyı Sil
-        </h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          Bu yazıyı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
-        </p>
-        <div className="flex items-center gap-3 w-full">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg bg-card border border-border text-text hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
-          >
-            İptal
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={loading}
-            className="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {loading ? "Siliniyor..." : "Evet, Sil"}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-);
 
 /* ─── Loading Skeleton ─── */
 const PostDetailSkeleton = () => (

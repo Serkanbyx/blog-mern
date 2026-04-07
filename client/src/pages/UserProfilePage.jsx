@@ -9,6 +9,7 @@ import {
   HiOutlineChatAlt,
   HiOutlineCamera,
   HiOutlineArrowRight,
+  HiOutlineLockClosed,
 } from "react-icons/hi";
 import { useAuth } from "../context/AuthContext";
 import { getUserProfile, getUserLikedPosts } from "../api/services/userService";
@@ -16,16 +17,14 @@ import { getAllPosts } from "../api/services/postService";
 import { getUserComments } from "../api/services/commentService";
 import { uploadImage } from "../api/services/uploadService";
 import PostCard from "../components/PostCard";
+import PostCardSkeleton from "../components/ui/PostCardSkeleton";
+import RoleBadge from "../components/ui/RoleBadge";
+import EmptyState from "../components/ui/EmptyState";
 import Pagination from "../components/Pagination";
 import toast from "react-hot-toast";
 
 const POSTS_PER_PAGE = 9;
 const COMMENTS_PER_PAGE = 10;
-
-const ROLE_BADGES = {
-  author: { label: "Author", className: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" },
-  user: { label: "Member", className: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
-};
 
 const formatJoinDate = (dateStr) => {
   const date = new Date(dateStr);
@@ -290,8 +289,6 @@ const UserProfilePage = () => {
     );
   }
 
-  const roleBadge = ROLE_BADGES[profile.role] || ROLE_BADGES.user;
-
   return (
     <div className="py-8 space-y-8">
       {/* Profile Header */}
@@ -330,11 +327,7 @@ const UserProfilePage = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-text">
                 {profile.name}
               </h1>
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleBadge.className}`}
-              >
-                {roleBadge.label}
-              </span>
+              <RoleBadge role={profile.role} />
             </div>
 
             {profile.bio && (
@@ -498,11 +491,11 @@ const StatItem = ({ label, value }) => (
 );
 
 const PostsTab = ({ posts, loading, page, totalPages, onPageChange }) => {
-  if (loading) return <PostGridSkeleton />;
+  if (loading) return <PostCardSkeleton count={6} />;
 
   if (posts.length === 0) {
     return (
-      <EmptyTabState
+      <EmptyState
         icon={HiOutlineDocumentText}
         message="Henüz yazı yayınlanmamış."
       />
@@ -536,18 +529,19 @@ const LikedPostsTab = ({
 }) => {
   if (isPrivate && !isOwner) {
     return (
-      <EmptyTabState
-        icon={HiOutlineHeart}
-        message="Bu kullanıcının beğendiği yazılar gizli."
+      <EmptyState
+        icon={HiOutlineLockClosed}
+        isPrivate
+        message="Bu içerik gizli."
       />
     );
   }
 
-  if (loading) return <PostGridSkeleton />;
+  if (loading) return <PostCardSkeleton count={6} />;
 
   if (posts.length === 0) {
     return (
-      <EmptyTabState
+      <EmptyState
         icon={HiOutlineHeart}
         message="Henüz beğenilen yazı yok."
       />
@@ -581,9 +575,10 @@ const CommentsTab = ({
 }) => {
   if (isPrivate && !isOwner) {
     return (
-      <EmptyTabState
-        icon={HiOutlineChatAlt}
-        message="Bu kullanıcının yorumları gizli."
+      <EmptyState
+        icon={HiOutlineLockClosed}
+        isPrivate
+        message="Bu içerik gizli."
       />
     );
   }
@@ -592,7 +587,7 @@ const CommentsTab = ({
 
   if (comments.length === 0) {
     return (
-      <EmptyTabState
+      <EmptyState
         icon={HiOutlineChatAlt}
         message="Henüz yorum yapılmamış."
       />
@@ -630,15 +625,6 @@ const CommentsTab = ({
     </>
   );
 };
-
-const EmptyTabState = ({ icon: Icon, message }) => (
-  <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
-      <Icon className="w-6 h-6 text-muted-foreground" />
-    </div>
-    <p className="text-muted-foreground">{message}</p>
-  </div>
-);
 
 const AvatarModal = ({ onClose, onUpload, uploading }) => (
   <div
@@ -715,34 +701,7 @@ const ProfileSkeleton = () => (
       </div>
     </div>
     <div className="h-12 bg-muted rounded-xl" />
-    <PostGridSkeleton />
-  </div>
-);
-
-const PostGridSkeleton = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {Array.from({ length: 6 }).map((_, i) => (
-      <div
-        key={i}
-        className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse"
-      >
-        <div className="aspect-video bg-muted" />
-        <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-muted" />
-            <div className="space-y-1.5 flex-1">
-              <div className="h-3 w-24 bg-muted rounded" />
-              <div className="h-2.5 w-16 bg-muted rounded" />
-            </div>
-          </div>
-          <div className="h-5 w-3/4 bg-muted rounded" />
-          <div className="space-y-1.5">
-            <div className="h-3 w-full bg-muted rounded" />
-            <div className="h-3 w-2/3 bg-muted rounded" />
-          </div>
-        </div>
-      </div>
-    ))}
+    <PostCardSkeleton count={6} />
   </div>
 );
 

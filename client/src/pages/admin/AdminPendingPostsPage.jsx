@@ -9,7 +9,6 @@ import {
   HiOutlineChevronDown,
   HiOutlineChevronUp,
   HiOutlineCheckCircle,
-  HiOutlineDocumentText,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
 import {
@@ -17,6 +16,8 @@ import {
   approvePost,
   rejectPost,
 } from "../../api/services/adminService";
+import ConfirmModal from "../../components/ui/ConfirmModal";
+import EmptyState from "../../components/ui/EmptyState";
 
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString("tr-TR", {
@@ -37,6 +38,11 @@ const AdminPendingPostsPage = () => {
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [expandedPost, setExpandedPost] = useState(null);
+
+  const [approveModal, setApproveModal] = useState({
+    open: false,
+    postId: null,
+  });
 
   const [rejectModal, setRejectModal] = useState({
     open: false,
@@ -61,21 +67,20 @@ const AdminPendingPostsPage = () => {
     fetchPosts();
   }, [fetchPosts]);
 
-  const handleApprove = useCallback(async (postId) => {
-    if (!window.confirm("Bu yazıyı onaylamak istediğinize emin misiniz?"))
-      return;
-
+  const handleApprove = useCallback(async () => {
+    const { postId } = approveModal;
     setActionLoading(postId);
     try {
       await approvePost(postId);
       toast.success("Yazı onaylandı ve yayınlandı.");
       setPosts((prev) => prev.filter((p) => p._id !== postId));
+      setApproveModal({ open: false, postId: null });
     } catch (err) {
       toast.error(err.message || "Yazı onaylanamadı.");
     } finally {
       setActionLoading(null);
     }
-  }, []);
+  }, [approveModal]);
 
   const openRejectModal = useCallback((postId) => {
     setRejectModal({ open: true, postId });
@@ -111,8 +116,6 @@ const AdminPendingPostsPage = () => {
     setExpandedPost((prev) => (prev === postId ? null : postId));
   }, []);
 
-  /* ── Error state ─────────────────────────────────────── */
-
   if (error && posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -126,8 +129,6 @@ const AdminPendingPostsPage = () => {
       </div>
     );
   }
-
-  /* ── Main render ─────────────────────────────────────── */
 
   return (
     <div className="space-y-6">
@@ -143,7 +144,11 @@ const AdminPendingPostsPage = () => {
       {loading ? (
         <PendingPostsSkeleton />
       ) : posts.length === 0 ? (
-        <EmptyState />
+        <EmptyState
+          icon={HiOutlineCheckCircle}
+          title="Her Şey Tamam!"
+          message="Şu anda onay bekleyen yazı bulunmuyor."
+        />
       ) : (
         <div className="space-y-4">
           {posts.map((post) => (
@@ -153,29 +158,55 @@ const AdminPendingPostsPage = () => {
               isExpanded={expandedPost === post._id}
               isLoading={actionLoading === post._id}
               onToggleExpand={toggleExpand}
-              onApprove={handleApprove}
+              onApprove={(postId) =>
+                setApproveModal({ open: true, postId })
+              }
               onReject={openRejectModal}
             />
           ))}
         </div>
       )}
 
+      {/* Approve Modal */}
+      {approveModal.open && (
+        <ConfirmModal
+          title="Yazıyı Onayla"
+          message="Bu yazıyı onaylamak istediğinize emin misiniz?"
+          confirmLabel="Onayla"
+          icon={HiOutlineCheck}
+          variant="primary"
+          loading={actionLoading === approveModal.postId}
+          onConfirm={handleApprove}
+          onCancel={() => setApproveModal({ open: false, postId: null })}
+        />
+      )}
+
       {/* Reject Modal */}
       {rejectModal.open && (
-        <RejectModal
-          rejectionReason={rejectionReason}
-          setRejectionReason={setRejectionReason}
-          isLoading={actionLoading === rejectModal.postId}
+        <ConfirmModal
+          title="Yazıyı Reddet"
+          message="Ret sebebini belirtin. Bu mesaj yazara iletilecektir."
+          confirmLabel="Reddet"
+          icon={HiOutlineX}
+          variant="danger"
+          loading={actionLoading === rejectModal.postId}
           onConfirm={handleReject}
-          onClose={closeRejectModal}
-        />
+          onCancel={closeRejectModal}
+        >
+          <textarea
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Ret sebebini yazın..."
+            rows={4}
+            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
+            autoFocus
+          />
+        </ConfirmModal>
       )}
     </div>
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════ */
-/*  Sub-components                                                */
 /* ═══════════════════════════════════════════════════════════════ */
 
 const PostReviewCard = ({
@@ -190,7 +221,6 @@ const PostReviewCard = ({
 
   return (
     <div className="bg-card border border-border rounded-xl p-5 space-y-4">
-      {/* Post Header */}
       <div className="flex items-start gap-4">
         <img
           src={getAvatarUrl(author)}
@@ -214,7 +244,6 @@ const PostReviewCard = ({
         </div>
       </div>
 
-      {/* Tags */}
       {post.tags?.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <HiOutlineTag className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
@@ -229,7 +258,6 @@ const PostReviewCard = ({
         </div>
       )}
 
-      {/* Expandable Content */}
       <button
         onClick={() => onToggleExpand(post._id)}
         className="flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
@@ -263,7 +291,6 @@ const PostReviewCard = ({
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex items-center gap-3 pt-1">
         <button
           onClick={() => onApprove(post._id)}
@@ -285,74 +312,6 @@ const PostReviewCard = ({
     </div>
   );
 };
-
-const RejectModal = ({
-  rejectionReason,
-  setRejectionReason,
-  isLoading,
-  onConfirm,
-  onClose,
-}) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-    <div className="relative bg-card border border-border rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold text-text">Yazıyı Reddet</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Ret sebebini belirtin. Bu mesaj yazara iletilecektir.
-        </p>
-      </div>
-
-      <textarea
-        value={rejectionReason}
-        onChange={(e) => setRejectionReason(e.target.value)}
-        placeholder="Ret sebebini yazın..."
-        rows={4}
-        className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
-        autoFocus
-      />
-
-      <div className="flex items-center justify-end gap-3">
-        <button
-          onClick={onClose}
-          disabled={isLoading}
-          className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-text transition-colors cursor-pointer disabled:opacity-50"
-        >
-          İptal
-        </button>
-        <button
-          onClick={onConfirm}
-          disabled={isLoading || !rejectionReason.trim()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-        >
-          {isLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Reddediliyor...
-            </>
-          ) : (
-            <>
-              <HiOutlineX className="w-4 h-4" />
-              Reddet
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="w-14 h-14 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-4">
-      <HiOutlineCheckCircle className="w-7 h-7 text-green-500" />
-    </div>
-    <h3 className="text-lg font-semibold text-text mb-1">Her Şey Tamam!</h3>
-    <p className="text-sm text-muted-foreground max-w-sm">
-      Şu anda onay bekleyen yazı bulunmuyor.
-    </p>
-  </div>
-);
 
 /* ─── Skeleton ────────────────────────────────────────────── */
 
