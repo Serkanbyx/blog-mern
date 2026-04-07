@@ -38,6 +38,11 @@ const errorHandler = (err, req, res, _next) => {
     message = "Token has expired";
   }
 
+  // Log errors regardless of environment
+  if (statusCode === 500) {
+    console.error(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}:`, err.message);
+  }
+
   // Hide internal details in production
   if (NODE_ENV === "production" && statusCode === 500) {
     message = "Internal server error";
@@ -47,7 +52,7 @@ const errorHandler = (err, req, res, _next) => {
   const response = { success: false, message };
   if (errors) response.errors = errors;
 
-  // Log full error in development
+  // Log full stack in development
   if (NODE_ENV !== "production") {
     console.error("Error:", err);
   }

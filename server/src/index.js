@@ -34,10 +34,21 @@ app.use(express.json({ limit: "10kb" }));
 // 4. URL-encoded parser with size limit
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 
-// 5. NoSQL injection prevention
+// 5. Express 5 compatibility: req.query is read-only (getter), make it writable
+// for middleware that needs to mutate it (mongoSanitize, hpp)
+app.use((req, _res, next) => {
+  Object.defineProperty(req, "query", {
+    ...Object.getOwnPropertyDescriptor(req, "query"),
+    value: req.query,
+    writable: true,
+  });
+  next();
+});
+
+// 6. NoSQL injection prevention
 app.use(mongoSanitize());
 
-// 6. HTTP parameter pollution protection
+// 7. HTTP parameter pollution protection
 app.use(hpp());
 
 // --- Rate limiters ---
