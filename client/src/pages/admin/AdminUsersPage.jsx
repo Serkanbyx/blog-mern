@@ -75,8 +75,9 @@ const AdminUsersPage = () => {
       if (roleFilter) params.role = roleFilter;
 
       const { data } = await getAllUsers(params);
-      setUsers(data.data || data.users || []);
-      setTotalPages(data.totalPages || 1);
+      const result = data.data || data;
+      setUsers(result.users || []);
+      setTotalPages(result.totalPages || 1);
     } catch (err) {
       setError(err.message || "Kullanıcılar yüklenirken bir hata oluştu.");
     } finally {
