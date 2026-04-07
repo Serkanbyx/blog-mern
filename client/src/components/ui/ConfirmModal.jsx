@@ -6,13 +6,14 @@ const ConfirmModal = ({
   message,
   confirmLabel = "Onayla",
   cancelLabel = "İptal",
-  icon: Icon = HiOutlineExclamationCircle,
+  icon = HiOutlineExclamationCircle,
   variant = "danger",
   loading = false,
   onConfirm,
   onCancel,
   children,
 }) => {
+  const Icon = icon;
   const cancelRef = useRef(null);
 
   useEffect(() => {

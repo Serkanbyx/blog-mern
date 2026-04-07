@@ -9,7 +9,7 @@ import { truncateContent } from "../utils/helpers";
 import { getGuestLikedSet, persistGuestLikedSet } from "../utils/guestLikes";
 
 const PostCard = ({ post, onLikeUpdate }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const fingerprint = useGuestFingerprint();
 
   const resolveInitialLiked = () => {
