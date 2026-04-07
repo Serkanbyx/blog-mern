@@ -11,7 +11,7 @@ import {
   HiOutlineArrowRight,
   HiOutlineLockClosed,
 } from "react-icons/hi";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 import { getUserProfile, getUserLikedPosts } from "../api/services/userService";
 import { getAllPosts } from "../api/services/postService";
 import { getUserComments } from "../api/services/commentService";

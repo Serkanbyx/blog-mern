@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 import { changePassword, deleteAccount } from "../../api/services/authService";
 import toast from "react-hot-toast";
 import { FiLock, FiTrash2, FiAlertTriangle, FiX } from "react-icons/fi";

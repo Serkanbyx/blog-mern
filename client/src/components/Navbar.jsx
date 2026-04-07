@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 
 const Navbar = () => {
   const { user, isAuthenticated, isAdmin, canCreatePost, logout } = useAuth();

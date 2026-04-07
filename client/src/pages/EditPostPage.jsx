@@ -8,7 +8,7 @@ import {
   HiOutlineCheckCircle,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 import { getMyPostById, updatePost, submitPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
 import { TITLE_MAX, TAGS_MAX, STATUS_LABELS } from "../utils/constants";

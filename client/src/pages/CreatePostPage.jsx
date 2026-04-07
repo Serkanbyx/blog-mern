@@ -7,7 +7,7 @@ import {
   HiOutlineShieldCheck,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 import { createPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
 import { TITLE_MAX, TAGS_MAX } from "../utils/constants";

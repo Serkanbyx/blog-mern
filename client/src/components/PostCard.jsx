@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { HiHeart, HiOutlineHeart, HiOutlineChatAlt } from "react-icons/hi";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 import useGuestFingerprint from "../hooks/useGuestFingerprint";
 import { toggleLike, toggleGuestLike } from "../api/services/likeService";
 import { formatDate } from "../utils/formatDate";

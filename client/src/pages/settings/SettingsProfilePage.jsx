@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useAuth } from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 import { uploadImage } from "../../api/services/uploadService";
 import toast from "react-hot-toast";
 import { FiCamera, FiSave, FiUser } from "react-icons/fi";

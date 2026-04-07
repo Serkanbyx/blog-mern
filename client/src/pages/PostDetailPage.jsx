@@ -10,7 +10,7 @@ import {
   HiArrowLeft,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 import useGuestFingerprint from "../hooks/useGuestFingerprint";
 import { getPostBySlug, deletePost } from "../api/services/postService";
 import { toggleLike, toggleGuestLike } from "../api/services/likeService";
