@@ -416,7 +416,9 @@ const BackButton = () => (
   </Link>
 );
 
-const StatCard = ({ icon: Icon, label, value, color, bg }) => (
+const StatCard = ({ icon, label, value, color, bg }) => {
+  const Icon = icon;
+  return (
   <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-3">
     <div
       className={`w-10 h-10 rounded-lg ${bg} flex items-center justify-center`}
@@ -428,7 +430,8 @@ const StatCard = ({ icon: Icon, label, value, color, bg }) => (
       <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
     </div>
   </div>
-);
+  );
+};
 
 /* ─── Skeleton ────────────────────────────────────────────── */
 

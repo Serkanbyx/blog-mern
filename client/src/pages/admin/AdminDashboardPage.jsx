@@ -143,7 +143,8 @@ const AdminDashboardPage = () => {
 
       {/* Stat Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {STAT_CARDS.map(({ key, label, icon: Icon, color, bg, linkTo }) => {
+        {STAT_CARDS.map(({ key, label, icon, color, bg, linkTo }) => {
+          const Icon = icon;
           const CardWrapper = linkTo ? Link : "div";
           const wrapperProps = linkTo
             ? { to: linkTo, className: "group" }

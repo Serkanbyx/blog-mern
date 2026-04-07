@@ -48,18 +48,21 @@ const SettingsLayout = () => {
           </button>
           {mobileNavOpen && (
             <nav className="mt-2 bg-card border border-border rounded-xl p-2 space-y-1">
-              {settingsLinks.map(({ to, label, icon: Icon, end }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={end}
-                  className={linkClass}
-                  onClick={() => setMobileNavOpen(false)}
-                >
-                  <Icon size={18} />
-                  {label}
-                </NavLink>
-              ))}
+              {settingsLinks.map(({ to, label, icon, end }) => {
+                const Icon = icon;
+                return (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    end={end}
+                    className={linkClass}
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    <Icon size={18} />
+                    {label}
+                  </NavLink>
+                );
+              })}
             </nav>
           )}
         </div>
@@ -67,12 +70,15 @@ const SettingsLayout = () => {
         {/* Desktop: Side Navigation */}
         <aside className="hidden lg:block lg:w-56 shrink-0">
           <nav className="sticky top-20 space-y-1">
-            {settingsLinks.map(({ to, label, icon: Icon, end }) => (
-              <NavLink key={to} to={to} end={end} className={linkClass}>
-                <Icon size={18} />
-                {label}
-              </NavLink>
-            ))}
+            {settingsLinks.map(({ to, label, icon, end }) => {
+              const Icon = icon;
+              return (
+                <NavLink key={to} to={to} end={end} className={linkClass}>
+                  <Icon size={18} />
+                  {label}
+                </NavLink>
+              );
+            })}
           </nav>
         </aside>
 

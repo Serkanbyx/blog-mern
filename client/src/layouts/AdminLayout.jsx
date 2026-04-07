@@ -8,7 +8,6 @@ import {
   HiOutlineDocumentText,
   HiOutlineArrowLeft,
   HiMenu,
-  HiX,
 } from "react-icons/hi";
 
 const sidebarLinks = [
@@ -35,18 +34,21 @@ const AdminLayout = () => {
         <h2 className="text-lg font-bold text-text">Admin Panel</h2>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {sidebarLinks.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={linkClass}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <Icon size={20} />
-            {label}
-          </NavLink>
-        ))}
+        {sidebarLinks.map(({ to, label, icon, end }) => {
+          const Icon = icon;
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={linkClass}
+              onClick={() => setSidebarOpen(false)}
+            >
+              <Icon size={20} />
+              {label}
+            </NavLink>
+          );
+        })}
       </nav>
       <div className="px-3 py-4 border-t border-border">
         <Link
