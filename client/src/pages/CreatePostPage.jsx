@@ -20,7 +20,6 @@ const CreatePostPage = () => {
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
-  const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -31,7 +30,6 @@ const CreatePostPage = () => {
     if (!file) return;
 
     const preview = URL.createObjectURL(file);
-    setImage(file);
     setImagePreview(preview);
 
     setUploading(true);
@@ -41,7 +39,6 @@ const CreatePostPage = () => {
       toast.success("Görsel yüklendi.");
     } catch (err) {
       toast.error(err.message || "Görsel yüklenemedi.");
-      setImage(null);
       setImagePreview("");
       setImageUrl("");
     } finally {
@@ -50,7 +47,6 @@ const CreatePostPage = () => {
   }, []);
 
   const removeImage = useCallback(() => {
-    setImage(null);
     setImagePreview("");
     setImageUrl("");
   }, []);
