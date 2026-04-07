@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useCallback, useMemo } from "react";
-import { useAuth } from "./AuthContext";
+import useAuth from "../hooks/useAuth";
 
 const PreferencesContext = createContext(null);
 
