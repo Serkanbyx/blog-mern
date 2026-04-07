@@ -52,6 +52,7 @@ const BecomeAuthorPage = () => {
 
   useEffect(() => {
     if (isAuthor || isAdmin) {
+      toast("Zaten yazar/yönetici yetkiniz var.", { icon: "✅" });
       navigate("/", { replace: true });
     }
   }, [isAuthor, isAdmin, navigate]);
