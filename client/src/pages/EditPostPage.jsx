@@ -6,16 +6,17 @@ import {
   HiOutlineExclamation,
   HiOutlineClock,
   HiOutlineCheckCircle,
+  HiOutlineInformationCircle,
 } from "react-icons/hi";
 import toast from "react-hot-toast";
 import useAuth from "../hooks/useAuth";
 import { getMyPostById, updatePost, submitPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
-import { TITLE_MAX, TAGS_MAX, STATUS_LABELS } from "../utils/constants";
+import { TITLE_MAX, TAGS_MAX } from "../utils/constants";
 
 const EditPostPage = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const [post, setPost] = useState(null);
@@ -52,8 +53,9 @@ const EditPostPage = () => {
     fetchPost();
   }, [id]);
 
-  const isEditable = post?.status === "draft" || post?.status === "rejected";
   const isOwner = post?.author?._id === user?._id || post?.author === user?._id;
+  const willRevertToDraft =
+    (post?.status === "published" && !isAdmin) || post?.status === "pending";
 
   const handleImageSelect = useCallback(async (e) => {
     const file = e.target.files?.[0];
@@ -194,7 +196,7 @@ const EditPostPage = () => {
           <HiOutlineExclamation className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
           <div>
             <p className="text-sm font-medium text-red-700 dark:text-red-300">
-              Bu yazı reddedildi
+              Bu yazı reddedildi. Düzenleyip tekrar gönderebilirsiniz.
             </p>
             {post.rejectionReason && (
               <p className="text-sm text-red-600 dark:text-red-400 mt-1">
@@ -209,7 +211,7 @@ const EditPostPage = () => {
         <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
           <HiOutlineClock className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
           <p className="text-sm text-amber-700 dark:text-amber-300">
-            Bu yazı şu anda inceleme aşamasında. İnceleme tamamlanana kadar düzenleme yapılamaz.
+            Bu yazı inceleme aşamasında. Düzenlerseniz taslak durumuna döner ve tekrar göndermeniz gerekir.
           </p>
         </div>
       )}
@@ -218,13 +220,15 @@ const EditPostPage = () => {
         <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
           <HiOutlineCheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
           <p className="text-sm text-green-700 dark:text-green-300">
-            Bu yazı yayında. Yayındaki yazılar düzenlenemez.
+            {isAdmin
+              ? "Bu yazı yayında. Admin olarak düzenlemeleriniz doğrudan yansır."
+              : "Bu yazı yayında. Düzenlerseniz taslak durumuna döner ve tekrar incelemeye göndermeniz gerekir."}
           </p>
         </div>
       )}
 
       {/* Form */}
-      <fieldset disabled={!isEditable} className="space-y-6">
+      <div className="space-y-6">
         {/* Title */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -245,7 +249,7 @@ const EditPostPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
             placeholder="Yazınıza bir başlık verin..."
-            className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors"
           />
         </div>
 
@@ -260,7 +264,7 @@ const EditPostPage = () => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Yazınızın içeriğini buraya yazın..."
             rows={12}
-            className="w-full px-4 py-3 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors resize-y min-h-[200px] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors resize-y min-h-[200px]"
           />
         </div>
 
@@ -280,35 +284,31 @@ const EditPostPage = () => {
                   <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin" />
                 </div>
               )}
-              {isEditable && (
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  disabled={uploading}
-                  className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <HiOutlineX className="w-4 h-4" />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={removeImage}
+                disabled={uploading}
+                className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <HiOutlineX className="w-4 h-4" />
+              </button>
             </div>
           ) : (
-            isEditable && (
-              <label className="flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary-400 hover:bg-muted/50 transition-colors">
-                <HiOutlinePhotograph className="w-10 h-10 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  Görsel yüklemek için tıklayın
-                </span>
-                <span className="text-xs text-muted-foreground/60">
-                  JPEG, PNG veya WebP — Maks. 5 MB
-                </span>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                />
-              </label>
-            )
+            <label className="flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary-400 hover:bg-muted/50 transition-colors">
+              <HiOutlinePhotograph className="w-10 h-10 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                Görsel yüklemek için tıklayın
+              </span>
+              <span className="text-xs text-muted-foreground/60">
+                JPEG, PNG veya WebP — Maks. 5 MB
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </label>
           )}
         </div>
 
@@ -331,57 +331,61 @@ const EditPostPage = () => {
                   className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm rounded-lg"
                 >
                   {tag}
-                  {isEditable && (
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      className="p-0.5 hover:text-primary-900 dark:hover:text-primary-100 cursor-pointer"
-                      aria-label={`${tag} etiketini kaldır`}
-                    >
-                      <HiOutlineX className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="p-0.5 hover:text-primary-900 dark:hover:text-primary-100 cursor-pointer"
+                    aria-label={`${tag} etiketini kaldır`}
+                  >
+                    <HiOutlineX className="w-3.5 h-3.5" />
+                  </button>
                 </span>
               ))}
             </div>
           )}
 
-          {isEditable && (
-            <input
-              id="tags"
-              type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={handleAddTag}
-              placeholder="Etiket yazın ve Enter'a basın"
-              disabled={tags.length >= TAGS_MAX}
-              className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            />
-          )}
+          <input
+            id="tags"
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleAddTag}
+            placeholder="Etiket yazın ve Enter'a basın"
+            disabled={tags.length >= TAGS_MAX}
+            className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          />
         </div>
 
-        {/* Action Buttons */}
-        {isEditable && (
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => handleSave(false)}
-              disabled={!title.trim() || !content.trim() || uploading || submitting}
-              className="px-5 py-2.5 border border-border text-text hover:bg-muted font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {submitting ? "Kaydediliyor..." : "Taslak Kaydet"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSave(true)}
-              disabled={!title.trim() || !content.trim() || uploading || submitting}
-              className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {submitting ? "Gönderiliyor..." : "İncelemeye Gönder"}
-            </button>
+        {/* Status Change Warning */}
+        {willRevertToDraft && (
+          <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+            <HiOutlineInformationCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Bu yazıyı kaydettiğinizde durum taslağa dönecektir. Yayınlanması için tekrar incelemeye göndermeniz gerekir.
+            </p>
           </div>
         )}
-      </fieldset>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => handleSave(false)}
+            disabled={!title.trim() || !content.trim() || uploading || submitting}
+            className="px-5 py-2.5 border border-border text-text hover:bg-muted font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {submitting ? "Kaydediliyor..." : "Taslak Kaydet"}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSave(true)}
+            disabled={!title.trim() || !content.trim() || uploading || submitting}
+            className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {submitting ? "Gönderiliyor..." : "İncelemeye Gönder"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

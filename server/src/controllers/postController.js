@@ -222,13 +222,6 @@ const updatePost = async (req, res, next) => {
         .json({ success: false, message: "You can only edit your own posts." });
     }
 
-    if (!["draft", "rejected"].includes(post.status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Only posts in draft or rejected status can be edited.",
-      });
-    }
-
     const { title, content, image, tags } = req.body;
 
     if (image !== undefined && !isValidImageUrl(image)) {
@@ -243,8 +236,13 @@ const updatePost = async (req, res, next) => {
     if (image !== undefined) post.image = image;
     if (tags !== undefined) post.tags = sanitizeTags(tags);
 
-    // Editing a rejected post resets it to draft
-    if (post.status === "rejected") {
+    const isAdmin = req.user.role === "admin";
+
+    if (post.status === "published" && !isAdmin) {
+      post.status = "draft";
+    } else if (post.status === "pending") {
+      post.status = "draft";
+    } else if (post.status === "rejected") {
       post.status = "draft";
       post.rejectionReason = "";
     }
@@ -275,10 +273,10 @@ const submitPost = async (req, res, next) => {
         .json({ success: false, message: "You can only submit your own posts." });
     }
 
-    if (!["draft", "rejected"].includes(post.status)) {
+    if (post.status !== "draft") {
       return res.status(400).json({
         success: false,
-        message: "Only posts in draft or rejected status can be submitted for review.",
+        message: "Only draft posts can be submitted for review.",
       });
     }
 
