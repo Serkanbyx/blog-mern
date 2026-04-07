@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { HiSearch } from "react-icons/hi";
-import { usePreferences } from "../context/PreferencesContext";
+import { usePreferences } from "../hooks/usePreferences";
 import { getAllPosts } from "../api/services/postService";
 import PostCard from "../components/PostCard";
 import PostCardSkeleton from "../components/ui/PostCardSkeleton";

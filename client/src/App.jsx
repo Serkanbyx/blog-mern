@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { usePreferences } from "./context/PreferencesContext";
+import { usePreferences } from "./hooks/usePreferences";
 import ScrollToTop from "./components/ScrollToTop";
 
 // Layouts

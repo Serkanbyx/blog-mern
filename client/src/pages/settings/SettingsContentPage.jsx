@@ -1,4 +1,4 @@
-import { usePreferences } from "../../context/PreferencesContext";
+import { usePreferences } from "../../hooks/usePreferences";
 import toast from "react-hot-toast";
 import { FiCheck } from "react-icons/fi";
 

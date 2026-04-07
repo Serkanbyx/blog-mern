@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { createContext, useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "./AuthContext";
 
 const PreferencesContext = createContext(null);
@@ -20,14 +20,6 @@ const getStoredPreferences = () => {
   } catch {
     return DEFAULT_PREFERENCES;
   }
-};
-
-export const usePreferences = () => {
-  const context = useContext(PreferencesContext);
-  if (!context) {
-    throw new Error("usePreferences must be used within a PreferencesProvider");
-  }
-  return context;
 };
 
 export const PreferencesProvider = ({ children }) => {

@@ -1,4 +1,4 @@
-import { usePreferences } from "../../context/PreferencesContext";
+import { usePreferences } from "../../hooks/usePreferences";
 import toast from "react-hot-toast";
 import { FiSun, FiMoon, FiMonitor } from "react-icons/fi";
 import ToggleSwitch from "../../components/ui/ToggleSwitch";
