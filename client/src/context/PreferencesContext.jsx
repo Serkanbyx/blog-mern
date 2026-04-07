@@ -32,14 +32,19 @@ export const PreferencesProvider = ({ children }) => {
     return getStoredPreferences();
   });
 
-  // Sync preferences when user logs in/out
-  useEffect(() => {
+  const [prevUser, setPrevUser] = useState(user);
+  const [prevIsAuthenticated, setPrevIsAuthenticated] = useState(isAuthenticated);
+
+  if (prevUser !== user || prevIsAuthenticated !== isAuthenticated) {
+    setPrevUser(user);
+    setPrevIsAuthenticated(isAuthenticated);
+
     if (user?.preferences) {
       setPreferences({ ...DEFAULT_PREFERENCES, ...user.preferences });
     } else if (!isAuthenticated) {
       setPreferences(getStoredPreferences());
     }
-  }, [user, isAuthenticated]);
+  }
 
   // Apply theme to <html>
   useEffect(() => {
