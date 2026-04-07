@@ -99,6 +99,27 @@ const AdminLayout = () => {
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
           <Outlet />
         </main>
+
+        <footer className="border-t border-border bg-card/50 px-4 py-4 text-center text-sm text-muted-foreground">
+          Created by{" "}
+          <a
+            href="https://serkanbayraktar.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            Serkanby
+          </a>
+          {" | "}
+          <a
+            href="https://github.com/Serkanbyx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            Github
+          </a>
+        </footer>
       </div>
     </div>
   );
