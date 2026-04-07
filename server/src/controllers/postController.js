@@ -47,7 +47,7 @@ const createPost = async (req, res, next) => {
       image: image || "",
       tags: sanitizeTags(tags),
       author: req.user._id,
-      status: req.user.role === "admin" ? "published" : "pending",
+      status: req.user.role === "admin" ? "published" : "draft",
     };
 
     const post = await Post.create(postData);
@@ -271,6 +271,10 @@ const submitPost = async (req, res, next) => {
       return res
         .status(403)
         .json({ success: false, message: "You can only submit your own posts." });
+    }
+
+    if (post.status === "pending") {
+      return res.json({ success: true, post });
     }
 
     if (post.status !== "draft") {

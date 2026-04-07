@@ -125,9 +125,11 @@ const EditPostPage = () => {
         tags,
       });
 
-      if (shouldSubmit) {
+      if (shouldSubmit && !isAdmin) {
         await submitPost(id);
         toast.success("Yazı incelemeye gönderildi.");
+      } else if (shouldSubmit && isAdmin) {
+        toast.success("Yazı güncellendi ve yayınlandı.");
       } else {
         toast.success("Taslak kaydedildi.");
       }
@@ -382,7 +384,11 @@ const EditPostPage = () => {
             disabled={!title.trim() || !content.trim() || uploading || submitting}
             className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {submitting ? "Gönderiliyor..." : "İncelemeye Gönder"}
+            {submitting
+              ? "Gönderiliyor..."
+              : isAdmin
+              ? "Güncelle ve Yayınla"
+              : "İncelemeye Gönder"}
           </button>
         </div>
       </div>

@@ -549,26 +549,26 @@ blog-mern/
 
 ### Completed Features
 
-✅ JWT authentication with register, login, and auto-refresh
-✅ Three-tier role system (User, Author, Admin)
-✅ Author request and approval workflow
-✅ Post creation with draft, pending, published, rejected lifecycle
-✅ Admin dashboard with statistics and quick actions
-✅ Admin user management with role changes and deletion
-✅ Admin post moderation with approve/reject workflow
-✅ Admin comment management
-✅ Guest likes with fingerprint-based tracking
-✅ Authenticated comments with optimistic UI
-✅ User profiles with tabs and privacy controls
-✅ Six settings sub-pages (Profile, Account, Appearance, Privacy, Notifications, Content)
-✅ Dark / Light / System theme support
-✅ Font size, content density, and animation preferences
-✅ Cloudinary image uploads for posts and avatars
-✅ Debounced search and multi-sort post listing
-✅ Pagination with configurable posts per page
-✅ Responsive mobile-first design
-✅ Comprehensive input validation (express-validator)
-✅ Security hardening (Helmet, CORS, rate limiting, sanitization, HPP)
+- ✅ JWT authentication with register, login, and auto-refresh
+- ✅ Three-tier role system (User, Author, Admin)
+- ✅ Author request and approval workflow
+- ✅ Post creation with draft, pending, published, rejected lifecycle
+- ✅ Admin dashboard with statistics and quick actions
+- ✅ Admin user management with role changes and deletion
+- ✅ Admin post moderation with approve/reject workflow
+- ✅ Admin comment management
+- ✅ Guest likes with fingerprint-based tracking
+- ✅ Authenticated comments with optimistic UI
+- ✅ User profiles with tabs and privacy controls
+- ✅ Six settings sub-pages (Profile, Account, Appearance, Privacy, Notifications, Content)
+- ✅ Dark / Light / System theme support
+- ✅ Font size, content density, and animation preferences
+- ✅ Cloudinary image uploads for posts and avatars
+- ✅ Debounced search and multi-sort post listing
+- ✅ Pagination with configurable posts per page
+- ✅ Responsive mobile-first design
+- ✅ Comprehensive input validation (express-validator)
+- ✅ Security hardening (Helmet, CORS, rate limiting, sanitization, HPP)
 
 ### Future Features
 
