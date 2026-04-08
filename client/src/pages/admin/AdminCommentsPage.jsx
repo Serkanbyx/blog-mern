@@ -133,11 +133,11 @@ const AdminCommentsPage = () => {
       ) : (
         <>
           {/* Desktop Table */}
-          <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+          <div className="hidden md:block bg-card border border-border rounded-xl">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tl-xl">
                     Kullanıcı
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
@@ -149,7 +149,7 @@ const AdminCommentsPage = () => {
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
                     Tarih
                   </th>
-                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">
+                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tr-xl">
                     İşlem
                   </th>
                 </tr>
@@ -302,8 +302,8 @@ const EmptyState = ({ hasFilters }) => (
 const CommentsSkeleton = () => (
   <div className="space-y-4 animate-pulse">
     {/* Desktop Skeleton */}
-    <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
-      <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4">
+    <div className="hidden md:block bg-card border border-border rounded-xl">
+      <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4 rounded-t-xl">
         {[100, 200, 140, 80, 40].map((w, i) => (
           <div key={i} className="h-4 bg-muted rounded" style={{ width: w }} />
         ))}

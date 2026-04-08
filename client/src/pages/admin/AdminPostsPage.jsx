@@ -255,11 +255,11 @@ const AdminPostsPage = () => {
       ) : (
         <>
           {/* Desktop Table */}
-          <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+          <div className="hidden md:block bg-card border border-border rounded-xl">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tl-xl">
                     Başlık
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
@@ -271,7 +271,7 @@ const AdminPostsPage = () => {
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
                     Tarih
                   </th>
-                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">
+                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tr-xl">
                     İşlemler
                   </th>
                 </tr>
@@ -541,8 +541,8 @@ const PostMobileCard = ({
 
 const PostsSkeleton = () => (
   <div className="space-y-4 animate-pulse">
-    <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
-      <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4">
+    <div className="hidden md:block bg-card border border-border rounded-xl">
+      <div className="border-b border-border bg-muted/50 px-4 py-3 flex gap-4 rounded-t-xl">
         {[160, 100, 70, 80, 60].map((w, i) => (
           <div key={i} className="h-4 bg-muted rounded" style={{ width: w }} />
         ))}
