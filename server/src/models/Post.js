@@ -65,7 +65,7 @@ const postSchema = new mongoose.Schema(
 );
 
 postSchema.virtual("totalLikes").get(function () {
-  return this.likes.length + this.guestLikeCount;
+  return (this.likes?.length ?? 0) + (this.guestLikeCount ?? 0);
 });
 
 postSchema.pre("save", async function () {
