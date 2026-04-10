@@ -46,6 +46,8 @@ const HomePage = () => {
   }, [activeTag]);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchPosts = async () => {
       setLoading(true);
       try {
@@ -63,18 +65,25 @@ const HomePage = () => {
           params.tag = activeTag;
         }
 
-        const { data } = await getAllPosts(params);
+        const { data } = await getAllPosts(params, {
+          signal: abortController.signal,
+        });
         setPosts(data.posts);
         setTotalPages(data.totalPages);
-      } catch {
+      } catch (err) {
+        if (abortController.signal.aborted) return;
         setPosts([]);
         setTotalPages(1);
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchPosts();
+
+    return () => abortController.abort();
   }, [page, debouncedSearch, sort, postsPerPage, activeTag]);
 
   const handleSortChange = useCallback((e) => {

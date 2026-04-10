@@ -1,6 +1,7 @@
 import api from "../axios";
 
-export const getAllPosts = (params) => api.get("/posts", { params });
+export const getAllPosts = (params, config) =>
+  api.get("/posts", { params, ...config });
 
 export const getPostBySlug = (slug) => api.get(`/posts/${slug}`);
 
