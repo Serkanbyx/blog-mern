@@ -484,12 +484,8 @@ const getAllPostsAdmin = async (req, res, next) => {
       filter.status = req.query.status;
     }
 
-    if (req.query.search) {
-      const safeSearch = escapeRegex(req.query.search);
-      filter.$or = [
-        { title: { $regex: safeSearch, $options: "i" } },
-        { tags: { $regex: safeSearch, $options: "i" } },
-      ];
+    if (req.query.search?.trim()) {
+      filter.$text = { $search: req.query.search.trim() };
     }
 
     if (req.query.author) {
@@ -640,13 +636,14 @@ const getAllCommentsAdmin = async (req, res, next) => {
 
     const filter = {};
 
-    if (req.query.search) {
-      const safeSearch = escapeRegex(req.query.search);
+    if (req.query.search?.trim()) {
+      const searchTerm = req.query.search.trim();
+      const safeSearch = escapeRegex(searchTerm);
       const regex = { $regex: safeSearch, $options: "i" };
 
       const [matchingUsers, matchingPosts] = await Promise.all([
         User.find({ name: regex }).select("_id"),
-        Post.find({ title: regex }).select("_id"),
+        Post.find({ $text: { $search: searchTerm } }).select("_id"),
       ]);
 
       filter.$or = [

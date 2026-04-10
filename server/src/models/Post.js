@@ -90,6 +90,10 @@ postSchema.index({ author: 1 });
 postSchema.index({ status: 1 });
 postSchema.index({ likes: 1 });
 postSchema.index({ totalLikeCount: -1, createdAt: -1 });
+postSchema.index(
+  { title: "text", content: "text", tags: "text" },
+  { weights: { title: 10, tags: 5, content: 1 } }
+);
 
 const MAX_SLUG_RETRIES = 5;
 

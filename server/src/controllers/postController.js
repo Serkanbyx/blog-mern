@@ -1,6 +1,5 @@
 const Post = require("../models/Post");
 const sanitizeHtml = require("sanitize-html");
-const escapeRegex = require("../utils/escapeRegex");
 const { deleteCloudinaryAsset } = require("../utils/cloudinaryDelete");
 
 /**
@@ -89,12 +88,8 @@ const getAllPosts = async (req, res, next) => {
 
     const filter = { status: "published" };
 
-    if (search) {
-      const safeSearch = escapeRegex(search);
-      filter.$or = [
-        { title: { $regex: safeSearch, $options: "i" } },
-        { content: { $regex: safeSearch, $options: "i" } },
-      ];
+    if (search?.trim()) {
+      filter.$text = { $search: search.trim() };
     }
 
     if (tag) {
@@ -114,7 +109,9 @@ const getAllPosts = async (req, res, next) => {
         sortOption = { commentsCount: -1, createdAt: -1 };
         break;
       default:
-        sortOption = { createdAt: -1 };
+        sortOption = filter.$text
+          ? { score: { $meta: "textScore" }, createdAt: -1 }
+          : { createdAt: -1 };
     }
 
     const totalPosts = await Post.countDocuments(filter);
