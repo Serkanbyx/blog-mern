@@ -48,6 +48,11 @@ const postSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    totalLikeCount: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
     commentsCount: {
       type: Number,
       default: 0,
@@ -65,7 +70,7 @@ const postSchema = new mongoose.Schema(
 );
 
 postSchema.virtual("totalLikes").get(function () {
-  return (this.likes?.length ?? 0) + (this.guestLikeCount ?? 0);
+  return this.totalLikeCount ?? (this.likes?.length ?? 0) + (this.guestLikeCount ?? 0);
 });
 
 postSchema.pre("save", async function () {
@@ -84,5 +89,20 @@ postSchema.index({ createdAt: -1 });
 postSchema.index({ author: 1 });
 postSchema.index({ status: 1 });
 postSchema.index({ likes: 1 });
+postSchema.index({ totalLikeCount: -1, createdAt: -1 });
+
+/**
+ * Atomically recalculates and persists totalLikeCount from likes array length + guestLikeCount.
+ * Returns the updated document.
+ */
+postSchema.statics.syncTotalLikeCount = async function (postId) {
+  const post = await this.findById(postId);
+  if (!post) return null;
+
+  const computed = post.likes.length + (post.guestLikeCount ?? 0);
+  post.totalLikeCount = computed;
+  await post.save();
+  return post;
+};
 
 module.exports = mongoose.model("Post", postSchema);

@@ -98,7 +98,7 @@ const getAllPosts = async (req, res, next) => {
     let sortOption;
     switch (sort) {
       case "popular":
-        sortOption = { guestLikeCount: -1, createdAt: -1 };
+        sortOption = { totalLikeCount: -1, createdAt: -1 };
         break;
       case "mostCommented":
         sortOption = { commentsCount: -1, createdAt: -1 };
@@ -115,11 +115,6 @@ const getAllPosts = async (req, res, next) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .populate("author", "name avatar");
-
-    // For "popular" sort, re-sort in memory using the totalLikes virtual
-    if (sort === "popular") {
-      posts = posts.sort((a, b) => b.totalLikes - a.totalLikes);
-    }
 
     // Add isLiked flag for authenticated users
     if (req.user) {

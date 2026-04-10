@@ -248,6 +248,13 @@ const deleteUser = async (req, res, next) => {
     try {
       session.startTransaction();
 
+      // Find posts liked by this user before modifying them
+      const likedByUserPostIds = await Post.find(
+        { likes: targetUser._id },
+        { _id: 1 },
+        { session }
+      ).then((docs) => docs.map((d) => d._id));
+
       [deletedPosts, deletedComments, deletedGuestLikes, deletedRequests] =
         await Promise.all([
           Post.deleteMany({ author: targetUser._id }, { session }),
@@ -257,11 +264,13 @@ const deleteUser = async (req, res, next) => {
           ),
           GuestLike.deleteMany({ postId: { $in: postIds } }, { session }),
           AuthorRequest.deleteMany({ user: targetUser._id }, { session }),
-          Post.updateMany(
-            { likes: targetUser._id },
-            { $pull: { likes: targetUser._id } },
-            { session }
-          ),
+          likedByUserPostIds.length > 0
+            ? Post.updateMany(
+                { _id: { $in: likedByUserPostIds } },
+                { $pull: { likes: targetUser._id }, $inc: { totalLikeCount: -1 } },
+                { session }
+              )
+            : Promise.resolve(),
         ]);
 
       // Recalculate commentsCount on other people's posts

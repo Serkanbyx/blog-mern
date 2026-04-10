@@ -8,19 +8,18 @@ const DUPLICATE_KEY_CODE = 11000;
 
 /**
  * Derives guestLikeCount from GuestLike collection (authoritative source),
- * syncs it onto the Post document, and returns the canonical totalLikes.
+ * syncs it and totalLikeCount onto the Post document, and returns the canonical totalLikes.
  */
 const syncGuestLikeCount = async (postId) => {
   const guestCount = await GuestLike.countDocuments({ postId });
 
-  const post = await Post.findByIdAndUpdate(
-    postId,
-    { $set: { guestLikeCount: guestCount } },
-    { new: true }
-  );
+  const post = await Post.findById(postId);
+  post.guestLikeCount = guestCount;
+  post.totalLikeCount = post.likes.length + guestCount;
+  await post.save();
 
   return {
-    totalLikes: post.likes.length + guestCount,
+    totalLikes: post.totalLikeCount,
     post,
   };
 };
@@ -61,9 +60,13 @@ const toggleLike = async (req, res, next) => {
       isLiked = true;
     }
 
+    updatedPost.totalLikeCount =
+      updatedPost.likes.length + (updatedPost.guestLikeCount ?? 0);
+    await updatedPost.save();
+
     res.json({
       success: true,
-      totalLikes: updatedPost.likes.length + updatedPost.guestLikeCount,
+      totalLikes: updatedPost.totalLikeCount,
       isLiked,
     });
   } catch (error) {

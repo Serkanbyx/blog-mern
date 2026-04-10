@@ -184,12 +184,20 @@ const deleteAccount = async (req, res, next) => {
 
       await Post.deleteMany({ author: user._id }, { session });
 
-      // Remove user from likes arrays — scoped to posts they actually liked
-      await Post.updateMany(
+      // Remove user from likes arrays and recalculate totalLikeCount
+      const likedPostIds = await Post.find(
         { likes: user._id },
-        { $pull: { likes: user._id } },
+        { _id: 1 },
         { session }
-      );
+      ).then((docs) => docs.map((d) => d._id));
+
+      if (likedPostIds.length > 0) {
+        await Post.updateMany(
+          { _id: { $in: likedPostIds } },
+          { $pull: { likes: user._id }, $inc: { totalLikeCount: -1 } },
+          { session }
+        );
+      }
 
       await AuthorRequest.deleteMany({ user: user._id }, { session });
       await user.deleteOne({ session });
