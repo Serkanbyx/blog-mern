@@ -166,11 +166,22 @@ const CommentSection = ({ postId }) => {
               onChange={(e) => setText(e.target.value)}
               placeholder="Share your thoughts..."
               rows={3}
-              maxLength={2000}
+              maxLength={500}
               className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground resize-y focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors"
             />
           </div>
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <span
+              className={`text-xs tabular-nums ${
+                text.length >= 450
+                  ? text.length >= 500
+                    ? "text-red-500"
+                    : "text-amber-500"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {text.length}/500
+            </span>
             <button
               type="submit"
               disabled={!text.trim() || submitting}
