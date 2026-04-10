@@ -9,6 +9,14 @@ const api = axios.create({
   },
 });
 
+// Auto-remove Content-Type for FormData so the browser sets the correct boundary
+api.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
+  return config;
+});
+
 // Handle 401 responses globally
 api.interceptors.response.use(
   (response) => response,
