@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const sanitizeHtml = require("sanitize-html");
 const escapeRegex = require("../utils/escapeRegex");
 
 /**
@@ -29,6 +30,15 @@ const sanitizeTags = (tags) => {
     .filter(Boolean);
 };
 
+/**
+ * Strips all HTML tags from post content (plain-text only field).
+ * Defense-in-depth against stored XSS even if client-side rendering is safe.
+ */
+const sanitizeContent = (rawContent) => {
+  if (!rawContent) return rawContent;
+  return sanitizeHtml(rawContent, { allowedTags: [], allowedAttributes: {} });
+};
+
 // POST /api/posts
 const createPost = async (req, res, next) => {
   try {
@@ -43,7 +53,7 @@ const createPost = async (req, res, next) => {
 
     const postData = {
       title,
-      content,
+      content: sanitizeContent(content),
       image: image || "",
       tags: sanitizeTags(tags),
       author: req.user._id,
@@ -232,7 +242,7 @@ const updatePost = async (req, res, next) => {
     }
 
     if (title !== undefined) post.title = title;
-    if (content !== undefined) post.content = content;
+    if (content !== undefined) post.content = sanitizeContent(content);
     if (image !== undefined) post.image = image;
     if (tags !== undefined) post.tags = sanitizeTags(tags);
 

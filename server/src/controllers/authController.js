@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const { setTokenCookie, clearTokenCookie } = require("../utils/cookieToken");
 
 // Format user payload for API response (never expose password)
 const formatUserResponse = (user) => ({
@@ -27,7 +28,8 @@ const register = async (req, res, next) => {
     const user = await User.create({ name, email, password });
     const token = generateToken(user._id);
 
-    res.status(201).json({ success: true, user: formatUserResponse(user), token });
+    setTokenCookie(res, token);
+    res.status(201).json({ success: true, user: formatUserResponse(user) });
   } catch (error) {
     next(error);
   }
@@ -48,7 +50,8 @@ const login = async (req, res, next) => {
 
     const token = generateToken(user._id);
 
-    res.json({ success: true, user: formatUserResponse(user), token });
+    setTokenCookie(res, token);
+    res.json({ success: true, user: formatUserResponse(user) });
   } catch (error) {
     next(error);
   }
@@ -156,9 +159,16 @@ const deleteAccount = async (req, res, next) => {
   }
 };
 
+// POST /api/auth/logout
+const logout = (_req, res) => {
+  clearTokenCookie(res);
+  res.json({ success: true, message: "Logged out successfully" });
+};
+
 module.exports = {
   register,
   login,
+  logout,
   getMe,
   updateProfile,
   changePassword,

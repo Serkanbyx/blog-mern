@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
@@ -42,13 +43,16 @@ app.use(
 // 2. CORS — strict origin, credentials enabled
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
-// 3. JSON body parser with size limit
+// 3. Cookie parser — reads httpOnly JWT cookie
+app.use(cookieParser());
+
+// 4. JSON body parser with size limit
 app.use(express.json({ limit: "10kb" }));
 
-// 4. URL-encoded parser with size limit
+// 5. URL-encoded parser with size limit
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 
-// 5. Express 5 compatibility: req.query is read-only (getter), make it writable
+// 6. Express 5 compatibility: req.query is read-only (getter), make it writable
 // for middleware that needs to mutate it (mongoSanitize, hpp)
 app.use((req, _res, next) => {
   Object.defineProperty(req, "query", {
@@ -59,10 +63,10 @@ app.use((req, _res, next) => {
   next();
 });
 
-// 6. NoSQL injection prevention
+// 7. NoSQL injection prevention
 app.use(mongoSanitize());
 
-// 7. HTTP parameter pollution protection
+// 8. HTTP parameter pollution protection
 app.use(hpp());
 
 // --- Rate limiters ---

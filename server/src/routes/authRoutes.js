@@ -11,6 +11,7 @@ const {
 const {
   register,
   login,
+  logout,
   getMe,
   updateProfile,
   changePassword,
@@ -22,6 +23,7 @@ const router = express.Router();
 
 router.post("/register", registerRules, validate, register);
 router.post("/login", loginRules, validate, login);
+router.post("/logout", logout);
 router.get("/me", protect, getMe);
 router.put("/me", protect, updateProfile);
 router.put("/me/password", protect, changePasswordRules, validate, changePassword);

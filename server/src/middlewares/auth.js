@@ -1,19 +1,32 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { JWT_SECRET } = require("../config/env");
+const { COOKIE_NAME } = require("../utils/cookieToken");
+
+/**
+ * Extracts JWT from httpOnly cookie first, then falls back to
+ * Authorization: Bearer header for backward compatibility / API clients.
+ */
+const extractToken = (req) => {
+  if (req.cookies?.[COOKIE_NAME]) return req.cookies[COOKIE_NAME];
+
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) return authHeader.split(" ")[1];
+
+  return null;
+};
 
 // Require valid token — blocks unauthenticated requests
 const protect = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = extractToken(req);
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res
         .status(401)
         .json({ success: false, message: "Access denied. No token provided." });
     }
 
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.id);
 
@@ -35,14 +48,13 @@ const protect = async (req, res, next) => {
 // Attach user if token exists, otherwise continue as guest
 const optionalAuth = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = extractToken(req);
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       req.user = null;
       return next();
     }
 
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.id);
 

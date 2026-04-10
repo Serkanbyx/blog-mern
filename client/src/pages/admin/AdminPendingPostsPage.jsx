@@ -276,10 +276,17 @@ const PostReviewCard = ({
               className="w-full max-h-64 object-cover rounded-lg"
             />
           )}
-          <div
-            className="text-sm text-text leading-relaxed prose prose-sm dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="text-sm text-text leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+            {post.content.split("\n").map((paragraph, idx) => {
+              const trimmed = paragraph.trim();
+              if (!trimmed) return <br key={idx} />;
+              return (
+                <p key={idx} className="mb-2 last:mb-0">
+                  {trimmed}
+                </p>
+              );
+            })}
+          </div>
         </div>
       )}
 

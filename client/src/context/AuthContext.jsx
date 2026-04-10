@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useCallback, useMemo } from "react"
 import {
   registerUser,
   loginUser,
+  logoutUser,
   getMe,
   updateProfile,
   updatePreferences,
@@ -11,57 +12,42 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  // Validate existing token on mount
+  // Validate existing session (httpOnly cookie) on mount
   useEffect(() => {
-    const verifyToken = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
+    const verifySession = async () => {
       try {
         const { data } = await getMe();
         setUser(data.user);
       } catch {
-        localStorage.removeItem("token");
-        setToken(null);
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    verifyToken();
-  }, [token]);
+    verifySession();
+  }, []);
 
   const login = useCallback(async (credentials) => {
     const { data } = await loginUser(credentials);
-    const { token: newToken, user: userData } = data;
-
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-    setUser(userData);
-
-    return userData;
+    setUser(data.user);
+    return data.user;
   }, []);
 
   const register = useCallback(async (userData) => {
     const { data } = await registerUser(userData);
-    const { token: newToken, user: newUser } = data;
-
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-    setUser(newUser);
-
-    return newUser;
+    setUser(data.user);
+    return data.user;
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    setToken(null);
+  const logout = useCallback(async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // Cookie will expire on its own even if the request fails
+    }
     setUser(null);
   }, []);
 
@@ -81,14 +67,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const value = useMemo(() => {
-    const isAuthenticated = !!user && !!token;
+    const isAuthenticated = !!user;
     const isAdmin = user?.role === "admin";
     const isAuthor = user?.role === "author";
     const canCreatePost = isAdmin || isAuthor;
 
     return {
       user,
-      token,
       loading,
       isAuthenticated,
       isAdmin,
@@ -100,7 +85,7 @@ export const AuthProvider = ({ children }) => {
       updateUser,
       updateUserPreferences,
     };
-  }, [user, token, loading, login, register, logout, updateUser, updateUserPreferences]);
+  }, [user, loading, login, register, logout, updateUser, updateUserPreferences]);
 
   return (
     <AuthContext.Provider value={value}>
