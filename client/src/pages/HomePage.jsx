@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { HiSearch } from "react-icons/hi";
+import { useSearchParams } from "react-router-dom";
+import { HiSearch, HiX } from "react-icons/hi";
 import { usePreferences } from "../hooks/usePreferences";
 import { getAllPosts } from "../api/services/postService";
 import PostCard from "../components/PostCard";
@@ -17,6 +18,9 @@ const DEBOUNCE_MS = 300;
 
 const HomePage = () => {
   const { defaultSort, postsPerPage } = usePreferences();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTag = searchParams.get("tag") || "";
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +42,10 @@ const HomePage = () => {
   }, [search]);
 
   useEffect(() => {
+    setPage(1);
+  }, [activeTag]);
+
+  useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
@@ -49,6 +57,10 @@ const HomePage = () => {
 
         if (debouncedSearch.trim()) {
           params.search = debouncedSearch.trim();
+        }
+
+        if (activeTag) {
+          params.tag = activeTag;
         }
 
         const { data } = await getAllPosts(params);
@@ -63,12 +75,19 @@ const HomePage = () => {
     };
 
     fetchPosts();
-  }, [page, debouncedSearch, sort, postsPerPage]);
+  }, [page, debouncedSearch, sort, postsPerPage, activeTag]);
 
   const handleSortChange = useCallback((e) => {
     setSort(e.target.value);
     setPage(1);
   }, []);
+
+  const clearTag = useCallback(() => {
+    setSearchParams((prev) => {
+      prev.delete("tag");
+      return prev;
+    });
+  }, [setSearchParams]);
 
   const handlePageChange = useCallback((newPage) => {
     setPage(newPage);
@@ -114,6 +133,23 @@ const HomePage = () => {
           ))}
         </select>
       </div>
+
+      {/* Active Tag Filter */}
+      {activeTag && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Filtered by tag:</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
+            {activeTag}
+            <button
+              onClick={clearTag}
+              aria-label="Clear tag filter"
+              className="hover:text-primary-900 dark:hover:text-primary-100 transition-colors cursor-pointer"
+            >
+              <HiX className="w-3.5 h-3.5" />
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Content Area */}
       {loading ? (
