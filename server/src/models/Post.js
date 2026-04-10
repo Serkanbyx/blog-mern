@@ -73,16 +73,12 @@ postSchema.virtual("totalLikes").get(function () {
   return this.totalLikeCount ?? (this.likes?.length ?? 0) + (this.guestLikeCount ?? 0);
 });
 
-postSchema.pre("save", async function () {
+postSchema.pre("save", function () {
   if (!this.isModified("title")) return;
 
-  let baseSlug = slugify(this.title, { lower: true, strict: true });
-
-  const existing = await mongoose.model("Post").findOne({ slug: baseSlug, _id: { $ne: this._id } });
-
-  this.slug = existing
-    ? `${baseSlug}-${crypto.randomBytes(3).toString("hex")}`
-    : baseSlug;
+  const baseSlug = slugify(this.title, { lower: true, strict: true });
+  this._baseSlug = baseSlug || crypto.randomBytes(4).toString("hex");
+  this.slug = this._baseSlug;
 });
 
 postSchema.index({ createdAt: -1 });
@@ -90,6 +86,26 @@ postSchema.index({ author: 1 });
 postSchema.index({ status: 1 });
 postSchema.index({ likes: 1 });
 postSchema.index({ totalLikeCount: -1, createdAt: -1 });
+
+const MAX_SLUG_RETRIES = 5;
+
+/**
+ * Saves a document, retrying with a random hex suffix on E11000 duplicate-key
+ * errors for the slug field. Avoids the race condition of read-before-write.
+ */
+postSchema.statics.saveWithSlugRetry = async function (doc) {
+  for (let attempt = 0; attempt < MAX_SLUG_RETRIES; attempt++) {
+    try {
+      return await doc.save();
+    } catch (err) {
+      const isDuplicateSlug =
+        err.code === 11000 && err.keyPattern && err.keyPattern.slug;
+      if (!isDuplicateSlug || attempt === MAX_SLUG_RETRIES - 1) throw err;
+
+      doc.slug = `${doc._baseSlug}-${crypto.randomBytes(3).toString("hex")}`;
+    }
+  }
+};
 
 /**
  * Atomically recalculates and persists totalLikeCount from likes array length + guestLikeCount.

@@ -1,4 +1,5 @@
 const { body } = require("express-validator");
+const slugify = require("slugify");
 
 // ─── Auth ─────────────────────────────────────────────────────
 
@@ -38,11 +39,20 @@ const deleteAccountRules = [
 
 // ─── Posts ────────────────────────────────────────────────────
 
+const slugifyTitle = (value) => {
+  const slug = slugify(value, { lower: true, strict: true });
+  if (!slug) {
+    throw new Error("Title must contain at least one letter or number");
+  }
+  return value;
+};
+
 const createPostRules = [
   body("title")
     .trim()
     .isLength({ min: 3, max: 150 })
     .withMessage("Title must be between 3 and 150 characters")
+    .custom(slugifyTitle)
     .escape(),
   body("content")
     .trim()
@@ -56,6 +66,7 @@ const updatePostRules = [
     .trim()
     .isLength({ min: 3, max: 150 })
     .withMessage("Title must be between 3 and 150 characters")
+    .custom(slugifyTitle)
     .escape(),
   body("content")
     .optional()

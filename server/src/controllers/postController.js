@@ -60,7 +60,8 @@ const createPost = async (req, res, next) => {
       status: req.user.role === "admin" ? "published" : "draft",
     };
 
-    const post = await Post.create(postData);
+    const post = new Post(postData);
+    await Post.saveWithSlugRetry(post);
     const populated = await post.populate("author", "name avatar");
 
     res.status(201).json({ success: true, post: populated });
@@ -252,7 +253,7 @@ const updatePost = async (req, res, next) => {
       post.rejectionReason = "";
     }
 
-    await post.save();
+    await Post.saveWithSlugRetry(post);
     await post.populate("author", "name avatar");
 
     res.json({ success: true, post });
