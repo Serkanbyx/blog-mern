@@ -620,14 +620,32 @@ const getAllCommentsAdmin = async (req, res, next) => {
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
     const skip = (page - 1) * limit;
 
+    const filter = {};
+
+    if (req.query.search) {
+      const safeSearch = escapeRegex(req.query.search);
+      const regex = { $regex: safeSearch, $options: "i" };
+
+      const [matchingUsers, matchingPosts] = await Promise.all([
+        User.find({ name: regex }).select("_id"),
+        Post.find({ title: regex }).select("_id"),
+      ]);
+
+      filter.$or = [
+        { text: regex },
+        { user: { $in: matchingUsers.map((u) => u._id) } },
+        { postId: { $in: matchingPosts.map((p) => p._id) } },
+      ];
+    }
+
     const [comments, totalComments] = await Promise.all([
-      Comment.find()
+      Comment.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .populate("user", "name email avatar")
         .populate("postId", "title slug"),
-      Comment.countDocuments(),
+      Comment.countDocuments(filter),
     ]);
 
     res.json({

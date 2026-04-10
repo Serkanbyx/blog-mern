@@ -445,7 +445,7 @@ const PostActionsDropdown = ({
       <div className="absolute right-0 top-full mt-1 w-44 bg-card border border-border rounded-xl shadow-lg z-30 py-1">
         {availableActions.includes("view") && (
           <Link
-            to={`/post/${post.slug || post._id}`}
+            to={`/posts/${post.slug || post._id}`}
             className="w-full text-left px-4 py-2 text-sm text-text hover:bg-muted transition-colors flex items-center gap-2"
           >
             <HiOutlineEye className="w-4 h-4 text-muted-foreground" />

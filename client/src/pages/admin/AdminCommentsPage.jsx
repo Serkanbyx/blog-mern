@@ -179,7 +179,7 @@ const AdminCommentsPage = () => {
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        to={`/post/${comment.postId?.slug || comment.postId?._id}`}
+                        to={`/posts/${comment.postId?.slug || comment.postId?._id}`}
                         className="text-sm text-primary-600 dark:text-primary-400 hover:underline truncate block max-w-[180px]"
                       >
                         {comment.postId?.title || "Deleted post"}
@@ -275,7 +275,7 @@ const CommentCard = ({ comment, isLoading, onDelete }) => (
     </p>
 
     <Link
-      to={`/post/${comment.postId?.slug || comment.postId?._id}`}
+      to={`/posts/${comment.postId?.slug || comment.postId?._id}`}
       className="text-xs text-primary-600 dark:text-primary-400 hover:underline truncate block"
     >
       {comment.postId?.title || "Deleted post"}
