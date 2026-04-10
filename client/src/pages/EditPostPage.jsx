@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   HiOutlinePhotograph,
@@ -53,6 +53,14 @@ const EditPostPage = () => {
     fetchPost();
   }, [id]);
 
+  const previewUrlRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
+
   const isOwner = post?.author?._id === user?._id || post?.author === user?._id;
   const willRevertToDraft =
     (post?.status === "published" && !isAdmin) || post?.status === "pending";
@@ -61,7 +69,10 @@ const EditPostPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+
     const preview = URL.createObjectURL(file);
+    previewUrlRef.current = preview;
     setImagePreview(preview);
 
     setUploading(true);
@@ -71,6 +82,8 @@ const EditPostPage = () => {
       toast.success("Image uploaded.");
     } catch (err) {
       toast.error(err.message || "Could not upload image.");
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
       setImagePreview(imageUrl);
     } finally {
       setUploading(false);
@@ -78,6 +91,8 @@ const EditPostPage = () => {
   }, [imageUrl]);
 
   const removeImage = useCallback(() => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = null;
     setImagePreview("");
     setImageUrl("");
   }, []);

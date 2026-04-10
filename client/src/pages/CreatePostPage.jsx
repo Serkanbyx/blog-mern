@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   HiOutlinePhotograph,
@@ -24,12 +24,22 @@ const CreatePostPage = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const previewUrlRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const handleImageSelect = useCallback(async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+
     const preview = URL.createObjectURL(file);
+    previewUrlRef.current = preview;
     setImagePreview(preview);
 
     setUploading(true);
@@ -39,6 +49,8 @@ const CreatePostPage = () => {
       toast.success("Image uploaded.");
     } catch (err) {
       toast.error(err.message || "Could not upload image.");
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
       setImagePreview("");
       setImageUrl("");
     } finally {
@@ -47,6 +59,8 @@ const CreatePostPage = () => {
   }, []);
 
   const removeImage = useCallback(() => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = null;
     setImagePreview("");
     setImageUrl("");
   }, []);

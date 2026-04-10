@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 import { uploadImage } from "../../api/services/uploadService";
 import toast from "react-hot-toast";
@@ -12,12 +12,19 @@ const NAME_MAX = 50;
 const SettingsProfilePage = () => {
   const { user, updateUser } = useAuth();
   const fileInputRef = useRef(null);
+  const previewUrlRef = useRef(null);
 
   const [name, setName] = useState(user?.name || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || "");
   const [avatarFile, setAvatarFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
@@ -33,8 +40,12 @@ const SettingsProfilePage = () => {
       return;
     }
 
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+
+    const preview = URL.createObjectURL(file);
+    previewUrlRef.current = preview;
     setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
+    setAvatarPreview(preview);
   };
 
   const handleSubmit = async (e) => {
