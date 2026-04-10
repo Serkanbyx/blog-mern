@@ -79,19 +79,25 @@ const PostDetailPage = () => {
     setLikeLoading(true);
 
     try {
+      let response;
+
       if (isAuthenticated) {
-        await toggleLike(post._id);
+        response = await toggleLike(post._id);
       } else {
-        await toggleGuestLike(post._id, fingerprint);
+        response = await toggleGuestLike(post._id, fingerprint);
 
         const likedSet = getGuestLikedSet(fingerprint);
-        if (prevLiked) {
-          likedSet.delete(post._id);
-        } else {
+        if (response.data.isLiked) {
           likedSet.add(post._id);
+        } else {
+          likedSet.delete(post._id);
         }
         persistGuestLikedSet(fingerprint, likedSet);
       }
+
+      // Reconcile with server-returned canonical state
+      setLiked(response.data.isLiked);
+      setLikeCount(response.data.totalLikes);
     } catch {
       setLiked(prevLiked);
       setLikeCount(prevCount);

@@ -1,50 +1,70 @@
 const Post = require("../models/Post");
 const GuestLike = require("../models/GuestLike");
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const DUPLICATE_KEY_CODE = 11000;
+
+/**
+ * Derives guestLikeCount from GuestLike collection (authoritative source),
+ * syncs it onto the Post document, and returns the canonical totalLikes.
+ */
+const syncGuestLikeCount = async (postId) => {
+  const guestCount = await GuestLike.countDocuments({ postId });
+
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    { $set: { guestLikeCount: guestCount } },
+    { new: true }
+  );
+
+  return {
+    totalLikes: post.likes.length + guestCount,
+    post,
+  };
+};
 
 // POST /api/posts/:id/like — registered users only
 const toggleLike = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
-
-    if (!post) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Post not found." });
-    }
-
-    if (post.status !== "published") {
-      return res
-        .status(403)
-        .json({ success: false, message: "Only published posts can be liked." });
-    }
-
     const userId = req.user._id;
-    const alreadyLiked = post.likes.some(
-      (id) => id.toString() === userId.toString()
+
+    // Atomic toggle — $addToSet is idempotent, $pull is safe on missing values.
+    // We try $pull first; if nothing was removed the user hadn't liked yet.
+    const pulled = await Post.findOneAndUpdate(
+      { _id: req.params.id, status: "published", likes: userId },
+      { $pull: { likes: userId } },
+      { new: true }
     );
 
     let updatedPost;
+    let isLiked;
 
-    if (alreadyLiked) {
-      updatedPost = await Post.findByIdAndUpdate(
-        post._id,
-        { $pull: { likes: userId } },
-        { new: true }
-      );
+    if (pulled) {
+      updatedPost = pulled;
+      isLiked = false;
     } else {
-      updatedPost = await Post.findByIdAndUpdate(
-        post._id,
+      updatedPost = await Post.findOneAndUpdate(
+        { _id: req.params.id, status: "published" },
         { $addToSet: { likes: userId } },
         { new: true }
       );
+
+      if (!updatedPost) {
+        return res.status(404).json({
+          success: false,
+          message: "Post not found or not published.",
+        });
+      }
+
+      isLiked = true;
     }
 
     res.json({
       success: true,
       totalLikes: updatedPost.likes.length + updatedPost.guestLikeCount,
-      isLiked: !alreadyLiked,
+      isLiked,
     });
   } catch (error) {
     next(error);
@@ -62,51 +82,46 @@ const toggleGuestLike = async (req, res, next) => {
         .json({ success: false, message: "Invalid fingerprint format." });
     }
 
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findOne({
+      _id: req.params.id,
+      status: "published",
+    });
 
     if (!post) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Post not found." });
+      return res.status(404).json({
+        success: false,
+        message: "Post not found or not published.",
+      });
     }
 
-    if (post.status !== "published") {
-      return res
-        .status(403)
-        .json({ success: false, message: "Only published posts can be liked." });
-    }
-
-    const existingLike = await GuestLike.findOne({
+    // Atomic toggle: try removing first, then create if nothing was removed
+    const removed = await GuestLike.findOneAndDelete({
       postId: post._id,
       fingerprint,
     });
 
-    let updatedPost;
     let isLiked;
 
-    if (existingLike) {
-      await existingLike.deleteOne();
-      updatedPost = await Post.findByIdAndUpdate(
-        post._id,
-        { $inc: { guestLikeCount: -1 } },
-        { new: true }
-      );
+    if (removed) {
       isLiked = false;
     } else {
-      await GuestLike.create({ postId: post._id, fingerprint });
-      updatedPost = await Post.findByIdAndUpdate(
-        post._id,
-        { $inc: { guestLikeCount: 1 } },
-        { new: true }
-      );
-      isLiked = true;
+      try {
+        await GuestLike.create({ postId: post._id, fingerprint });
+        isLiked = true;
+      } catch (error) {
+        // Another concurrent request already created the like — treat as "already liked"
+        if (error.code === DUPLICATE_KEY_CODE) {
+          isLiked = true;
+        } else {
+          throw error;
+        }
+      }
     }
 
-    res.json({
-      success: true,
-      totalLikes: updatedPost.likes.length + updatedPost.guestLikeCount,
-      isLiked,
-    });
+    // Derive count from GuestLike collection (authoritative) and sync to Post
+    const { totalLikes } = await syncGuestLikeCount(post._id);
+
+    res.json({ success: true, totalLikes, isLiked });
   } catch (error) {
     next(error);
   }

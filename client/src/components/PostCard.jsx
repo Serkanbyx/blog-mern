@@ -36,24 +36,28 @@ const PostCard = ({ post, onLikeUpdate }) => {
       setLikeLoading(true);
 
       try {
-        if (isAuthenticated) {
-          await toggleLike(post._id);
-        } else {
-          await toggleGuestLike(post._id, fingerprint);
+        let response;
 
-          // Persist guest like state in localStorage
+        if (isAuthenticated) {
+          response = await toggleLike(post._id);
+        } else {
+          response = await toggleGuestLike(post._id, fingerprint);
+
           const likedSet = getGuestLikedSet(fingerprint);
-          if (prevLiked) {
-            likedSet.delete(post._id);
-          } else {
+          if (response.data.isLiked) {
             likedSet.add(post._id);
+          } else {
+            likedSet.delete(post._id);
           }
           persistGuestLikedSet(fingerprint, likedSet);
         }
 
-        onLikeUpdate?.(post._id, !prevLiked);
+        // Reconcile with server-returned canonical state
+        setLiked(response.data.isLiked);
+        setLikeCount(response.data.totalLikes);
+
+        onLikeUpdate?.(post._id, response.data.isLiked);
       } catch {
-        // Revert on failure
         setLiked(prevLiked);
         setLikeCount(prevCount);
       } finally {
