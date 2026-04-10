@@ -44,7 +44,7 @@ const EditPostPage = () => {
         setImageUrl(postData.image || "");
         setImagePreview(postData.image || "");
       } catch (err) {
-        setError(err.message || "Yazı yüklenemedi.");
+        setError(err.message || "Could not load post.");
       } finally {
         setLoading(false);
       }
@@ -68,9 +68,9 @@ const EditPostPage = () => {
     try {
       const url = await uploadImage(file);
       setImageUrl(url);
-      toast.success("Görsel yüklendi.");
+      toast.success("Image uploaded.");
     } catch (err) {
-      toast.error(err.message || "Görsel yüklenemedi.");
+      toast.error(err.message || "Could not upload image.");
       setImagePreview(imageUrl);
     } finally {
       setUploading(false);
@@ -97,7 +97,7 @@ const EditPostPage = () => {
 
       const available = TAGS_MAX - tags.length;
       if (available <= 0) {
-        toast.error(`En fazla ${TAGS_MAX} etiket ekleyebilirsiniz.`);
+        toast.error(`You can add up to ${TAGS_MAX} tags.`);
         setTagInput("");
         return;
       }
@@ -113,8 +113,8 @@ const EditPostPage = () => {
   }, []);
 
   const handleSave = async (shouldSubmit = false) => {
-    if (!title.trim()) return toast.error("Başlık zorunludur.");
-    if (!content.trim()) return toast.error("İçerik zorunludur.");
+    if (!title.trim()) return toast.error("Title is required.");
+    if (!content.trim()) return toast.error("Content is required.");
 
     setSubmitting(true);
     try {
@@ -127,16 +127,16 @@ const EditPostPage = () => {
 
       if (shouldSubmit && !isAdmin) {
         await submitPost(id);
-        toast.success("Yazı incelemeye gönderildi.");
+        toast.success("Post sent for review.");
       } else if (shouldSubmit && isAdmin) {
-        toast.success("Yazı güncellendi ve yayınlandı.");
+        toast.success("Post updated and published.");
       } else {
-        toast.success("Taslak kaydedildi.");
+        toast.success("Draft saved.");
       }
 
       navigate("/posts/mine");
     } catch (err) {
-      toast.error(err.message || "Yazı kaydedilemedi.");
+      toast.error(err.message || "Could not save post.");
     } finally {
       setSubmitting(false);
     }
@@ -164,8 +164,8 @@ const EditPostPage = () => {
         <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
-        <h2 className="text-lg font-semibold text-text mb-1">Yazı Bulunamadı</h2>
-        <p className="text-sm text-muted-foreground">{error || "Bu yazıya erişiminiz yok."}</p>
+        <h2 className="text-lg font-semibold text-text mb-1">Post not found</h2>
+        <p className="text-sm text-muted-foreground">{error || "You do not have access to this post."}</p>
       </div>
     );
   }
@@ -176,8 +176,8 @@ const EditPostPage = () => {
         <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
-        <h2 className="text-lg font-semibold text-text mb-1">Yetkisiz Erişim</h2>
-        <p className="text-sm text-muted-foreground">Bu yazıyı düzenleme yetkiniz yok.</p>
+        <h2 className="text-lg font-semibold text-text mb-1">Unauthorized</h2>
+        <p className="text-sm text-muted-foreground">You do not have permission to edit this post.</p>
       </div>
     );
   }
@@ -186,9 +186,9 @@ const EditPostPage = () => {
     <div className="py-8 max-w-3xl mx-auto space-y-6">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-text">Yazıyı Düzenle</h1>
+        <h1 className="text-3xl font-bold text-text">Edit post</h1>
         <p className="text-muted-foreground">
-          Yazınızı güncelleyin ve tekrar gönderin.
+          Update your post and submit again.
         </p>
       </div>
 
@@ -198,11 +198,11 @@ const EditPostPage = () => {
           <HiOutlineExclamation className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
           <div>
             <p className="text-sm font-medium text-red-700 dark:text-red-300">
-              Bu yazı reddedildi. Düzenleyip tekrar gönderebilirsiniz.
+              This post was rejected. You can edit it and submit again.
             </p>
             {post.rejectionReason && (
               <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                Sebep: {post.rejectionReason}
+                Reason: {post.rejectionReason}
               </p>
             )}
           </div>
@@ -213,7 +213,7 @@ const EditPostPage = () => {
         <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
           <HiOutlineClock className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
           <p className="text-sm text-amber-700 dark:text-amber-300">
-            Bu yazı inceleme aşamasında. Düzenlerseniz taslak durumuna döner ve tekrar göndermeniz gerekir.
+            This post is under review. If you edit it, it will revert to draft and you will need to submit it again.
           </p>
         </div>
       )}
@@ -223,8 +223,8 @@ const EditPostPage = () => {
           <HiOutlineCheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
           <p className="text-sm text-green-700 dark:text-green-300">
             {isAdmin
-              ? "Bu yazı yayında. Admin olarak düzenlemeleriniz doğrudan yansır."
-              : "Bu yazı yayında. Düzenlerseniz taslak durumuna döner ve tekrar incelemeye göndermeniz gerekir."}
+              ? "This post is live. As an admin, your edits apply immediately."
+              : "This post is live. If you edit it, it will revert to draft and you must submit it for review again."}
           </p>
         </div>
       )}
@@ -235,7 +235,7 @@ const EditPostPage = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="title" className="text-sm font-medium text-text">
-              Başlık
+              Title
             </label>
             <span
               className={`text-xs ${
@@ -250,7 +250,7 @@ const EditPostPage = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
-            placeholder="Yazınıza bir başlık verin..."
+            placeholder="Give your post a title..."
             className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors"
           />
         </div>
@@ -258,13 +258,13 @@ const EditPostPage = () => {
         {/* Content */}
         <div className="space-y-2">
           <label htmlFor="content" className="text-sm font-medium text-text">
-            İçerik
+            Content
           </label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Yazınızın içeriğini buraya yazın..."
+            placeholder="Write your post content here..."
             rows={12}
             className="w-full px-4 py-3 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors resize-y min-h-[200px]"
           />
@@ -272,13 +272,13 @@ const EditPostPage = () => {
 
         {/* Image Upload */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-text">Kapak Görseli</label>
+          <label className="text-sm font-medium text-text">Cover image</label>
 
           {imagePreview ? (
             <div className="relative rounded-xl overflow-hidden border border-border">
               <img
                 src={imagePreview}
-                alt="Önizleme"
+                alt="Preview"
                 className="w-full max-h-64 object-cover"
               />
               {uploading && (
@@ -299,10 +299,10 @@ const EditPostPage = () => {
             <label className="flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary-400 hover:bg-muted/50 transition-colors">
               <HiOutlinePhotograph className="w-10 h-10 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                Görsel yüklemek için tıklayın
+                Click to upload an image
               </span>
               <span className="text-xs text-muted-foreground/60">
-                JPEG, PNG veya WebP — Maks. 5 MB
+                JPEG, PNG, or WebP — Max. 5 MB
               </span>
               <input
                 type="file"
@@ -318,7 +318,7 @@ const EditPostPage = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="tags" className="text-sm font-medium text-text">
-              Etiketler
+              Tags
             </label>
             <span className="text-xs text-muted-foreground">
               {tags.length}/{TAGS_MAX}
@@ -337,7 +337,7 @@ const EditPostPage = () => {
                     type="button"
                     onClick={() => removeTag(tag)}
                     className="p-0.5 hover:text-primary-900 dark:hover:text-primary-100 cursor-pointer"
-                    aria-label={`${tag} etiketini kaldır`}
+                    aria-label={`Remove tag ${tag}`}
                   >
                     <HiOutlineX className="w-3.5 h-3.5" />
                   </button>
@@ -352,7 +352,7 @@ const EditPostPage = () => {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleAddTag}
-            placeholder="Etiket yazın ve Enter'a basın"
+            placeholder="Type a tag and press Enter"
             disabled={tags.length >= TAGS_MAX}
             className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           />
@@ -363,7 +363,7 @@ const EditPostPage = () => {
           <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
             <HiOutlineInformationCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
             <p className="text-sm text-blue-700 dark:text-blue-300">
-              Bu yazıyı kaydettiğinizde durum taslağa dönecektir. Yayınlanması için tekrar incelemeye göndermeniz gerekir.
+              Saving will set this post back to draft. You will need to submit it for review again to publish it.
             </p>
           </div>
         )}
@@ -376,7 +376,7 @@ const EditPostPage = () => {
             disabled={!title.trim() || !content.trim() || uploading || submitting}
             className="px-5 py-2.5 border border-border text-text hover:bg-muted font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {submitting ? "Kaydediliyor..." : "Taslak Kaydet"}
+            {submitting ? "Saving..." : "Save draft"}
           </button>
           <button
             type="button"
@@ -385,10 +385,10 @@ const EditPostPage = () => {
             className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {submitting
-              ? "Gönderiliyor..."
+              ? "Submitting..."
               : isAdmin
-              ? "Güncelle ve Yayınla"
-              : "İncelemeye Gönder"}
+              ? "Update and publish"
+              : "Submit for review"}
           </button>
         </div>
       </div>

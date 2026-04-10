@@ -12,10 +12,10 @@ import {
 
 const sidebarLinks = [
   { to: "/admin", label: "Dashboard", icon: HiOutlineChartBar, end: true },
-  { to: "/admin/users", label: "Kullanıcılar", icon: HiOutlineUsers },
-  { to: "/admin/author-requests", label: "Yazar Başvuruları", icon: HiOutlinePencilAlt },
-  { to: "/admin/posts", label: "Yazılar", icon: HiOutlineDocumentText },
-  { to: "/admin/comments", label: "Yorumlar", icon: HiOutlineChatAlt2 },
+  { to: "/admin/users", label: "Users", icon: HiOutlineUsers },
+  { to: "/admin/author-requests", label: "Author applications", icon: HiOutlinePencilAlt },
+  { to: "/admin/posts", label: "Posts", icon: HiOutlineDocumentText },
+  { to: "/admin/comments", label: "Comments", icon: HiOutlineChatAlt2 },
 ];
 
 const AdminLayout = () => {
@@ -56,7 +56,7 @@ const AdminLayout = () => {
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-text hover:bg-muted transition-colors"
         >
           <HiOutlineArrowLeft size={20} />
-          Siteye Dön
+          Back to site
         </Link>
       </div>
     </>
@@ -89,7 +89,7 @@ const AdminLayout = () => {
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 rounded-lg text-muted-foreground hover:text-text hover:bg-muted transition-colors cursor-pointer"
-            aria-label="Menüyü aç"
+            aria-label="Open menu"
           >
             <HiMenu size={22} />
           </button>

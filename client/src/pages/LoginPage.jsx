@@ -21,10 +21,10 @@ const LoginPage = () => {
 
     try {
       const user = await login(formData);
-      toast.success("Başarıyla giriş yapıldı!");
+      toast.success("Signed in successfully.");
       navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
     } catch (error) {
-      toast.error(error.message || "Giriş başarısız. Lütfen tekrar deneyin.");
+      toast.error(error.message || "Sign-in failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -36,10 +36,10 @@ const LoginPage = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-card-foreground">
-            Giriş Yap
+            Sign in
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Hesabınıza giriş yaparak devam edin
+            Sign in to your account to continue
           </p>
         </div>
 
@@ -51,7 +51,7 @@ const LoginPage = () => {
               htmlFor="email"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              E-posta
+              Email
             </label>
             <div className="relative">
               <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -61,7 +61,7 @@ const LoginPage = () => {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="ornek@email.com"
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-border bg-bg py-2.5 pl-10 pr-4 text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
@@ -75,7 +75,7 @@ const LoginPage = () => {
               htmlFor="password"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              Şifre
+              Password
             </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -102,12 +102,12 @@ const LoginPage = () => {
             {isLoading ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Giriş yapılıyor...
+                Signing in...
               </>
             ) : (
               <>
                 <FiLogIn className="h-4 w-4" />
-                Giriş Yap
+                Sign in
               </>
             )}
           </button>
@@ -115,12 +115,12 @@ const LoginPage = () => {
 
         {/* Footer Link */}
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Hesabınız yok mu?{" "}
+          {"Don't have an account? "}
           <Link
             to="/register"
             className="font-medium text-primary-600 hover:text-primary-700 transition-colors"
           >
-            Kayıt Ol
+            Sign up
           </Link>
         </p>
       </div>

@@ -7,18 +7,18 @@ import ToggleSwitch from "../../components/ui/ToggleSwitch";
 const PRIVACY_TOGGLES = [
   {
     key: "privacy.showLikedPosts",
-    label: "Beğenilen yazıları profilimde göster",
-    description: "Etkinleştirildiğinde, diğer kullanıcılar beğendiğiniz yazıları görebilir.",
+    label: "Show liked posts on my profile",
+    description: "When enabled, other users can see posts you have liked.",
   },
   {
     key: "privacy.showComments",
-    label: "Yorumlarımı profilimde göster",
-    description: "Etkinleştirildiğinde, yorumlarınız profil sayfanızda görünür.",
+    label: "Show my comments on my profile",
+    description: "When enabled, your comments appear on your profile page.",
   },
   {
     key: "privacy.showEmail",
-    label: "E-postamı profilimde göster",
-    description: "Etkinleştirildiğinde, e-posta adresiniz herkese açık profilinizde görünür.",
+    label: "Show my email on my profile",
+    description: "When enabled, your email address is visible on your public profile.",
   },
 ];
 
@@ -49,7 +49,7 @@ const SettingsPrivacyPage = () => {
           });
         }, 1500);
       } catch {
-        toast.error("Ayar kaydedilemedi.");
+        toast.error("Could not save setting.");
         setSavingKeys((prev) => {
           const next = { ...prev };
           delete next[key];
@@ -62,9 +62,9 @@ const SettingsPrivacyPage = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-text mb-1">Gizlilik Ayarları</h2>
+      <h2 className="text-xl font-bold text-text mb-1">Privacy settings</h2>
       <p className="text-sm text-muted-foreground mb-6">
-        Profilinizde hangi bilgilerin görüneceğini kontrol edin.
+        Control what information appears on your profile.
       </p>
 
       <div className="space-y-3">
@@ -90,7 +90,7 @@ const SettingsPrivacyPage = () => {
                     ) : (
                       <FiCheck className="h-3.5 w-3.5 text-green-500" />
                     )}
-                    {status === "saving" ? "Kaydediliyor..." : "Kaydedildi"}
+                    {status === "saving" ? "Saving..." : "Saved"}
                   </span>
                 )}
 

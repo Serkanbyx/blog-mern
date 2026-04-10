@@ -53,11 +53,11 @@ const Navbar = () => {
           {/* Center: Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
             <NavLink to="/" end className={navLinkClass}>
-              Ana Sayfa
+              Home
             </NavLink>
             {canCreatePost && (
               <NavLink to="/posts/new" className={navLinkClass}>
-                Yeni Yazı
+                New Post
               </NavLink>
             )}
           </div>
@@ -70,13 +70,13 @@ const Navbar = () => {
                   to="/login"
                   className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-text transition-colors"
                 >
-                  Giriş Yap
+                  Sign in
                 </Link>
                 <Link
                   to="/register"
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
                 >
-                  Kayıt Ol
+                  Sign up
                 </Link>
               </>
             ) : (
@@ -109,7 +109,7 @@ const Navbar = () => {
                       onClick={() => setDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-text hover:bg-muted transition-colors"
                     >
-                      Profilim
+                      My profile
                     </Link>
                     {canCreatePost && (
                       <Link
@@ -117,7 +117,7 @@ const Navbar = () => {
                         onClick={() => setDropdownOpen(false)}
                         className="block px-4 py-2 text-sm text-text hover:bg-muted transition-colors"
                       >
-                        Yazılarım
+                        My posts
                       </Link>
                     )}
                     <Link
@@ -125,7 +125,7 @@ const Navbar = () => {
                       onClick={() => setDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-text hover:bg-muted transition-colors"
                     >
-                      Ayarlar
+                      Settings
                     </Link>
                     {isAdmin && (
                       <Link
@@ -133,7 +133,7 @@ const Navbar = () => {
                         onClick={() => setDropdownOpen(false)}
                         className="block px-4 py-2 text-sm text-text hover:bg-muted transition-colors"
                       >
-                        Admin Paneli
+                        Admin panel
                       </Link>
                     )}
                     <hr className="my-2 border-border" />
@@ -141,7 +141,7 @@ const Navbar = () => {
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-muted transition-colors cursor-pointer"
                     >
-                      Çıkış Yap
+                      Sign out
                     </button>
                   </div>
                 )}
@@ -153,7 +153,7 @@ const Navbar = () => {
           <button
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-text hover:bg-muted transition-colors cursor-pointer"
-            aria-label="Menüyü aç/kapat"
+            aria-label="Open or close menu"
           >
             {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
@@ -165,11 +165,11 @@ const Navbar = () => {
         <div className="md:hidden border-t border-border bg-card">
           <div className="px-4 py-3 space-y-1">
             <NavLink to="/" end className={navLinkClass} onClick={closeMobileMenu}>
-              Ana Sayfa
+              Home
             </NavLink>
             {canCreatePost && (
               <NavLink to="/posts/new" className={navLinkClass} onClick={closeMobileMenu}>
-                Yeni Yazı
+                New Post
               </NavLink>
             )}
 
@@ -180,14 +180,14 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                   className="block px-3 py-2 text-sm font-medium text-muted-foreground hover:text-text transition-colors"
                 >
-                  Giriş Yap
+                  Sign in
                 </Link>
                 <Link
                   to="/register"
                   onClick={closeMobileMenu}
                   className="block px-3 py-2 text-sm font-medium text-center text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
                 >
-                  Kayıt Ol
+                  Sign up
                 </Link>
               </div>
             ) : (
@@ -214,7 +214,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                   className="block px-3 py-2 text-sm text-text hover:bg-muted rounded-lg transition-colors"
                 >
-                  Profilim
+                  My profile
                 </Link>
                 {canCreatePost && (
                   <Link
@@ -222,7 +222,7 @@ const Navbar = () => {
                     onClick={closeMobileMenu}
                     className="block px-3 py-2 text-sm text-text hover:bg-muted rounded-lg transition-colors"
                   >
-                    Yazılarım
+                    My posts
                   </Link>
                 )}
                 <Link
@@ -230,7 +230,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                   className="block px-3 py-2 text-sm text-text hover:bg-muted rounded-lg transition-colors"
                 >
-                  Ayarlar
+                  Settings
                 </Link>
                 {isAdmin && (
                   <Link
@@ -238,7 +238,7 @@ const Navbar = () => {
                     onClick={closeMobileMenu}
                     className="block px-3 py-2 text-sm text-text hover:bg-muted rounded-lg transition-colors"
                   >
-                    Admin Paneli
+                    Admin panel
                   </Link>
                 )}
                 <hr className="my-2 border-border" />
@@ -246,7 +246,7 @@ const Navbar = () => {
                   onClick={handleLogout}
                   className="w-full text-left px-3 py-2 text-sm text-destructive hover:bg-muted rounded-lg transition-colors cursor-pointer"
                 >
-                  Çıkış Yap
+                  Sign out
                 </button>
               </div>
             )}

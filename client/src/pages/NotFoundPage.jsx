@@ -14,10 +14,11 @@ const NotFoundPage = () => {
       {/* Overlay heading */}
       <div className="-mt-16 sm:-mt-20">
         <h2 className="text-2xl font-bold text-text sm:text-3xl">
-          Sayfa Bulunamadı
+          Page not found
         </h2>
         <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-          Aradığınız sayfa mevcut değil, taşınmış veya kaldırılmış olabilir.
+          The page you are looking for does not exist, may have been moved, or
+          was removed.
         </p>
       </div>
 
@@ -29,7 +30,7 @@ const NotFoundPage = () => {
           className="flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-text transition-colors hover:bg-muted"
         >
           <FiArrowLeft className="h-4 w-4" />
-          Geri Dön
+          Go back
         </button>
 
         <Link
@@ -37,7 +38,7 @@ const NotFoundPage = () => {
           className="flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700"
         >
           <FiHome className="h-4 w-4" />
-          Ana Sayfaya Git
+          Go to home
         </Link>
       </div>
     </div>

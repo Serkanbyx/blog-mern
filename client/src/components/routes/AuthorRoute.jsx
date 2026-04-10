@@ -8,7 +8,7 @@ const AuthorRoute = () => {
 
   useEffect(() => {
     if (!loading && isAuthenticated && !canCreatePost) {
-      toast.error("Bu alana erişmek için yazar olmanız gerekiyor.");
+      toast.error("You must be an author to access this area.");
     }
   }, [loading, isAuthenticated, canCreatePost]);
 

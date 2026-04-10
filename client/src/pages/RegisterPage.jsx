@@ -22,12 +22,12 @@ const RegisterPage = () => {
 
   const validateForm = () => {
     if (formData.password.length < 6) {
-      toast.error("Şifre en az 6 karakter olmalıdır.");
+      toast.error("Password must be at least 6 characters.");
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Şifreler eşleşmiyor.");
+      toast.error("Passwords do not match.");
       return false;
     }
 
@@ -44,10 +44,10 @@ const RegisterPage = () => {
     try {
       const { confirmPassword: _confirmPassword, ...registerData } = formData;
       await register(registerData);
-      toast.success("Kayıt başarılı! Hoş geldiniz.");
+      toast.success("Account created successfully. Welcome!");
       navigate("/", { replace: true });
     } catch (error) {
-      toast.error(error.message || "Kayıt başarısız. Lütfen tekrar deneyin.");
+      toast.error(error.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -61,9 +61,9 @@ const RegisterPage = () => {
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-card-foreground">Kayıt Ol</h1>
+          <h1 className="text-3xl font-bold text-card-foreground">Sign up</h1>
           <p className="mt-2 text-muted-foreground">
-            Yeni bir hesap oluşturun
+            Create a new account
           </p>
         </div>
 
@@ -75,7 +75,7 @@ const RegisterPage = () => {
               htmlFor="name"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              Ad Soyad
+              Full name
             </label>
             <div className="relative">
               <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -99,7 +99,7 @@ const RegisterPage = () => {
               htmlFor="email"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              E-posta
+              Email
             </label>
             <div className="relative">
               <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -109,7 +109,7 @@ const RegisterPage = () => {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="ornek@email.com"
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 className={inputClassName}
@@ -123,7 +123,7 @@ const RegisterPage = () => {
               htmlFor="password"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              Şifre
+              Password
             </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -141,7 +141,7 @@ const RegisterPage = () => {
               />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              En az 6 karakter olmalıdır
+              Must be at least 6 characters
             </p>
           </div>
 
@@ -151,7 +151,7 @@ const RegisterPage = () => {
               htmlFor="confirmPassword"
               className="mb-1.5 block text-sm font-medium text-card-foreground"
             >
-              Şifre Tekrar
+              Confirm password
             </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -178,12 +178,12 @@ const RegisterPage = () => {
             {isLoading ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Kayıt yapılıyor...
+                Creating account...
               </>
             ) : (
               <>
                 <FiUserPlus className="h-4 w-4" />
-                Kayıt Ol
+                Sign up
               </>
             )}
           </button>
@@ -191,19 +191,19 @@ const RegisterPage = () => {
 
         {/* Footer Link */}
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Zaten hesabınız var mı?{" "}
+          Already have an account?{" "}
           <Link
             to="/login"
             className="font-medium text-primary-600 hover:text-primary-700 transition-colors"
           >
-            Giriş Yap
+            Sign in
           </Link>
         </p>
 
         {/* Author Info */}
         <p className="mt-4 text-center text-xs text-muted-foreground/70">
-          Blog yazıları yazmak ister misiniz? Kayıt olduktan sonra yazar erişimi
-          talep edebilirsiniz.
+          Want to write blog posts? After signing up, you can request author
+          access.
         </p>
       </div>
     </div>

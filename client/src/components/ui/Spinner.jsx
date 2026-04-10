@@ -9,7 +9,7 @@ const Spinner = ({ size = "md", className = "" }) => (
     <div
       className={`rounded-full border-primary-600 border-t-transparent animate-spin ${SIZE_MAP[size]}`}
     />
-    <span className="sr-only">Yükleniyor...</span>
+    <span className="sr-only">Loading...</span>
   </div>
 );
 

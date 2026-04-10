@@ -8,7 +8,7 @@ const AdminRoute = () => {
 
   useEffect(() => {
     if (!loading && isAuthenticated && !isAdmin) {
-      toast.error("Bu alana erişim yetkiniz yok.");
+      toast.error("You do not have permission to access this area.");
     }
   }, [loading, isAuthenticated, isAdmin]);
 

@@ -49,7 +49,7 @@ const AdminPendingPostsPage = () => {
       const result = data.data || data;
       setPosts(result.posts || []);
     } catch (err) {
-      setError(err.message || "Yazılar yüklenirken bir hata oluştu.");
+      setError(err.message || "Something went wrong while loading posts.");
     } finally {
       setLoading(false);
     }
@@ -64,11 +64,11 @@ const AdminPendingPostsPage = () => {
     setActionLoading(postId);
     try {
       await approvePost(postId);
-      toast.success("Yazı onaylandı ve yayınlandı.");
+      toast.success("Post approved and published.");
       setPosts((prev) => prev.filter((p) => p._id !== postId));
       setApproveModal({ open: false, postId: null });
     } catch (err) {
-      toast.error(err.message || "Yazı onaylanamadı.");
+      toast.error(err.message || "Could not approve the post.");
     } finally {
       setActionLoading(null);
     }
@@ -86,7 +86,7 @@ const AdminPendingPostsPage = () => {
 
   const handleReject = useCallback(async () => {
     if (!rejectionReason.trim()) {
-      toast.error("Ret sebebi zorunludur.");
+      toast.error("A rejection reason is required.");
       return;
     }
 
@@ -94,11 +94,11 @@ const AdminPendingPostsPage = () => {
     setActionLoading(postId);
     try {
       await rejectPost(postId, rejectionReason.trim());
-      toast.success("Yazı reddedildi.");
+      toast.success("Post rejected.");
       setPosts((prev) => prev.filter((p) => p._id !== postId));
       closeRejectModal();
     } catch (err) {
-      toast.error(err.message || "Yazı reddedilemedi.");
+      toast.error(err.message || "Could not reject the post.");
     } finally {
       setActionLoading(null);
     }
@@ -115,7 +115,7 @@ const AdminPendingPostsPage = () => {
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">
-          Bir hata oluştu
+          Something went wrong
         </h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
@@ -126,9 +126,9 @@ const AdminPendingPostsPage = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Onay Bekleyen Yazılar</h1>
+        <h1 className="text-2xl font-bold text-text">Posts awaiting approval</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Bekleyen yazıları inceleyin, onaylayın veya reddedin.
+          Review pending posts, approve them, or reject them.
         </p>
       </div>
 
@@ -138,8 +138,8 @@ const AdminPendingPostsPage = () => {
       ) : posts.length === 0 ? (
         <EmptyState
           icon={HiOutlineCheckCircle}
-          title="Her Şey Tamam!"
-          message="Şu anda onay bekleyen yazı bulunmuyor."
+          title="All caught up"
+          message="There are no posts awaiting approval right now."
         />
       ) : (
         <div className="space-y-4">
@@ -162,9 +162,9 @@ const AdminPendingPostsPage = () => {
       {/* Approve Modal */}
       {approveModal.open && (
         <ConfirmModal
-          title="Yazıyı Onayla"
-          message="Bu yazıyı onaylamak istediğinize emin misiniz?"
-          confirmLabel="Onayla"
+          title="Approve post"
+          message="Are you sure you want to approve this post?"
+          confirmLabel="Approve"
           icon={HiOutlineCheck}
           variant="primary"
           loading={actionLoading === approveModal.postId}
@@ -176,9 +176,9 @@ const AdminPendingPostsPage = () => {
       {/* Reject Modal */}
       {rejectModal.open && (
         <ConfirmModal
-          title="Yazıyı Reddet"
-          message="Ret sebebini belirtin. Bu mesaj yazara iletilecektir."
-          confirmLabel="Reddet"
+          title="Reject post"
+          message="Provide a rejection reason. This message will be sent to the author."
+          confirmLabel="Reject"
           icon={HiOutlineX}
           variant="danger"
           loading={actionLoading === rejectModal.postId}
@@ -188,7 +188,7 @@ const AdminPendingPostsPage = () => {
           <textarea
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
-            placeholder="Ret sebebini yazın..."
+            placeholder="Enter the rejection reason..."
             rows={4}
             className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
             autoFocus
@@ -226,7 +226,7 @@ const PostReviewCard = ({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1">
             <span className="flex items-center gap-1">
               <HiOutlineUser className="w-3.5 h-3.5" />
-              {author.name || "Bilinmiyor"}
+              {author.name || "Unknown"}
             </span>
             <span className="flex items-center gap-1">
               <HiOutlineCalendar className="w-3.5 h-3.5" />
@@ -257,12 +257,12 @@ const PostReviewCard = ({
         {isExpanded ? (
           <>
             <HiOutlineChevronUp className="w-4 h-4" />
-            İçeriği Gizle
+            Hide content
           </>
         ) : (
           <>
             <HiOutlineChevronDown className="w-4 h-4" />
-            İçeriği Görüntüle
+            Show content
           </>
         )}
       </button>
@@ -297,7 +297,7 @@ const PostReviewCard = ({
           className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
         >
           <HiOutlineCheck className="w-4 h-4" />
-          Onayla
+          Approve
         </button>
         <button
           onClick={() => onReject(post._id)}
@@ -305,7 +305,7 @@ const PostReviewCard = ({
           className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
         >
           <HiOutlineX className="w-4 h-4" />
-          Reddet
+          Reject
         </button>
       </div>
     </div>

@@ -47,7 +47,7 @@ const AdminCommentsPage = () => {
       setComments(result.comments || []);
       setTotalPages(result.totalPages || 1);
     } catch (err) {
-      setError(err.message || "Yorumlar yüklenirken bir hata oluştu.");
+      setError(err.message || "Something went wrong while loading comments.");
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ const AdminCommentsPage = () => {
     async (commentId) => {
       if (
         !window.confirm(
-          "Bu yorumu silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+          "Are you sure you want to delete this comment? This action cannot be undone."
         )
       )
         return;
@@ -74,10 +74,10 @@ const AdminCommentsPage = () => {
       setActionLoading(commentId);
       try {
         await adminDeleteComment(commentId);
-        toast.success("Yorum silindi.");
+        toast.success("Comment deleted.");
         fetchComments();
       } catch (err) {
-        toast.error(err.message || "Yorum silinemedi.");
+        toast.error(err.message || "Could not delete the comment.");
       } finally {
         setActionLoading(null);
       }
@@ -94,7 +94,7 @@ const AdminCommentsPage = () => {
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">
-          Bir hata oluştu
+          Something went wrong
         </h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
@@ -107,9 +107,9 @@ const AdminCommentsPage = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Yorumlar</h1>
+        <h1 className="text-2xl font-bold text-text">Comments</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tüm yorumları görüntüleyin ve yönetin.
+          View and manage all comments.
         </p>
       </div>
 
@@ -118,7 +118,7 @@ const AdminCommentsPage = () => {
         <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <input
           type="text"
-          placeholder="Kullanıcı adı veya yazı başlığı ile ara..."
+          placeholder="Search by username or post title..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
@@ -138,19 +138,19 @@ const AdminCommentsPage = () => {
               <thead>
                 <tr className="border-b border-border bg-muted/50">
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tl-xl">
-                    Kullanıcı
+                    User
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Yorum
+                    Comment
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Yazı
+                    Post
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Tarih
+                    Date
                   </th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tr-xl">
-                    İşlem
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -168,7 +168,7 @@ const AdminCommentsPage = () => {
                           className="w-7 h-7 rounded-full object-cover ring-1 ring-border"
                         />
                         <span className="text-sm font-medium text-text truncate max-w-[120px]">
-                          {comment.user?.name || "Misafir"}
+                          {comment.user?.name || "Guest"}
                         </span>
                       </div>
                     </td>
@@ -182,7 +182,7 @@ const AdminCommentsPage = () => {
                         to={`/post/${comment.postId?.slug || comment.postId?._id}`}
                         className="text-sm text-primary-600 dark:text-primary-400 hover:underline truncate block max-w-[180px]"
                       >
-                        {comment.postId?.title || "Silinmiş yazı"}
+                        {comment.postId?.title || "Deleted post"}
                       </Link>
                     </td>
                     <td className="px-4 py-3">
@@ -195,7 +195,7 @@ const AdminCommentsPage = () => {
                         onClick={() => handleDelete(comment._id)}
                         disabled={actionLoading === comment._id}
                         className="p-2 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer disabled:opacity-50"
-                        aria-label="Yorumu sil"
+                        aria-label="Delete comment"
                       >
                         {actionLoading === comment._id ? (
                           <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -248,7 +248,7 @@ const CommentCard = ({ comment, isLoading, onDelete }) => (
         />
         <div className="min-w-0">
           <p className="text-sm font-semibold text-text truncate">
-            {comment.user?.name || "Misafir"}
+            {comment.user?.name || "Guest"}
           </p>
           <p className="text-xs text-muted-foreground">
             {formatDate(comment.createdAt)}
@@ -260,7 +260,7 @@ const CommentCard = ({ comment, isLoading, onDelete }) => (
         onClick={() => onDelete(comment._id)}
         disabled={isLoading}
         className="p-2 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer disabled:opacity-50 shrink-0"
-        aria-label="Yorumu sil"
+        aria-label="Delete comment"
       >
         {isLoading ? (
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -278,7 +278,7 @@ const CommentCard = ({ comment, isLoading, onDelete }) => (
       to={`/post/${comment.postId?.slug || comment.postId?._id}`}
       className="text-xs text-primary-600 dark:text-primary-400 hover:underline truncate block"
     >
-      {comment.postId?.title || "Silinmiş yazı"}
+      {comment.postId?.title || "Deleted post"}
     </Link>
   </div>
 );
@@ -288,11 +288,11 @@ const EmptyState = ({ hasFilters }) => (
     <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
       <HiOutlineChatAlt2 className="w-7 h-7 text-muted-foreground" />
     </div>
-    <h3 className="text-lg font-semibold text-text mb-1">Yorum Bulunamadı</h3>
+    <h3 className="text-lg font-semibold text-text mb-1">No comments found</h3>
     <p className="text-sm text-muted-foreground max-w-sm">
       {hasFilters
-        ? "Arama kriterlerinize uygun yorum bulunamadı."
-        : "Henüz hiç yorum yok."}
+        ? "No comments match your search criteria."
+        : "There are no comments yet."}
     </p>
   </div>
 );

@@ -26,12 +26,12 @@ import { getAvatarUrl } from "../../utils/helpers";
 
 const ROLE_CONFIG = {
   user: {
-    label: "Kullanıcı",
+    label: "User",
     className:
       "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
   },
   author: {
-    label: "Yazar",
+    label: "Author",
     className:
       "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
   },
@@ -44,22 +44,22 @@ const ROLE_CONFIG = {
 
 const STATUS_CONFIG = {
   draft: {
-    label: "Taslak",
+    label: "Draft",
     className:
       "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
   },
   pending: {
-    label: "İncelemede",
+    label: "In review",
     className:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
   },
   published: {
-    label: "Yayında",
+    label: "Published",
     className:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
   },
   rejected: {
-    label: "Reddedildi",
+    label: "Rejected",
     className:
       "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   },
@@ -67,17 +67,17 @@ const STATUS_CONFIG = {
 
 const REQUEST_STATUS_CONFIG = {
   pending: {
-    label: "Bekliyor",
+    label: "Pending",
     className:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
   },
   approved: {
-    label: "Onaylandı",
+    label: "Approved",
     className:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
   },
   rejected: {
-    label: "Reddedildi",
+    label: "Rejected",
     className:
       "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   },
@@ -105,7 +105,7 @@ const AdminUserDetailPage = () => {
       const res = await getUserById(id);
       setData(res.data.data || res.data);
     } catch (err) {
-      setError(err.message || "Kullanıcı bilgileri yüklenemedi.");
+      setError(err.message || "Could not load user details.");
     } finally {
       setLoading(false);
     }
@@ -121,10 +121,10 @@ const AdminUserDetailPage = () => {
       setRoleLoading(true);
       try {
         await updateUserRole(id, newRole);
-        toast.success("Kullanıcı rolü güncellendi.");
+        toast.success("User role updated.");
         fetchUser();
       } catch (err) {
-        toast.error(err.message || "Rol güncellenemedi.");
+        toast.error(err.message || "Could not update role.");
       } finally {
         setRoleLoading(false);
       }
@@ -136,7 +136,7 @@ const AdminUserDetailPage = () => {
     if (isSelf) return;
     if (
       !window.confirm(
-        "Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+        "Are you sure you want to delete this user? This action cannot be undone."
       )
     )
       return;
@@ -144,10 +144,10 @@ const AdminUserDetailPage = () => {
     setDeleteLoading(true);
     try {
       await deleteUser(id);
-      toast.success("Kullanıcı silindi.");
+      toast.success("User deleted.");
       navigate("/admin/users");
     } catch (err) {
-      toast.error(err.message || "Kullanıcı silinemedi.");
+      toast.error(err.message || "Could not delete user.");
       setDeleteLoading(false);
     }
   }, [id, isSelf, navigate]);
@@ -167,7 +167,7 @@ const AdminUserDetailPage = () => {
             <HiOutlineExclamation className="w-7 h-7 text-red-500" />
           </div>
           <h3 className="text-lg font-semibold text-text mb-1">
-            Bir hata oluştu
+            Something went wrong
           </h3>
           <p className="text-sm text-muted-foreground">{error}</p>
         </div>
@@ -214,7 +214,7 @@ const AdminUserDetailPage = () => {
                 </span>
                 {isSelf && (
                   <span className="text-xs text-muted-foreground italic">
-                    (Siz)
+                    (You)
                   </span>
                 )}
               </div>
@@ -243,28 +243,28 @@ const AdminUserDetailPage = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           icon={HiOutlineCheckCircle}
-          label="Yayınlanan Yazılar"
+          label="Published posts"
           value={stats.publishedPosts ?? 0}
           color="text-green-600 dark:text-green-400"
           bg="bg-green-50 dark:bg-green-900/30"
         />
         <StatCard
           icon={HiOutlineClock}
-          label="Bekleyen Yazılar"
+          label="Pending posts"
           value={stats.pendingPosts ?? 0}
           color="text-amber-600 dark:text-amber-400"
           bg="bg-amber-50 dark:bg-amber-900/30"
         />
         <StatCard
           icon={HiOutlineChatAlt2}
-          label="Yorumlar"
+          label="Comments"
           value={stats.totalComments ?? stats.comments ?? 0}
           color="text-teal-600 dark:text-teal-400"
           bg="bg-teal-50 dark:bg-teal-900/30"
         />
         <StatCard
           icon={HiOutlineDocumentText}
-          label="Toplam Yazılar"
+          label="Total posts"
           value={stats.totalPosts ?? posts.length ?? 0}
           color="text-blue-600 dark:text-blue-400"
           bg="bg-blue-50 dark:bg-blue-900/30"
@@ -276,10 +276,10 @@ const AdminUserDetailPage = () => {
         <div className="bg-card border border-border rounded-xl p-5">
           <h2 className="text-base font-semibold text-text mb-1 flex items-center gap-2">
             <HiOutlineShieldCheck className="w-5 h-5 text-muted-foreground" />
-            Rol Değiştir
+            Change role
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Kullanıcının mevcut rolü:{" "}
+            Current role:{" "}
             <strong>{(ROLE_CONFIG[user.role] || ROLE_CONFIG.user).label}</strong>
           </p>
           <div className="flex flex-wrap gap-2">
@@ -290,7 +290,7 @@ const AdminUserDetailPage = () => {
                 disabled={roleLoading}
                 className="px-4 py-2 text-sm font-medium bg-muted hover:bg-muted/80 text-text rounded-lg transition-colors cursor-pointer disabled:opacity-50"
               >
-                {roleLoading ? "Güncelleniyor..." : `${ROLE_CONFIG[role].label} Yap`}
+                {roleLoading ? "Updating..." : `Set as ${ROLE_CONFIG[role].label}`}
               </button>
             ))}
           </div>
@@ -303,7 +303,7 @@ const AdminUserDetailPage = () => {
           <div className="px-5 py-4 border-b border-border">
             <h2 className="text-base font-semibold text-text flex items-center gap-2">
               <HiOutlinePencilAlt className="w-5 h-5 text-muted-foreground" />
-              Yazar Başvuru Geçmişi
+              Author application history
             </h2>
           </div>
           <ul className="divide-y divide-border">
@@ -328,7 +328,7 @@ const AdminUserDetailPage = () => {
                   )}
                   {req.rejectionReason && (
                     <p className="text-sm text-red-600 dark:text-red-400">
-                      Ret sebebi: {req.rejectionReason}
+                      Rejection reason: {req.rejectionReason}
                     </p>
                   )}
                 </li>
@@ -344,7 +344,7 @@ const AdminUserDetailPage = () => {
           <div className="px-5 py-4 border-b border-border">
             <h2 className="text-base font-semibold text-text flex items-center gap-2">
               <HiOutlineDocumentText className="w-5 h-5 text-muted-foreground" />
-              Kullanıcının Yazıları
+              {"User's posts"}
               <span className="text-xs font-normal text-muted-foreground">
                 ({posts.length})
               </span>
@@ -382,11 +382,11 @@ const AdminUserDetailPage = () => {
       {!isSelf && (
         <div className="bg-card border border-red-200 dark:border-red-900/50 rounded-xl p-5">
           <h2 className="text-base font-semibold text-red-600 dark:text-red-400 mb-1">
-            Tehlikeli Bölge
+            Danger zone
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Bu kullanıcıyı sildiğinizde tüm verileri kalıcı olarak
-            kaldırılacaktır. Bu işlem geri alınamaz.
+            Deleting this user will permanently remove all of their data. This
+            action cannot be undone.
           </p>
           <button
             onClick={handleDelete}
@@ -394,7 +394,7 @@ const AdminUserDetailPage = () => {
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl transition-colors cursor-pointer disabled:opacity-50"
           >
             <HiOutlineTrash className="w-4 h-4" />
-            {deleteLoading ? "Siliniyor..." : "Kullanıcıyı Sil"}
+            {deleteLoading ? "Deleting..." : "Delete user"}
           </button>
         </div>
       )}
@@ -412,7 +412,7 @@ const BackButton = () => (
     className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-text transition-colors"
   >
     <HiOutlineArrowLeft className="w-4 h-4" />
-    Kullanıcılara Dön
+    Back to users
   </Link>
 );
 

@@ -5,322 +5,322 @@ const Post = require("../models/Post");
 
 const posts = [
   {
-    title: "JavaScript'te Async/Await Kullanımı ve En İyi Pratikler",
-    content: `Modern JavaScript geliştirmede async/await, asenkron işlemleri yönetmenin en okunabilir ve güçlü yoludur. Callback hell ve karmaşık Promise zincirlerinin yerini alan bu yapı, kodunuzu senkron görünümlü hale getirirken tüm asenkron avantajları korur.
+    title: "Async/Await in JavaScript: Usage and Best Practices",
+    content: `In modern JavaScript development, async/await is one of the most readable and powerful ways to manage asynchronous work. This syntax replaces callback hell and tangled Promise chains, making your code look synchronous while keeping all the benefits of asynchrony.
 
-Async/Await Nedir?
+What Is Async/Await?
 
-ES2017 ile tanıtılan async/await, Promise tabanlı asenkron kodun yazılmasını kolaylaştıran bir sözdizimi şekeridir. "async" anahtar kelimesi bir fonksiyonu asenkron olarak işaretlerken, "await" bir Promise'in çözülmesini bekler.
+Introduced in ES2017, async/await is syntactic sugar that makes writing Promise-based asynchronous code easier. The "async" keyword marks a function as asynchronous, while "await" pauses until a Promise settles.
 
-Hata Yönetimi
+Error Handling
 
-Async/await ile hata yönetimi try/catch blokları üzerinden yapılır. Bu yaklaşım, senkron kodda alışkın olduğumuz hata yakalama mekanizmasının aynısıdır. Her zaman catch bloğunda anlamlı hata mesajları üretmeye özen gösterin.
+With async/await, errors are handled through try/catch blocks—the same pattern you already use in synchronous code. Always aim to produce clear, meaningful error messages in your catch blocks.
 
-Paralel İşlemler
+Parallel Work
 
-Birbirinden bağımsız asenkron işlemleri Promise.all() ile paralel çalıştırmak performansı önemli ölçüde artırır. Sıralı await kullanmak yerine, bağımsız işlemleri gruplayarak toplam bekleme süresini en uzun işlem süresine düşürebilirsiniz.
+Running independent asynchronous operations in parallel with Promise.all() can significantly improve performance. Instead of awaiting one after another, group independent work so total wait time approaches the duration of the slowest task.
 
-Async/await, JavaScript ekosisteminin vazgeçilmez bir parçası haline gelmiştir. Doğru kullanıldığında kodunuzun hem okunabilirliğini hem de bakım kolaylığını büyük ölçüde artırır.`,
+Async/await has become essential in the JavaScript ecosystem. Used well, it greatly improves both readability and maintainability.`,
     tags: ["JavaScript", "Async", "Web Development"],
     status: "published",
   },
   {
-    title: "React Hooks ile Modern State Yönetimi",
-    content: `React 16.8 ile birlikte gelen Hooks, fonksiyonel bileşenlerde state ve lifecycle yönetimini mümkün kılarak React geliştirme paradigmasını kökten değiştirdi. Artık class bileşenlerine ihtiyaç duymadan güçlü ve yeniden kullanılabilir mantık yazabiliyoruz.
+    title: "Modern State Management with React Hooks",
+    content: `Hooks, introduced in React 16.8, fundamentally changed how we build React apps by enabling state and lifecycle logic inside function components. We can now write powerful, reusable logic without class components.
 
-useState ve useEffect
+useState and useEffect
 
-useState, bileşen içinde lokal state tutmanın en basit yoludur. useEffect ise side effect'leri — API çağrıları, abonelikler, DOM manipülasyonu — yönetmek için kullanılır. Bu iki hook, çoğu bileşen ihtiyacını karşılar.
+useState is the simplest way to hold local state in a component. useEffect manages side effects—API calls, subscriptions, DOM updates. Together they cover most component needs.
 
 Custom Hooks
 
-Custom hook'lar, tekrarlayan mantığı soyutlayarak bileşenler arasında paylaşmanızı sağlar. Örneğin, form yönetimi, API çağrıları veya local storage işlemleri için özel hook'lar yazabilirsiniz. Bu yaklaşım DRY prensibine uygun, test edilebilir ve modüler bir mimari sunar.
+Custom hooks let you extract and share logic across components. You can build hooks for forms, API calls, local storage, and more. This aligns with DRY, stays testable, and keeps your architecture modular.
 
-useReducer ile Karmaşık State
+Complex State with useReducer
 
-Birbirine bağlı birden fazla state değişkeni olduğunda useReducer daha tahmin edilebilir bir yönetim sunar. Redux benzeri bir yapıyı bileşen seviyesinde uygulayarak karmaşık state geçişlerini tek bir yerden kontrol edebilirsiniz.
+When several state values depend on each other, useReducer often gives more predictable updates. You can mirror a Redux-like flow at component level and drive transitions from one place.
 
-Hooks, React'in geleceğidir. Fonksiyonel programlama prensiplerini benimseyerek daha temiz, test edilebilir ve bakımı kolay uygulamalar geliştirmek artık her zamankinden daha kolay.`,
+Hooks are the future of React. Embracing functional ideas makes it easier than ever to ship cleaner, more testable, easier-to-maintain applications.`,
     tags: ["React", "Hooks", "Frontend"],
     status: "published",
   },
   {
-    title: "Node.js ile RESTful API Tasarım Rehberi",
-    content: `Başarılı bir web uygulamasının temelinde iyi tasarlanmış bir API yatar. RESTful mimari prensiplerini doğru uygulayarak ölçeklenebilir, anlaşılır ve bakımı kolay API'ler oluşturabilirsiniz.
+    title: "Designing RESTful APIs with Node.js",
+    content: `A solid API sits at the heart of most successful web apps. By applying REST principles well, you can build APIs that scale, stay understandable, and are straightforward to maintain.
 
-REST Prensipleri
+REST Principles
 
-REST (Representational State Transfer), HTTP protokolünü temel alan bir mimari stildir. Kaynakları URL'ler ile temsil eder ve HTTP metotlarını — GET, POST, PUT, DELETE — işlem türlerini belirtmek için kullanır. Stateless yapısı sayesinde her istek kendi içinde bağımsızdır.
+REST (Representational State Transfer) is an architectural style built on HTTP. It models resources with URLs and uses HTTP methods—GET, POST, PUT, DELETE—to express operations. Because it is stateless, each request stands on its own.
 
-URL Tasarımı
+URL Design
 
-İyi bir URL yapısı, API'nizin anlaşılabilirliğini doğrudan etkiler. İsimlendirmede çoğul isimler kullanın (/users, /posts), fiillerden kaçının ve hiyerarşik ilişkileri URL'de yansıtın (/users/:id/posts).
+Good URL design directly affects how intuitive your API feels. Prefer plural nouns (/users, /posts), avoid verbs in paths, and reflect hierarchy when it helps (/users/:id/posts).
 
-Hata Yönetimi ve Durum Kodları
+Errors and Status Codes
 
-HTTP durum kodlarını doğru kullanmak API'nizin profesyonelliğini artırır. 200 serisi başarı, 400 serisi istemci hataları, 500 serisi sunucu hataları için kullanılır. Her hata yanıtında tutarlı bir format ve açıklayıcı mesajlar sunun.
+Using HTTP status codes correctly signals professionalism. The 2xx range means success, 4xx client errors, 5xx server errors. Return a consistent error shape and helpful messages every time.
 
-Güvenlik
+Security
 
-Rate limiting, input validation, CORS yapılandırması ve JWT tabanlı authentication API güvenliğinin temel taşlarıdır. Hassas verileri asla URL parametrelerinde taşımayın ve tüm girdileri sunucu tarafında doğrulayın.
+Rate limiting, input validation, CORS configuration, and JWT-based authentication are core pieces of API security. Never put sensitive data in URL query strings, and validate all input on the server.
 
-İyi tasarlanmış bir API, yalnızca bugünün ihtiyaçlarını karşılamakla kalmaz, gelecekteki değişikliklere de kolayca adapte olabilir.`,
+A well-designed API serves today’s needs and can adapt as requirements evolve.`,
     tags: ["Node.js", "API", "Backend"],
     status: "published",
   },
   {
-    title: "MongoDB ile Veritabanı Modelleme Stratejileri",
-    content: `MongoDB, NoSQL veritabanları arasında en popüler olanlardan biridir. Esnek şema yapısı ve doküman tabanlı mimarisi, modern uygulamalar için güçlü bir temel sunar. Ancak bu esneklik, dikkatli bir modelleme stratejisi gerektirir.
+    title: "Database Modeling Strategies with MongoDB",
+    content: `MongoDB is among the most popular NoSQL databases. Its flexible schema and document model are a strong foundation for modern apps—but that flexibility still calls for deliberate modeling.
 
 Embedding vs Referencing
 
-MongoDB'de veri modellemenin iki temel yaklaşımı vardır: verileri iç içe gömmek (embedding) veya referans kullanmak. Sık birlikte okunan ve güncellenen veriler için embedding, bağımsız yaşam döngüsüne sahip veriler için referencing tercih edilmelidir.
+Two main patterns exist: embed related data or store references. Prefer embedding when data is usually read and updated together; prefer referencing when documents have independent lifecycles.
 
-İndeksleme
+Indexing
 
-Doğru indeksleme, sorgu performansını dramatik şekilde artırır. Sık sorgulanan alanlar, sıralama kriterleri ve filtreleme koşulları için indeks oluşturun. Ancak gereksiz indekslerden kaçının çünkü yazma performansını olumsuz etkilerler.
+The right indexes can dramatically improve query performance. Index fields you filter or sort on often. Avoid redundant indexes—they slow down writes.
 
 Aggregation Pipeline
 
-MongoDB'nin aggregation framework'ü, karmaşık veri dönüşümlerini ve analizlerini veritabanı seviyesinde gerçekleştirmenizi sağlar. $match, $group, $lookup gibi stage'ler ile güçlü sorgular yazabilirsiniz.
+MongoDB’s aggregation framework lets you transform and analyze data at the database layer. Stages like $match, $group, and $lookup enable powerful pipelines.
 
-Başarılı bir MongoDB modelleme stratejisi, uygulamanızın okuma/yazma paternlerini, veri ilişkilerini ve ölçeklenme ihtiyaçlarını dikkate almalıdır.`,
+A successful MongoDB strategy accounts for read/write patterns, relationships, and how you plan to scale.`,
     tags: ["MongoDB", "Database", "NoSQL"],
     status: "published",
   },
   {
-    title: "CSS Grid ve Flexbox: Ne Zaman Hangisini Kullanmalı?",
-    content: `Modern CSS layout sistemleri olan Grid ve Flexbox, web tasarımında devrim yarattı. Her ikisi de güçlü araçlardır, ancak farklı senaryolarda parlarlar. Doğru aracı seçmek, hem geliştirme hızınızı hem de kodunuzun bakım kolaylığını etkiler.
+    title: "CSS Grid vs Flexbox: When to Use Which",
+    content: `Grid and Flexbox revolutionized layout in CSS. Both are powerful, but they shine in different situations. Picking the right tool affects both your velocity and long-term maintainability.
 
-Flexbox: Tek Boyutlu Layout
+Flexbox: One-Dimensional Layout
 
-Flexbox, öğeleri tek bir eksen boyunca — yatay veya dikey — hizalamak için idealdir. Navigasyon menüleri, kart satırları, form elemanları ve merkezleme işlemleri Flexbox'ın en güçlü olduğu alanlardır. justify-content ve align-items ile hızlıca profesyonel hizalamalar yapabilirsiniz.
+Flexbox is ideal for aligning items along a single axis—row or column. Navigation bars, rows of cards, form rows, and centering are where it excels. justify-content and align-items get you polished alignment quickly.
 
-CSS Grid: İki Boyutlu Layout
+CSS Grid: Two-Dimensional Layout
 
-Grid, hem satır hem sütun bazında kontrol gerektiren karmaşık layout'lar için tasarlanmıştır. Sayfa düzenleri, dashboard'lar, galeri görünümleri ve asimetrik tasarımlar Grid ile çok daha kolay uygulanır. grid-template-areas ile görsel olarak layout'unuzu tanımlayabilirsiniz.
+Grid is built for layouts that need control across rows and columns—page shells, dashboards, galleries, asymmetric designs. grid-template-areas can describe structure visually.
 
-Birlikte Kullanım
+Using Them Together
 
-En güçlü yaklaşım, Grid ve Flexbox'ı birlikte kullanmaktır. Genel sayfa yapısını Grid ile oluştururken, bileşen içi hizalamalar için Flexbox tercih edebilirsiniz. Bu hibrit yaklaşım, hem esneklik hem de kontrol sağlar.
+The strongest approach often combines both: Grid for the overall page skeleton, Flexbox for alignment inside components. That hybrid gives flexibility and control.
 
-Sonuç olarak, layout ihtiyacınız tek boyutluysa Flexbox, iki boyutluysa Grid kullanın. İkisini birlikte kullandığınızda CSS'in gerçek gücünü keşfedeceksiniz.`,
+If your layout is essentially one-dimensional, reach for Flexbox; if it is two-dimensional, use Grid. Together they unlock the full power of modern CSS.`,
     tags: ["CSS", "Frontend", "Web Design"],
     status: "published",
   },
   {
-    title: "Git ile Etkili Versiyon Kontrolü ve Branch Stratejileri",
-    content: `Git, yazılım geliştirmenin olmazsa olmazıdır. Ancak Git'i gerçekten etkili kullanmak, temel komutları bilmenin ötesinde iyi bir branch stratejisi ve iş akışı gerektirir.
+    title: "Effective Version Control with Git and Branching Strategies",
+    content: `Git is non-negotiable in software development. Using it well means more than memorizing commands—you need a branching strategy and workflow that fit your team.
 
-Branch Stratejileri
+Branch Strategies
 
-Gitflow, GitHub Flow ve Trunk-Based Development en yaygın branch stratejileridir. Küçük ekipler için GitHub Flow'un basitliği ideal olabilirken, büyük projeler Gitflow'un yapısal avantajlarından faydalanabilir. Önemli olan ekibinize uygun stratejiyi seçmektir.
+Gitflow, GitHub Flow, and trunk-based development are common choices. Small teams often benefit from GitHub Flow’s simplicity; larger products may lean on Gitflow’s structure. The key is picking what matches your team.
 
-Anlamlı Commit Mesajları
+Meaningful Commit Messages
 
-İyi commit mesajları, projenin geçmişini okunabilir kılar. Conventional Commits formatı (feat:, fix:, refactor:) hem tutarlılık sağlar hem de otomatik changelog oluşturmayı mümkün kılar. Her commit tek bir mantıksal değişikliği kapsamalıdır.
+Good commits make history readable. Conventional Commits (feat:, fix:, refactor:) improve consistency and enable automated changelogs. Each commit should represent one logical change.
 
 Rebase vs Merge
 
-Feature branch'leri ana branch'e entegre ederken rebase temiz bir geçmiş sunarken, merge commit'leri branch tarihçesini korur. Ekip içinde tutarlı bir yaklaşım benimsemek karışıklığı önler.
+Rebasing feature branches onto main yields a linear history; merge commits preserve branch topology. Agree on one style per team to reduce confusion.
 
-Conflict Çözümü
+Resolving Conflicts
 
-Merge conflict'leri kaçınılmazdır. Düzenli olarak ana branch'ten güncellemeleri almak, küçük ve odaklı commit'ler yapmak ve iyi iletişim kurmak conflict'leri minimize eder.
+Conflicts are inevitable. Pull from main regularly, keep commits small and focused, and communicate—those habits keep pain to a minimum.
 
-Git, bir araçtan çok bir disiplindir. İyi Git pratikleri, ekip verimliliğini ve kod kalitesini doğrudan etkiler.`,
+Git is as much a discipline as a tool. Solid Git habits directly improve team throughput and code quality.`,
     tags: ["Git", "DevOps", "Version Control"],
     status: "published",
   },
   {
-    title: "Web Uygulamalarında Güvenlik: OWASP Top 10",
-    content: `Web güvenliği, her geliştiricinin sorumluluğudur. OWASP Top 10, web uygulamalarındaki en kritik güvenlik risklerini sıralar ve her geliştirici bu tehditleri bilmeli, önlem almalıdır.
+    title: "Security in Web Applications: OWASP Top 10",
+    content: `Web security is every developer’s responsibility. The OWASP Top 10 ranks the most critical risks in web applications; you should know these threats and mitigate them deliberately.
 
-Injection Saldırıları
+Injection Attacks
 
-SQL Injection, NoSQL Injection ve Command Injection, kullanıcı girdilerinin doğrudan sorgulara dahil edilmesiyle gerçekleşir. Parametreli sorgular, ORM kullanımı ve input sanitization bu saldırıları büyük ölçüde engeller.
+SQL injection, NoSQL injection, and command injection happen when user input is concatenated into queries or commands. Parameterized queries, ORMs, and careful input handling greatly reduce this risk.
 
 Cross-Site Scripting (XSS)
 
-XSS, kötü niyetli scriptlerin kullanıcı tarayıcısında çalıştırılmasına olanak tanır. Output encoding, Content Security Policy (CSP) header'ları ve React gibi framework'lerin otomatik escape mekanizmaları XSS'e karşı güçlü savunma hatları oluşturur.
+XSS lets attackers run scripts in a victim’s browser. Output encoding, Content Security Policy (CSP), and framework defaults (e.g. React’s escaping) form strong defenses.
 
-Authentication ve Session Yönetimi
+Authentication and Sessions
 
-Zayıf parola politikaları, güvensiz session yönetimi ve eksik brute-force koruması sık karşılaşılan sorunlardır. Bcrypt ile parola hashleme, JWT token yönetimi, rate limiting ve multi-factor authentication güvenliği katmanlı olarak artırır.
+Weak password rules, insecure session handling, and missing brute-force protection are common pitfalls. Hash passwords with bcrypt, manage JWTs carefully, add rate limiting, and consider multi-factor authentication.
 
-CSRF ve CORS
+CSRF and CORS
 
-Cross-Site Request Forgery (CSRF) saldırıları, kullanıcının oturumunu kötüye kullanarak yetkisiz işlemler yapar. CSRF token'ları, SameSite cookie ayarları ve doğru CORS yapılandırması bu tehdide karşı koruma sağlar.
+Cross-Site Request Forgery abuses a logged-in session to perform unauthorized actions. CSRF tokens, SameSite cookies, and correct CORS settings help close that gap.
 
-Güvenlik bir özellik değil, bir süreçtir. Uygulamanızı geliştirirken güvenliği her aşamada düşünün.`,
+Security is not a one-off feature—it is a process. Bake it into every stage of development.`,
     tags: ["Security", "OWASP", "Web Development"],
     status: "published",
   },
   {
-    title: "TypeScript'e Geçiş: Neden ve Nasıl?",
-    content: `TypeScript, JavaScript'in üzerine statik tip sistemi ekleyen bir süperset olarak, büyük ölçekli projelerde güvenilirliği ve geliştirici deneyimini önemli ölçüde artırır. Peki projenizi TypeScript'e taşımak ne zaman mantıklıdır?
+    title: "Moving to TypeScript: Why and How",
+    content: `TypeScript adds a static type system on top of JavaScript. On large projects it materially improves reliability and the developer experience. When does migrating make sense?
 
-TypeScript'in Avantajları
+Benefits of TypeScript
 
-Derleme zamanı hata yakalama, gelişmiş IDE desteği (otomatik tamamlama, refactoring), kendini belgeleyen kod ve büyük ekiplerde tutarlılık TypeScript'in en önemli avantajlarıdır. Tip sistemi sayesinde runtime hataları derleme aşamasında yakalanır.
+Catch errors at compile time, get richer IDE support (completion, refactors), write self-documenting code, and keep large teams aligned. Many runtime issues surface during the build instead of in production.
 
-Kademeli Geçiş Stratejisi
+Incremental Migration
 
-Mevcut bir JavaScript projesini TypeScript'e geçirmenin en sağlıklı yolu kademeli geçiştir. tsconfig.json'da allowJs: true ayarı ile JS ve TS dosyalarını bir arada kullanabilirsiniz. Önce kritik modülleri, sonra diğerlerini dönüştürün.
+The healthiest path is incremental. With allowJs: true in tsconfig.json you can mix JS and TS. Convert critical modules first, then expand.
 
-Tip Tanımlamaları
+Type Definitions
 
-Interface'ler, type alias'lar, generic'ler ve utility type'lar TypeScript'in güçlü tip sisteminin temel taşlarıdır. Partial, Pick, Omit gibi utility type'lar mevcut tipleri dönüştürerek kod tekrarını azaltır.
+Interfaces, type aliases, generics, and utility types are the building blocks. Utilities like Partial, Pick, and Omit reshape types and cut duplication.
 
-Yaygın Hatalar
+Common Pitfalls
 
-"any" tipini aşırı kullanmak, TypeScript'in faydalarını sıfırlar. Strict mode'u etkinleştirin, "unknown" tipini "any" yerine tercih edin ve tip güvenliğinden ödün vermeyin.
+Overusing "any" throws away TypeScript’s benefits. Enable strict mode, prefer "unknown" over "any" where you must loosen types, and do not give up type safety casually.
 
-TypeScript, kısa vadede biraz ekstra efor gerektirse de uzun vadede hata oranını düşürür, refactoring güvenini artırır ve ekip verimliliğini yükseltir.`,
+TypeScript asks for extra effort up front; over time it lowers defect rates, makes refactors safer, and boosts team productivity.`,
     tags: ["TypeScript", "JavaScript", "Programming"],
     status: "published",
   },
   {
-    title: "Docker ile Konteynerizasyon: Başlangıç Rehberi",
-    content: `Docker, uygulamaları konteynerler içinde paketleyerek "benim makinemde çalışıyor" problemini ortadan kaldıran devrimsel bir teknolojidir. Geliştirmeden üretime kadar tutarlı bir ortam sağlar.
+    title: "Containerization with Docker: A Getting Started Guide",
+    content: `Docker packages apps in containers and kills the “works on my machine” problem. From dev to prod it offers a consistent environment.
 
-Konteyner vs Sanal Makine
+Containers vs Virtual Machines
 
-Konteynerler, sanal makinelerden farklı olarak işletim sistemi çekirdeğini paylaşır. Bu sayede çok daha hafif, hızlı başlayan ve kaynak dostu bir izolasyon sunarlar. Bir sanal makine dakikalarca sürebilecek başlatma işlemi, bir konteyner için saniyeler alır.
+Containers share the host kernel unlike full VMs. That makes them lighter, faster to start, and more resource-friendly. What might take minutes for a VM can start in seconds for a container.
 
-Dockerfile Yazımı
+Writing Dockerfiles
 
-İyi bir Dockerfile, multi-stage build kullanır, gereksiz dosyaları .dockerignore ile hariç tutar, layer caching'den faydalanır ve minimum boyutlu base image'lar tercih eder. Alpine tabanlı image'lar boyutu önemli ölçüde azaltır.
+A solid Dockerfile uses multi-stage builds, excludes junk via .dockerignore, leverages layer caching, and favors small base images. Alpine-based images often shrink size a lot.
 
 Docker Compose
 
-Çoklu konteyner uygulamalarını yönetmek için Docker Compose vazgeçilmezdir. Veritabanı, backend, frontend ve diğer servisleri tek bir docker-compose.yml dosyasıyla tanımlayıp, tek komutla ayağa kaldırabilirsiniz.
+For multi-container apps, Docker Compose is essential. Define database, backend, frontend, and more in one docker-compose.yml and bring the stack up with a single command.
 
 Best Practices
 
-Root kullanıcıyla çalışmaktan kaçının, hassas verileri environment variable olarak geçirin, health check'ler tanımlayın ve image'larınızı düzenli olarak güncelleyin. Güvenlik taramalarını CI/CD pipeline'ınıza entegre edin.
+Avoid running as root, pass secrets via environment variables, define health checks, and refresh images regularly. Fold security scanning into CI/CD.
 
-Docker, modern yazılım geliştirmenin standart aracı haline gelmiştir. Öğrenme eğrisi başlangıçta dik olabilir, ancak sağladığı tutarlılık ve verimlilik bu yatırıma değer.`,
+Docker is now a standard part of modern development. The learning curve can feel steep at first, but consistency and efficiency repay the investment.`,
     tags: ["Docker", "DevOps", "Containerization"],
     status: "published",
   },
   {
-    title: "Responsive Tasarım: Mobile-First Yaklaşım",
-    content: `Dünya genelinde internet trafiğinin yarısından fazlası mobil cihazlardan gelirken, responsive tasarım artık bir tercih değil zorunluluktur. Mobile-first yaklaşımı, bu gerçekliği tasarım sürecinin merkezine koyar.
+    title: "Responsive Design: A Mobile-First Approach",
+    content: `With most web traffic coming from phones, responsive design is mandatory—not optional. Mobile-first puts that reality at the center of how you design and build.
 
-Mobile-First Nedir?
+What Is Mobile-First?
 
-Mobile-first, tasarım ve geliştirme sürecine en küçük ekrandan başlayıp, büyük ekranlara doğru genişletme yaklaşımıdır. Bu strateji, içeriğin önceliklendirilmesini zorunlu kılar ve performansı doğal olarak iyileştirir.
+You start from the smallest screen and scale up. That forces prioritization of content and naturally pushes you toward leaner, faster pages.
 
-Media Query Stratejisi
+Media Query Strategy
 
-min-width tabanlı media query'ler mobile-first yaklaşımın temelini oluşturur. Temel stiller mobil için yazılır, ardından @media (min-width: 768px) gibi breakpoint'ler ile tablet ve masaüstü stilleri eklenir.
+min-width queries are the backbone of mobile-first. Base styles target mobile; then breakpoints like @media (min-width: 768px) add tablet and desktop rules.
 
-Fluid Typography ve Spacing
+Fluid Typography and Spacing
 
-clamp() fonksiyonu ve viewport birimleri ile tipografi ve boşluklar ekran boyutuna göre akışkan biçimde ölçeklenir. Bu yaklaşım, sabit breakpoint'lere bağımlılığı azaltarak her ekran boyutunda optimal görünüm sağlar.
+clamp() and viewport units let type and spacing scale smoothly with the viewport. That reduces reliance on fixed breakpoints and looks good across sizes.
 
-Performans Optimizasyonu
+Performance
 
-Responsive image'lar (srcset, picture), lazy loading, kritik CSS ve conditional loading mobil performansı artıran temel tekniklerdir. Mobil kullanıcılar genellikle daha yavaş bağlantılar kullandığından performans kritik öneme sahiptir.
+Responsive images (srcset, picture), lazy loading, critical CSS, and conditional loading all help mobile performance. Mobile users often have slower links—speed matters.
 
-Mobile-first yaklaşım, sadece teknik bir karar değil, kullanıcı odaklı bir tasarım felsefesidir.`,
+Mobile-first is not only a technical choice; it is a user-centered design philosophy.`,
     tags: ["CSS", "Responsive", "UI/UX"],
     status: "published",
   },
   {
-    title: "Clean Code: Okunabilir Kod Yazma Sanatı",
-    content: `Kod yazmak, başkalarının — ve gelecekteki kendinizin — okuyabileceği bir metin üretmektir. Clean Code prensipleri, kodunuzu anlaşılır, bakımı kolay ve güvenilir hale getirmenin yol haritasıdır.
+    title: "Clean Code: The Craft of Readable Software",
+    content: `Writing code is writing text that others—and future you—must read. Clean code principles are the map to clarity, maintainability, and trust.
 
-Anlamlı İsimlendirme
+Meaningful Naming
 
-Değişken, fonksiyon ve sınıf isimleri niyeti açıkça ifade etmelidir. "d" yerine "elapsedDays", "getData" yerine "fetchActiveUsers" kullanmak kodun kendi kendini belgelemesini sağlar. İyi isimler, yorum ihtiyacını büyük ölçüde azaltır.
+Variables, functions, and classes should express intent. Prefer elapsedDays over d, fetchActiveUsers over getData. Good names reduce the need for comments.
 
-Küçük Fonksiyonlar
+Small Functions
 
-Her fonksiyon tek bir iş yapmalıdır ve bunu iyi yapmalıdır. 20 satırı aşan fonksiyonlar genellikle parçalanabilir. Küçük, odaklanmış fonksiyonlar hem test edilebilirliği hem de yeniden kullanılabilirliği artırır.
+Each function should do one thing and do it well. Functions past ~20 lines are often splittable. Small, focused units are easier to test and reuse.
 
-DRY ve KISS Prensipleri
+DRY and KISS
 
-Don't Repeat Yourself (DRY) ve Keep It Simple, Stupid (KISS) prensipleri clean code'un temelini oluşturur. Tekrarlayan kodu soyutlayın, ancak gereksiz karmaşıklıktan kaçının. Bazen basit bir çözüm, akıllıca görünen karmaşık bir çözümden daha değerlidir.
+Don't Repeat Yourself and Keep It Simple, Stupid anchor clean code. Abstract repetition, but resist needless complexity. Sometimes the simple fix beats the clever one.
 
-Code Review Kültürü
+A Culture of Code Review
 
-Düzenli code review'lar, kod kalitesini artırmanın en etkili yollarından biridir. Yapıcı geri bildirim vermek, bilgi paylaşımını teşvik etmek ve tutarlı standartlar oluşturmak ekip genelinde code quality'yi yükseltir.
+Regular reviews are one of the best ways to raise quality. Constructive feedback, knowledge sharing, and shared standards lift the whole team.
 
-Clean code yazmak bir alışkanlıktır. Her gün biraz daha iyi kod yazma hedefi, zamanla büyük fark yaratır.`,
+Clean code is a habit. Aiming to write slightly better code every day compounds over time.`,
     tags: ["Clean Code", "Best Practices", "Programming"],
     status: "published",
   },
   {
-    title: "CI/CD Pipeline Kurulumu: GitHub Actions ile Otomasyon",
-    content: `CI/CD (Continuous Integration / Continuous Deployment), modern yazılım geliştirmenin bel kemiğidir. GitHub Actions ile ücretsiz ve güçlü bir otomasyon pipeline'ı kurarak kod kalitesini artırabilir ve deployment sürecinizi hızlandırabilirsiniz.
+    title: "CI/CD Pipelines: Automation with GitHub Actions",
+    content: `CI/CD (Continuous Integration / Continuous Deployment) is the backbone of modern delivery. GitHub Actions gives you a capable automation platform for free—use it to tighten quality and speed up releases.
 
 Continuous Integration
 
-CI, her kod değişikliğinin otomatik olarak test edilmesi ve doğrulanması sürecidir. Linting, unit testler, integration testler ve build kontrolü CI pipeline'ının temel adımlarıdır. Sorunlar erken aşamada yakalanarak maliyetli hataların önüne geçilir.
+CI automatically tests and validates every change. Linting, unit tests, integration tests, and build checks are typical steps. Problems surface early before they get expensive.
 
-GitHub Actions Yapısı
+How GitHub Actions Fits Together
 
-Workflow dosyaları .github/workflows/ dizininde YAML formatında tanımlanır. Trigger'lar (push, pull_request), job'lar, step'ler ve action'lar workflow'un temel bileşenleridir. Marketplace'teki hazır action'lar geliştirme süresini kısaltır.
+Workflows live under .github/workflows/ as YAML. Triggers (push, pull_request), jobs, steps, and actions are the main pieces. Marketplace actions save implementation time.
 
 Continuous Deployment
 
-CD, başarılı testlerden geçen kodun otomatik olarak hedef ortama deploy edilmesi sürecidir. Staging ve production ortamları için ayrı pipeline'lar tanımlayarak güvenli bir deployment akışı oluşturabilirsiniz.
+CD ships passing code to target environments automatically. Separate pipelines for staging and production support safer promotion flows.
 
-Secrets ve Environment Yönetimi
+Secrets and Environments
 
-API anahtarları, veritabanı bağlantı bilgileri ve diğer hassas veriler GitHub Secrets üzerinden güvenle yönetilir. Her ortam için ayrı secret'lar tanımlayarak güvenliği katmanlı hale getirin.
+API keys, database URLs, and other secrets belong in GitHub Secrets. Use different secrets per environment for defense in depth.
 
-CI/CD, başlangıçta kurulum eforu gerektirse de uzun vadede ekip verimliliğini ve yazılım kalitesini dramatik şekilde artırır.`,
+CI/CD needs upfront setup, but over time it dramatically improves team throughput and software quality.`,
     tags: ["CI/CD", "GitHub Actions", "DevOps"],
     status: "published",
   },
   {
-    title: "Yapay Zeka ve Yazılım Geliştirmenin Geleceği",
-    content: `Yapay zeka, yazılım geliştirme dünyasını hızla dönüştürüyor. AI destekli kod asistanları, otomatik test üretimi ve akıllı hata tespiti gibi araçlar geliştiricilerin üretkenliğini katladı. Peki bu dönüşüm nereye gidiyor?
+    title: "Artificial Intelligence and the Future of Software Development",
+    content: `AI is reshaping how we build software. Assisted coding, generated tests, and smarter debugging multiply productivity. Where is this heading?
 
-AI Destekli Kodlama
+AI-Assisted Coding
 
-GitHub Copilot, Cursor ve benzeri araçlar, kod tamamlama, refactoring önerileri ve hata çözümlerinde geliştiricilere yardımcı oluyor. Bu araçlar tekrarlayan görevleri otomatikleştirerek geliştiricilerin yaratıcı problem çözmeye odaklanmasını sağlıyor.
+Tools like GitHub Copilot and Cursor help with completion, refactors, and fixes. They automate repetitive work so developers can focus on harder problems.
 
-Otomatik Test Üretimi
+Automated Test Generation
 
-AI, mevcut kodu analiz ederek edge case'leri tespit edebilir ve kapsamlı test senaryoları üretebilir. Bu, test coverage'ını artırırken geliştiricilerin test yazma yükünü azaltır.
+AI can analyze code, spot edge cases, and draft broader test suites—raising coverage while reducing manual test churn.
 
-Kod İnceleme ve Güvenlik
+Review and Security
 
-AI tabanlı kod inceleme araçları, güvenlik açıklarını, performans sorunlarını ve code smell'leri otomatik olarak tespit edebilir. Bu araçlar, insan reviewerlerin gözünden kaçabilecek sorunları yakalar.
+AI-powered reviewers can flag vulnerabilities, performance issues, and smells—catching issues humans might miss.
 
-Geliştiricinin Rolü Değişiyor
+The Developer’s Role Is Changing
 
-AI, geliştiricilerin yerini almıyor ancak rolünü dönüştürüyor. Rutin kodlama görevleri otomasyona geçerken, mimari tasarım, problem analizi ve kullanıcı deneyimi gibi yüksek seviye beceriler daha da değerli hale geliyor.
+AI is not replacing developers; it is changing the job. As routine coding automates, skills like architecture, problem framing, and UX matter more.
 
-AI araçlarını etkin kullanan geliştiriciler, bu dönüşümün kazananları olacak. Önemli olan AI'yı bir rakip değil, güçlü bir iş ortağı olarak görmektir.`,
+Developers who learn to use AI well will thrive. Treat it as a partner, not a competitor.`,
     tags: ["AI", "Technology", "Future"],
     status: "published",
   },
   {
-    title: "Web Performans Optimizasyonu: Core Web Vitals",
-    content: `Google'ın Core Web Vitals metrikleri, kullanıcı deneyiminin ölçülebilir standartlarını belirledi. LCP, INP ve CLS değerlerini optimize etmek hem kullanıcı memnuniyetini hem de SEO sıralamalarınızı doğrudan etkiler.
+    title: "Web Performance: Optimizing Core Web Vitals",
+    content: `Google’s Core Web Vitals define measurable standards for user experience. Improving LCP, INP, and CLS helps both satisfaction and SEO.
 
 Largest Contentful Paint (LCP)
 
-LCP, sayfadaki en büyük içerik öğesinin yüklenme süresini ölçer. 2.5 saniyenin altında olmalıdır. Image optimizasyonu, CDN kullanımı, server-side rendering ve kritik kaynakların önceliklendirilmesi LCP'yi iyileştirir.
+LCP measures when the largest content element becomes visible. Aim under 2.5 seconds. Image optimization, CDNs, server-side rendering, and prioritizing critical resources all help.
 
 Interaction to Next Paint (INP)
 
-INP, kullanıcı etkileşimlerine verilen yanıt süresini ölçer. 200ms altında olmalıdır. Ana thread'i bloklamaktan kaçınmak, uzun görevleri parçalamak ve Web Worker'lar kullanmak INP'yi optimize eder.
+INP measures responsiveness to input. Target under 200 ms. Avoid blocking the main thread, break up long tasks, and consider Web Workers.
 
 Cumulative Layout Shift (CLS)
 
-CLS, sayfadaki beklenmedik layout kaymalarını ölçer. 0.1 altında olmalıdır. Image ve video boyutlarını önceden belirtmek, dinamik içeriklere alan ayırmak ve font yükleme stratejileri CLS'yi minimize eder.
+CLS captures unexpected layout movement. Stay under 0.1. Reserve space for images and video, plan for dynamic content, and tune font loading.
 
-Ölçme ve İzleme
+Measurement and Monitoring
 
-Lighthouse, PageSpeed Insights ve Chrome DevTools performans metriklerini ölçmek için temel araçlardır. Real User Monitoring (RUM) ile gerçek kullanıcı verilerini toplayarak optimizasyon kararlarınızı veriyle destekleyin.
+Lighthouse, PageSpeed Insights, and Chrome DevTools are core for lab metrics. Real User Monitoring (RUM) grounds decisions in production data.
 
-Web performansı bir kerelik bir görev değil, sürekli bir iyileştirme sürecidir. Düzenli ölçüm ve optimizasyon ile kullanıcılarınıza en iyi deneyimi sunun.`,
+Performance is ongoing work—not a one-time task. Measure often and keep improving the experience you deliver.`,
     tags: ["Performance", "SEO", "Web Development"],
     status: "published",
   },

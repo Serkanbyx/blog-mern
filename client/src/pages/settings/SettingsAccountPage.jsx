@@ -24,17 +24,17 @@ const SettingsAccountPage = () => {
     e.preventDefault();
 
     if (newPassword.length < 6) {
-      toast.error("Yeni şifre en az 6 karakter olmalıdır.");
+      toast.error("New password must be at least 6 characters.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Yeni şifreler eşleşmiyor.");
+      toast.error("New passwords do not match.");
       return;
     }
 
     if (currentPassword === newPassword) {
-      toast.error("Yeni şifre mevcut şifreden farklı olmalıdır.");
+      toast.error("New password must be different from your current password.");
       return;
     }
 
@@ -44,9 +44,9 @@ const SettingsAccountPage = () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      toast.success("Şifre başarıyla değiştirildi.");
+      toast.success("Password changed successfully.");
     } catch (error) {
-      toast.error(error.message || "Şifre değiştirilemedi.");
+      toast.error(error.message || "Could not change password.");
     } finally {
       setIsChangingPassword(false);
     }
@@ -56,7 +56,7 @@ const SettingsAccountPage = () => {
     e.preventDefault();
 
     if (!deletePassword) {
-      toast.error("Lütfen şifrenizi girin.");
+      toast.error("Please enter your password.");
       return;
     }
 
@@ -65,9 +65,9 @@ const SettingsAccountPage = () => {
       await deleteAccount({ password: deletePassword });
       logout();
       navigate("/", { replace: true });
-      toast.success("Hesabınız silindi.");
+      toast.success("Your account has been deleted.");
     } catch (error) {
-      toast.error(error.message || "Hesap silinemedi.");
+      toast.error(error.message || "Could not delete account.");
     } finally {
       setIsDeleting(false);
     }
@@ -82,15 +82,15 @@ const SettingsAccountPage = () => {
     <div className="space-y-8">
       {/* Change Password */}
       <section>
-        <h2 className="text-xl font-bold text-text mb-1">Şifre Değiştir</h2>
+        <h2 className="text-xl font-bold text-text mb-1">Change password</h2>
         <p className="text-sm text-muted-foreground mb-5">
-          Hesabınızın güvenliği için şifrenizi düzenli olarak değiştirin.
+          Change your password regularly to keep your account secure.
         </p>
 
         <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
           <div>
             <label htmlFor="currentPassword" className="block text-sm font-medium text-text mb-1.5">
-              Mevcut Şifre
+              Current password
             </label>
             <input
               id="currentPassword"
@@ -98,14 +98,14 @@ const SettingsAccountPage = () => {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
-              placeholder="Mevcut şifreniz"
+              placeholder="Your current password"
               className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
             />
           </div>
 
           <div>
             <label htmlFor="newPassword" className="block text-sm font-medium text-text mb-1.5">
-              Yeni Şifre
+              New password
             </label>
             <input
               id="newPassword"
@@ -114,14 +114,14 @@ const SettingsAccountPage = () => {
               onChange={(e) => setNewPassword(e.target.value)}
               required
               minLength={6}
-              placeholder="En az 6 karakter"
+              placeholder="At least 6 characters"
               className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
             />
           </div>
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-1.5">
-              Yeni Şifre (Tekrar)
+              Confirm new password
             </label>
             <input
               id="confirmPassword"
@@ -130,11 +130,11 @@ const SettingsAccountPage = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}
-              placeholder="Yeni şifrenizi tekrar girin"
+              placeholder="Re-enter your new password"
               className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
             />
             {newPassword && confirmPassword && newPassword !== confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">Şifreler eşleşmiyor.</p>
+              <p className="mt-1 text-xs text-red-500">Passwords do not match.</p>
             )}
           </div>
 
@@ -146,12 +146,12 @@ const SettingsAccountPage = () => {
             {isChangingPassword ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Değiştiriliyor...
+                Changing...
               </>
             ) : (
               <>
                 <FiLock className="h-4 w-4" />
-                Şifreyi Değiştir
+                Change password
               </>
             )}
           </button>
@@ -169,10 +169,10 @@ const SettingsAccountPage = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
-              Tehlikeli Bölge
+              Danger zone
             </h3>
             <p className="text-sm text-red-600/80 dark:text-red-400/70 mt-0.5">
-              Bu işlem geri alınamaz. Tüm yazılarınız, yorumlarınız ve verileriniz kalıcı olarak silinecektir.
+              This action cannot be undone. All your posts, comments, and data will be permanently deleted.
             </p>
           </div>
         </div>
@@ -183,7 +183,7 @@ const SettingsAccountPage = () => {
           className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 cursor-pointer"
         >
           <FiTrash2 className="h-4 w-4" />
-          Hesabımı Sil
+          Delete my account
         </button>
       </section>
 
@@ -205,7 +205,7 @@ const SettingsAccountPage = () => {
                 setDeletePassword("");
               }}
               className="absolute top-4 right-4 text-muted-foreground hover:text-text transition-colors cursor-pointer"
-              aria-label="Kapat"
+              aria-label="Close"
             >
               <FiX className="h-5 w-5" />
             </button>
@@ -214,17 +214,17 @@ const SettingsAccountPage = () => {
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
                 <FiAlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-lg font-semibold text-text">Hesabı Sil</h3>
+              <h3 className="text-lg font-semibold text-text">Delete account</h3>
             </div>
 
             <p className="text-sm text-muted-foreground mb-5">
-              Bu işlem kalıcıdır ve geri alınamaz. Devam etmek için şifrenizi girin.
+              This is permanent and cannot be undone. Enter your password to continue.
             </p>
 
             <form onSubmit={handleDeleteAccount}>
               <div className="mb-5">
                 <label htmlFor="deletePassword" className="block text-sm font-medium text-text mb-1.5">
-                  Şifreniz
+                  Your password
                 </label>
                 <input
                   id="deletePassword"
@@ -232,7 +232,7 @@ const SettingsAccountPage = () => {
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   required
-                  placeholder="Şifrenizi girin"
+                  placeholder="Enter your password"
                   autoFocus
                   className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-colors"
                 />
@@ -247,7 +247,7 @@ const SettingsAccountPage = () => {
                   }}
                   className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text transition-colors hover:bg-muted cursor-pointer"
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -257,12 +257,12 @@ const SettingsAccountPage = () => {
                   {isDeleting ? (
                     <>
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Siliniyor...
+                      Deleting...
                     </>
                   ) : (
                     <>
                       <FiTrash2 className="h-4 w-4" />
-                      Evet, Hesabımı Sil
+                      Yes, delete my account
                     </>
                   )}
                 </button>

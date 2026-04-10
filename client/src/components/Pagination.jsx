@@ -42,11 +42,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     "min-w-[36px] h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors";
 
   return (
-    <nav aria-label="Sayfalama" className="flex items-center justify-center gap-1 mt-8">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-1 mt-8">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={isFirstPage}
-        aria-label="Önceki sayfa"
+        aria-label="Previous page"
         className={`${baseBtn} ${
           isFirstPage
             ? "text-muted-foreground/40 cursor-not-allowed"
@@ -83,7 +83,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={isLastPage}
-        aria-label="Sonraki sayfa"
+        aria-label="Next page"
         className={`${baseBtn} ${
           isLastPage
             ? "text-muted-foreground/40 cursor-not-allowed"

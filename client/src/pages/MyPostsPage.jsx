@@ -17,11 +17,11 @@ import EmptyState from "../components/ui/EmptyState";
 import { formatDate } from "../utils/formatDate";
 
 const TABS = [
-  { key: "all", label: "Tümü" },
-  { key: "draft", label: "Taslak" },
-  { key: "pending", label: "İncelemede" },
-  { key: "published", label: "Yayında" },
-  { key: "rejected", label: "Reddedildi" },
+  { key: "all", label: "All" },
+  { key: "draft", label: "Draft" },
+  { key: "pending", label: "In review" },
+  { key: "published", label: "Published" },
+  { key: "rejected", label: "Rejected" },
 ];
 
 const MyPostsPage = () => {
@@ -73,11 +73,11 @@ const MyPostsPage = () => {
     setActionLoading(postId);
     try {
       await deletePost(postId);
-      toast.success("Yazı silindi.");
+      toast.success("Post deleted.");
       setDeleteModal({ open: false, postId: null });
       fetchPosts();
     } catch (err) {
-      toast.error(err.message || "Yazı silinemedi.");
+      toast.error(err.message || "Could not delete post.");
     } finally {
       setActionLoading(null);
     }
@@ -88,10 +88,10 @@ const MyPostsPage = () => {
       setActionLoading(postId);
       try {
         await submitPost(postId);
-        toast.success("Yazı incelemeye gönderildi.");
+        toast.success("Post sent for review.");
         fetchPosts();
       } catch (err) {
-        toast.error(err.message || "Yazı gönderilemedi.");
+        toast.error(err.message || "Could not submit post.");
       } finally {
         setActionLoading(null);
       }
@@ -100,11 +100,11 @@ const MyPostsPage = () => {
   );
 
   const emptyMessages = {
-    all: "Henüz hiç yazınız yok. Yeni bir yazı oluşturarak başlayın!",
-    draft: "Taslak yazınız bulunmuyor.",
-    pending: "İncelemede bekleyen yazınız yok.",
-    published: "Henüz yayınlanmış yazınız yok.",
-    rejected: "Reddedilmiş yazınız bulunmuyor.",
+    all: "You do not have any posts yet. Create your first post to get started!",
+    draft: "You have no draft posts.",
+    pending: "You have no posts awaiting review.",
+    published: "You have no published posts yet.",
+    rejected: "You have no rejected posts.",
   };
 
   return (
@@ -112,15 +112,15 @@ const MyPostsPage = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-text">Yazılarım</h1>
-          <p className="text-muted-foreground">Tüm yazılarınızı yönetin.</p>
+          <h1 className="text-3xl font-bold text-text">My posts</h1>
+          <p className="text-muted-foreground">Manage all your posts.</p>
         </div>
         <Link
           to="/posts/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors"
         >
           <HiPlus className="w-5 h-5" />
-          <span className="hidden sm:inline">Yeni Yazı</span>
+          <span className="hidden sm:inline">New post</span>
         </Link>
       </div>
 
@@ -151,9 +151,9 @@ const MyPostsPage = () => {
       ) : posts.length === 0 ? (
         <EmptyState
           icon={HiOutlineDocumentText}
-          title="Yazı Bulunamadı"
+          title="No posts found"
           message={emptyMessages[activeTab]}
-          actionLabel={activeTab === "all" ? "Yeni Yazı Oluştur" : undefined}
+          actionLabel={activeTab === "all" ? "Create new post" : undefined}
           actionTo={activeTab === "all" ? "/posts/new" : undefined}
         />
       ) : (
@@ -183,9 +183,9 @@ const MyPostsPage = () => {
       {/* Delete Modal */}
       {deleteModal.open && (
         <ConfirmModal
-          title="Yazıyı Sil"
-          message="Bu yazıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-          confirmLabel="Evet, Sil"
+          title="Delete post"
+          message="Are you sure you want to delete this post? This action cannot be undone."
+          confirmLabel="Yes, delete"
           icon={HiOutlineTrash}
           variant="danger"
           loading={actionLoading === deleteModal.postId}
@@ -220,7 +220,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
         </p>
         {post.status === "rejected" && post.rejectionReason && (
           <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-            Ret sebebi: {post.rejectionReason}
+            Rejection reason: {post.rejectionReason}
           </p>
         )}
       </div>
@@ -233,7 +233,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-text border border-border rounded-lg hover:bg-muted transition-colors"
             >
               <HiOutlinePencilAlt className="w-4 h-4" />
-              Düzenle
+              Edit
             </Link>
             <button
               onClick={() => onSubmit(post._id)}
@@ -241,7 +241,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary-600 dark:text-primary-400 border border-primary-300 dark:border-primary-700 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors cursor-pointer disabled:opacity-50"
             >
               <HiOutlineUpload className="w-4 h-4" />
-              Gönder
+              Submit
             </button>
             <button
               onClick={() => onDelete(post._id)}
@@ -249,14 +249,14 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer disabled:opacity-50"
             >
               <HiOutlineTrash className="w-4 h-4" />
-              Sil
+              Delete
             </button>
           </>
         )}
 
         {post.status === "pending" && (
           <span className="text-sm text-amber-600 dark:text-amber-400 italic">
-            İnceleme bekleniyor...
+            Awaiting review...
           </span>
         )}
 
@@ -266,7 +266,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary-600 dark:text-primary-400 border border-primary-300 dark:border-primary-700 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
           >
             <HiOutlineExternalLink className="w-4 h-4" />
-            Görüntüle
+            View
           </Link>
         )}
 
@@ -277,7 +277,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-text border border-border rounded-lg hover:bg-muted transition-colors"
             >
               <HiOutlinePencilAlt className="w-4 h-4" />
-              Düzenle
+              Edit
             </Link>
             <button
               onClick={() => onDelete(post._id)}
@@ -285,7 +285,7 @@ const PostRow = ({ post, actionLoading, onDelete, onSubmit }) => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer disabled:opacity-50"
             >
               <HiOutlineTrash className="w-4 h-4" />
-              Sil
+              Delete
             </button>
           </>
         )}

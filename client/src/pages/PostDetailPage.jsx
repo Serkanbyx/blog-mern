@@ -56,9 +56,9 @@ const PostDetailPage = () => {
       } catch (err) {
         const status = err.response?.status;
         if (status === 404) {
-          setError("Yazı bulunamadı.");
+          setError("Post not found.");
         } else {
-          setError("Yazı yüklenirken bir hata oluştu.");
+          setError("Something went wrong while loading the post.");
         }
       } finally {
         setLoading(false);
@@ -106,10 +106,10 @@ const PostDetailPage = () => {
 
     try {
       await deletePost(post._id);
-      toast.success("Yazı başarıyla silindi.");
+      toast.success("Post deleted successfully.");
       navigate("/", { replace: true });
     } catch {
-      toast.error("Yazı silinirken bir hata oluştu.");
+      toast.error("Something went wrong while deleting the post.");
     } finally {
       setDeleteLoading(false);
       setShowDeleteModal(false);
@@ -132,7 +132,7 @@ const PostDetailPage = () => {
           className="mt-4 inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:underline"
         >
           <HiArrowLeft className="w-4 h-4" />
-          Ana sayfaya dön
+          Back to home
         </Link>
       </div>
     );
@@ -150,7 +150,7 @@ const PostDetailPage = () => {
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors mb-6"
       >
         <HiArrowLeft className="w-4 h-4" />
-        Tüm Yazılar
+        All posts
       </Link>
 
       {/* Post Image */}
@@ -198,7 +198,7 @@ const PostDetailPage = () => {
           </span>
           <span className="flex items-center gap-1.5">
             <HiOutlineClock className="w-4 h-4" />
-            {readingTime} dk okuma
+            {readingTime} min read
           </span>
         </div>
       </div>
@@ -236,7 +236,7 @@ const PostDetailPage = () => {
         <button
           onClick={handleLike}
           disabled={likeLoading}
-          aria-label={liked ? "Beğeniyi kaldır" : "Beğen"}
+          aria-label={liked ? "Unlike" : "Like"}
           className="flex items-center gap-2 text-sm transition-colors cursor-pointer group/like disabled:opacity-50"
         >
           {liked ? (
@@ -247,7 +247,7 @@ const PostDetailPage = () => {
           <span
             className={`font-medium ${liked ? "text-red-500" : "text-muted-foreground"}`}
           >
-            {likeCount} Beğeni
+            {likeCount} likes
           </span>
         </button>
 
@@ -259,7 +259,7 @@ const PostDetailPage = () => {
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-card border border-border text-text hover:bg-muted transition-colors"
               >
                 <HiOutlinePencilAlt className="w-4 h-4" />
-                Düzenle
+                Edit
               </Link>
             )}
             <button
@@ -267,7 +267,7 @@ const PostDetailPage = () => {
               className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer"
             >
               <HiOutlineTrash className="w-4 h-4" />
-              Sil
+              Delete
             </button>
           </div>
         )}
@@ -279,9 +279,9 @@ const PostDetailPage = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <ConfirmModal
-          title="Yazıyı Sil"
-          message="Bu yazıyı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-          confirmLabel="Evet, Sil"
+          title="Delete post"
+          message="Are you sure you want to permanently delete this post? This action cannot be undone."
+          confirmLabel="Yes, delete"
           icon={HiOutlineTrash}
           variant="danger"
           loading={deleteLoading}

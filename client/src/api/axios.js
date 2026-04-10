@@ -17,20 +17,28 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 responses globally
+// Messages returned by the protect middleware when the token/session is invalid
+const TOKEN_FAILURE_MESSAGES = new Set([
+  "Access denied. No token provided.",
+  "User no longer exists.",
+  "Invalid or expired token.",
+]);
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      if (window.location.pathname !== "/login") {
+      const serverMessage = error.response.data?.message ?? "";
+
+      if (
+        TOKEN_FAILURE_MESSAGES.has(serverMessage) &&
+        window.location.pathname !== "/login"
+      ) {
         window.location.href = "/login";
       }
     }
 
-    const message =
-      error.response?.data?.message || "An unexpected error occurred.";
-
-    return Promise.reject(new Error(message));
+    return Promise.reject(error);
   }
 );
 

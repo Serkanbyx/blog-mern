@@ -18,28 +18,28 @@ import { formatDate } from "../../utils/formatDate";
 const STAT_CARDS = [
   {
     key: "totalUsers",
-    label: "Toplam Kullanıcı",
+    label: "Total users",
     icon: HiOutlineUsers,
     color: "text-blue-600 dark:text-blue-400",
     bg: "bg-blue-50 dark:bg-blue-900/30",
   },
   {
     key: "totalAuthors",
-    label: "Toplam Yazar",
+    label: "Total authors",
     icon: HiOutlineUserGroup,
     color: "text-indigo-600 dark:text-indigo-400",
     bg: "bg-indigo-50 dark:bg-indigo-900/30",
   },
   {
     key: "publishedPosts",
-    label: "Yayınlanan Yazılar",
+    label: "Published posts",
     icon: HiOutlineCheckCircle,
     color: "text-green-600 dark:text-green-400",
     bg: "bg-green-50 dark:bg-green-900/30",
   },
   {
     key: "pendingPosts",
-    label: "Bekleyen Yazılar",
+    label: "Pending posts",
     icon: HiOutlineClock,
     color: "text-amber-600 dark:text-amber-400",
     bg: "bg-amber-50 dark:bg-amber-900/30",
@@ -47,21 +47,21 @@ const STAT_CARDS = [
   },
   {
     key: "rejectedPosts",
-    label: "Reddedilen Yazılar",
+    label: "Rejected posts",
     icon: HiOutlineXCircle,
     color: "text-red-600 dark:text-red-400",
     bg: "bg-red-50 dark:bg-red-900/30",
   },
   {
     key: "totalComments",
-    label: "Toplam Yorum",
+    label: "Total comments",
     icon: HiOutlineChatAlt2,
     color: "text-teal-600 dark:text-teal-400",
     bg: "bg-teal-50 dark:bg-teal-900/30",
   },
   {
     key: "pendingAuthorRequests",
-    label: "Bekleyen Başvurular",
+    label: "Pending applications",
     icon: HiOutlinePencilAlt,
     color: "text-purple-600 dark:text-purple-400",
     bg: "bg-purple-50 dark:bg-purple-900/30",
@@ -86,7 +86,7 @@ const AdminDashboardPage = () => {
         const { data } = await getDashboardStats();
         setStats(data.data);
       } catch (err) {
-        setError(err.message || "İstatistikler yüklenirken bir hata oluştu.");
+        setError(err.message || "Something went wrong while loading statistics.");
       } finally {
         setLoading(false);
       }
@@ -103,7 +103,7 @@ const AdminDashboardPage = () => {
         <div className="w-14 h-14 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center mb-4">
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
-        <h3 className="text-lg font-semibold text-text mb-1">Bir hata oluştu</h3>
+        <h3 className="text-lg font-semibold text-text mb-1">Something went wrong</h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
     );
@@ -115,7 +115,7 @@ const AdminDashboardPage = () => {
       <div>
         <h1 className="text-2xl font-bold text-text">Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Sitenizin genel durumunu buradan takip edebilirsiniz.
+          {"Track your site's overall status from here."}
         </p>
       </div>
 
@@ -124,17 +124,17 @@ const AdminDashboardPage = () => {
         <div className="space-y-3">
           {stats.pendingPosts > 0 && (
             <AlertBanner
-              message={`${stats.pendingPosts} yazı onay bekliyor.`}
+              message={`${stats.pendingPosts} post${stats.pendingPosts === 1 ? "" : "s"} awaiting approval.`}
               linkTo="/admin/posts/pending"
-              linkLabel="İncele"
+              linkLabel="Review"
               color="amber"
             />
           )}
           {stats.pendingAuthorRequests > 0 && (
             <AlertBanner
-              message={`${stats.pendingAuthorRequests} yazar başvurusu onay bekliyor.`}
+              message={`${stats.pendingAuthorRequests} author application${stats.pendingAuthorRequests === 1 ? "" : "s"} awaiting approval.`}
               linkTo="/admin/author-requests"
-              linkLabel="İncele"
+              linkLabel="Review"
               color="purple"
             />
           )}
@@ -174,11 +174,11 @@ const AdminDashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Recent Users */}
         <DashboardCard
-          title="Son Kullanıcılar"
+          title="Recent users"
           linkTo="/admin/users"
-          linkLabel="Tümünü Gör"
+          linkLabel="View all"
           isEmpty={stats.recentUsers.length === 0}
-          emptyText="Henüz kullanıcı yok."
+          emptyText="No users yet."
         >
           <ul className="divide-y divide-border">
             {stats.recentUsers.map((user) => (
@@ -211,11 +211,11 @@ const AdminDashboardPage = () => {
 
         {/* Pending Posts */}
         <DashboardCard
-          title="Bekleyen Yazılar"
+          title="Pending posts"
           linkTo="/admin/posts/pending"
-          linkLabel="Tümünü Gör"
+          linkLabel="View all"
           isEmpty={stats.recentPendingPosts.length === 0}
-          emptyText="Onay bekleyen yazı yok."
+          emptyText="No posts awaiting approval."
         >
           <ul className="divide-y divide-border">
             {stats.recentPendingPosts.map((post) => (
@@ -227,7 +227,7 @@ const AdminDashboardPage = () => {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-text truncate">{post.title}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {post.author?.name || "Bilinmeyen Yazar"}
+                      {post.author?.name || "Unknown author"}
                     </p>
                   </div>
                   <span className="text-[11px] text-muted-foreground shrink-0">
@@ -241,11 +241,11 @@ const AdminDashboardPage = () => {
 
         {/* Pending Author Requests */}
         <DashboardCard
-          title="Bekleyen Başvurular"
+          title="Pending applications"
           linkTo="/admin/author-requests"
-          linkLabel="Tümünü Gör"
+          linkLabel="View all"
           isEmpty={stats.recentAuthorRequests.length === 0}
-          emptyText="Bekleyen başvuru yok."
+          emptyText="No pending applications."
         >
           <ul className="divide-y divide-border">
             {stats.recentAuthorRequests.map((req) => (
@@ -256,7 +256,7 @@ const AdminDashboardPage = () => {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-text truncate">
-                      {req.user?.name || "Bilinmeyen Kullanıcı"}
+                      {req.user?.name || "Unknown user"}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
                       {req.messagePreview}

@@ -25,11 +25,11 @@ import { formatDate } from "../../utils/formatDate";
 import { getAvatarUrl } from "../../utils/helpers";
 
 const STATUS_FILTER_OPTIONS = [
-  { value: "", label: "Tüm Durumlar" },
-  { value: "draft", label: "Taslak" },
-  { value: "pending", label: "Beklemede" },
-  { value: "published", label: "Yayında" },
-  { value: "rejected", label: "Reddedildi" },
+  { value: "", label: "All statuses" },
+  { value: "draft", label: "Draft" },
+  { value: "pending", label: "Pending" },
+  { value: "published", label: "Published" },
+  { value: "rejected", label: "Rejected" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -90,7 +90,7 @@ const AdminPostsPage = () => {
       setPosts(result.posts || []);
       setTotalPages(result.totalPages || 1);
     } catch (err) {
-      setError(err.message || "Yazılar yüklenirken bir hata oluştu.");
+      setError(err.message || "Something went wrong while loading posts.");
     } finally {
       setLoading(false);
     }
@@ -115,11 +115,11 @@ const AdminPostsPage = () => {
     setActionLoading(postId);
     try {
       await approvePost(postId);
-      toast.success("Yazı onaylandı.");
+      toast.success("Post approved.");
       setApproveModal({ open: false, postId: null });
       fetchPosts();
     } catch (err) {
-      toast.error(err.message || "Yazı onaylanamadı.");
+      toast.error(err.message || "Could not approve the post.");
     } finally {
       setActionLoading(null);
     }
@@ -143,7 +143,7 @@ const AdminPostsPage = () => {
 
   const handleReject = useCallback(async () => {
     if (!rejectionReason.trim()) {
-      toast.error("Ret sebebi zorunludur.");
+      toast.error("A rejection reason is required.");
       return;
     }
 
@@ -151,11 +151,11 @@ const AdminPostsPage = () => {
     setActionLoading(postId);
     try {
       await rejectPost(postId, rejectionReason.trim());
-      toast.success("Yazı reddedildi.");
+      toast.success("Post rejected.");
       closeRejectModal();
       fetchPosts();
     } catch (err) {
-      toast.error(err.message || "Yazı reddedilemedi.");
+      toast.error(err.message || "Could not reject the post.");
     } finally {
       setActionLoading(null);
     }
@@ -171,11 +171,11 @@ const AdminPostsPage = () => {
     setActionLoading(postId);
     try {
       await adminDeletePost(postId);
-      toast.success("Yazı silindi.");
+      toast.success("Post deleted.");
       setDeleteModal({ open: false, postId: null });
       fetchPosts();
     } catch (err) {
-      toast.error(err.message || "Yazı silinemedi.");
+      toast.error(err.message || "Could not delete the post.");
     } finally {
       setActionLoading(null);
     }
@@ -196,7 +196,7 @@ const AdminPostsPage = () => {
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">
-          Bir hata oluştu
+          Something went wrong
         </h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
@@ -207,9 +207,9 @@ const AdminPostsPage = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Yazılar</h1>
+        <h1 className="text-2xl font-bold text-text">Posts</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tüm yazıları görüntüleyin ve yönetin.
+          View and manage all posts.
         </p>
       </div>
 
@@ -219,7 +219,7 @@ const AdminPostsPage = () => {
           <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Başlık veya yazar ile ara..."
+            placeholder="Search by title or author..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
@@ -245,11 +245,11 @@ const AdminPostsPage = () => {
       ) : posts.length === 0 ? (
         <EmptyState
           icon={HiOutlineDocumentText}
-          title="Yazı Bulunamadı"
+          title="No posts found"
           message={
             debouncedSearch || statusFilter
-              ? "Arama kriterlerinize uygun yazı bulunamadı."
-              : "Henüz hiç yazı yok."
+              ? "No posts match your search criteria."
+              : "There are no posts yet."
           }
         />
       ) : (
@@ -260,19 +260,19 @@ const AdminPostsPage = () => {
               <thead>
                 <tr className="border-b border-border bg-muted/50">
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tl-xl">
-                    Başlık
+                    Title
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Yazar
+                    Author
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Durum
+                    Status
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Tarih
+                    Date
                   </th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tr-xl">
-                    İşlemler
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -295,7 +295,7 @@ const AdminPostsPage = () => {
                           className="w-7 h-7 rounded-full object-cover ring-1 ring-border"
                         />
                         <span className="text-sm text-muted-foreground truncate max-w-[120px]">
-                          {post.author?.name || "Bilinmiyor"}
+                          {post.author?.name || "Unknown"}
                         </span>
                       </div>
                     </td>
@@ -361,9 +361,9 @@ const AdminPostsPage = () => {
       {/* Approve Modal */}
       {approveModal.open && (
         <ConfirmModal
-          title="Yazıyı Onayla"
-          message="Bu yazıyı onaylamak istediğinize emin misiniz?"
-          confirmLabel="Onayla"
+          title="Approve post"
+          message="Are you sure you want to approve this post?"
+          confirmLabel="Approve"
           icon={HiOutlineCheck}
           variant="primary"
           loading={actionLoading === approveModal.postId}
@@ -375,9 +375,9 @@ const AdminPostsPage = () => {
       {/* Reject Modal */}
       {rejectModal.open && (
         <ConfirmModal
-          title="Yazıyı Reddet"
-          message="Ret sebebini belirtin. Bu mesaj yazara iletilecektir."
-          confirmLabel="Reddet"
+          title="Reject post"
+          message="Provide a rejection reason. This message will be sent to the author."
+          confirmLabel="Reject"
           icon={HiOutlineX}
           variant="danger"
           loading={actionLoading === rejectModal.postId}
@@ -387,7 +387,7 @@ const AdminPostsPage = () => {
           <textarea
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
-            placeholder="Ret sebebini yazın..."
+            placeholder="Enter the rejection reason..."
             rows={4}
             className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
             autoFocus
@@ -398,9 +398,9 @@ const AdminPostsPage = () => {
       {/* Delete Modal */}
       {deleteModal.open && (
         <ConfirmModal
-          title="Yazıyı Sil"
-          message="Bu yazıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-          confirmLabel="Evet, Sil"
+          title="Delete post"
+          message="Are you sure you want to delete this post? This action cannot be undone."
+          confirmLabel="Yes, delete"
           icon={HiOutlineTrash}
           variant="danger"
           loading={actionLoading === deleteModal.postId}
@@ -432,7 +432,7 @@ const PostActionsDropdown = ({
       }}
       disabled={isLoading}
       className="p-2 rounded-lg text-muted-foreground hover:text-text hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
-      aria-label="İşlemler"
+      aria-label="Actions"
     >
       {isLoading ? (
         <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -449,7 +449,7 @@ const PostActionsDropdown = ({
             className="w-full text-left px-4 py-2 text-sm text-text hover:bg-muted transition-colors flex items-center gap-2"
           >
             <HiOutlineEye className="w-4 h-4 text-muted-foreground" />
-            Görüntüle
+            View
           </Link>
         )}
 
@@ -459,7 +459,7 @@ const PostActionsDropdown = ({
             className="w-full text-left px-4 py-2 text-sm text-text hover:bg-muted transition-colors cursor-pointer flex items-center gap-2"
           >
             <HiOutlineCheck className="w-4 h-4 text-green-500" />
-            Onayla
+            Approve
           </button>
         )}
 
@@ -469,7 +469,7 @@ const PostActionsDropdown = ({
             className="w-full text-left px-4 py-2 text-sm text-text hover:bg-muted transition-colors cursor-pointer flex items-center gap-2"
           >
             <HiOutlineX className="w-4 h-4 text-amber-500" />
-            Reddet
+            Reject
           </button>
         )}
 
@@ -481,7 +481,7 @@ const PostActionsDropdown = ({
               className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer flex items-center gap-2"
             >
               <HiOutlineTrash className="w-4 h-4" />
-              Sil
+              Delete
             </button>
           </>
         )}
@@ -513,7 +513,7 @@ const PostMobileCard = ({
             className="w-5 h-5 rounded-full object-cover ring-1 ring-border"
           />
           <span className="text-xs text-muted-foreground truncate">
-            {post.author?.name || "Bilinmiyor"}
+            {post.author?.name || "Unknown"}
           </span>
         </div>
       </div>

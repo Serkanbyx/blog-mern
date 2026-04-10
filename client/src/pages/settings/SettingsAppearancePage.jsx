@@ -7,45 +7,45 @@ import SelectableCard from "../../components/ui/SelectableCard";
 const THEME_OPTIONS = [
   {
     value: "light",
-    label: "Açık",
-    description: "Açık arka plan",
+    label: "Light",
+    description: "Light background",
     icon: FiSun,
   },
   {
     value: "dark",
-    label: "Koyu",
-    description: "Koyu arka plan",
+    label: "Dark",
+    description: "Dark background",
     icon: FiMoon,
   },
   {
     value: "system",
-    label: "Sistem",
-    description: "Cihaz ayarını takip et",
+    label: "System",
+    description: "Match device setting",
     icon: FiMonitor,
   },
 ];
 
 const FONT_SIZE_OPTIONS = [
-  { value: "small", label: "Küçük", preview: "14px" },
-  { value: "medium", label: "Orta", preview: "16px" },
-  { value: "large", label: "Büyük", preview: "18px" },
+  { value: "small", label: "Small", preview: "14px" },
+  { value: "medium", label: "Medium", preview: "16px" },
+  { value: "large", label: "Large", preview: "18px" },
 ];
 
 const DENSITY_OPTIONS = [
   {
     value: "compact",
-    label: "Sıkışık",
-    description: "Daha fazla içerik, daha az boşluk",
+    label: "Compact",
+    description: "More content, less spacing",
   },
   {
     value: "comfortable",
-    label: "Rahat",
-    description: "Dengeli boşluk ve içerik",
+    label: "Comfortable",
+    description: "Balanced spacing and content",
   },
   {
     value: "spacious",
-    label: "Geniş",
-    description: "Daha fazla boşluk, rahat okuma",
+    label: "Spacious",
+    description: "More spacing for easier reading",
   },
 ];
 
@@ -57,7 +57,7 @@ const SettingsAppearancePage = () => {
     try {
       await updatePreference(key, value);
     } catch {
-      toast.error("Ayar kaydedilemedi.");
+      toast.error("Could not save setting.");
     }
   };
 
@@ -65,9 +65,9 @@ const SettingsAppearancePage = () => {
     <div className="space-y-8">
       {/* Theme */}
       <section>
-        <h2 className="text-xl font-bold text-text mb-1">Tema</h2>
+        <h2 className="text-xl font-bold text-text mb-1">Theme</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          Uygulama görünümünü tercihlerinize göre ayarlayın.
+          Adjust how the app looks to match your preferences.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -86,9 +86,9 @@ const SettingsAppearancePage = () => {
 
       {/* Font Size */}
       <section>
-        <h2 className="text-lg font-semibold text-text mb-1">Yazı Boyutu</h2>
+        <h2 className="text-lg font-semibold text-text mb-1">Font size</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          İçerik metinlerinin boyutunu değiştirin.
+          Change the size of body text across the app.
         </p>
 
         <div className="flex flex-wrap gap-2 mb-3">
@@ -116,16 +116,16 @@ const SettingsAppearancePage = () => {
             className="text-text"
             style={{ fontSize: fontSize === "small" ? 14 : fontSize === "large" ? 18 : 16 }}
           >
-            Bu bir önizleme metnidir. Seçtiğiniz yazı boyutu ile içerikler böyle görünecektir.
+            This is preview text. Content will look like this at your chosen font size.
           </p>
         </div>
       </section>
 
       {/* Content Density */}
       <section>
-        <h2 className="text-lg font-semibold text-text mb-1">İçerik Yoğunluğu</h2>
+        <h2 className="text-lg font-semibold text-text mb-1">Content density</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          Sayfa elemanları arasındaki boşluk miktarını ayarlayın.
+          Adjust how much space appears between page elements.
         </p>
 
         <div className="space-y-2">
@@ -147,22 +147,22 @@ const SettingsAppearancePage = () => {
 
       {/* Animations */}
       <section>
-        <h2 className="text-lg font-semibold text-text mb-1">Animasyonlar</h2>
+        <h2 className="text-lg font-semibold text-text mb-1">Animations</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          Sayfa geçişleri ve hover efektlerini kontrol edin.
+          Control page transitions and hover effects.
         </p>
 
         <div className="flex items-center justify-between rounded-lg border border-border bg-bg px-4 py-3.5">
           <div>
-            <p className="text-sm font-medium text-text">Animasyonları Etkinleştir</p>
+            <p className="text-sm font-medium text-text">Enable animations</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Sayfa geçişleri ve hover efektlerini aç/kapat.
+              Turn page transitions and hover effects on or off.
             </p>
           </div>
           <ToggleSwitch
             checked={animationsEnabled}
             onChange={(val) => handleChange("animationsEnabled", val)}
-            ariaLabel="Animasyonları aç/kapat"
+            ariaLabel="Toggle animations on or off"
           />
         </div>
       </section>

@@ -24,12 +24,12 @@ const SettingsProfilePage = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Lütfen geçerli bir resim dosyası seçin.");
+      toast.error("Please choose a valid image file.");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Dosya boyutu en fazla 5MB olabilir.");
+      toast.error("File size must be at most 5MB.");
       return;
     }
 
@@ -42,7 +42,7 @@ const SettingsProfilePage = () => {
 
     const trimmedName = name.trim();
     if (trimmedName.length < NAME_MIN || trimmedName.length > NAME_MAX) {
-      toast.error(`İsim ${NAME_MIN}-${NAME_MAX} karakter arasında olmalıdır.`);
+      toast.error(`Name must be between ${NAME_MIN} and ${NAME_MAX} characters.`);
       return;
     }
 
@@ -61,9 +61,9 @@ const SettingsProfilePage = () => {
       });
 
       setAvatarFile(null);
-      toast.success("Profil başarıyla güncellendi.");
+      toast.success("Profile updated successfully.");
     } catch (error) {
-      toast.error(error.message || "Profil güncellenemedi.");
+      toast.error(error.message || "Could not update profile.");
     } finally {
       setIsSaving(false);
     }
@@ -76,9 +76,9 @@ const SettingsProfilePage = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-text mb-1">Profil Ayarları</h2>
+      <h2 className="text-xl font-bold text-text mb-1">Profile settings</h2>
       <p className="text-sm text-muted-foreground mb-6">
-        Adınızı, biyografinizi ve avatar resminizi güncelleyin.
+        Update your name, bio, and avatar.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -100,7 +100,7 @@ const SettingsProfilePage = () => {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-              aria-label="Avatar değiştir"
+              aria-label="Change avatar"
             >
               <FiCamera className="h-5 w-5 text-white" />
             </button>
@@ -111,10 +111,10 @@ const SettingsProfilePage = () => {
               onClick={() => fileInputRef.current?.click()}
               className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors cursor-pointer"
             >
-              Fotoğraf Yükle
+              Upload photo
             </button>
             <p className="text-xs text-muted-foreground mt-0.5">
-              JPG, PNG veya GIF. Maks 5MB.
+              JPG, PNG, or GIF. Max 5MB.
             </p>
           </div>
           <input
@@ -129,7 +129,7 @@ const SettingsProfilePage = () => {
         {/* Name */}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-text mb-1.5">
-            İsim
+            Name
           </label>
           <input
             id="name"
@@ -139,7 +139,7 @@ const SettingsProfilePage = () => {
             minLength={NAME_MIN}
             maxLength={NAME_MAX}
             required
-            placeholder="Adınız"
+            placeholder="Your name"
             className="w-full rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
           <div className="mt-1 flex justify-end">
@@ -150,7 +150,7 @@ const SettingsProfilePage = () => {
         {/* Bio */}
         <div>
           <label htmlFor="bio" className="block text-sm font-medium text-text mb-1.5">
-            Biyografi
+            Bio
           </label>
           <textarea
             id="bio"
@@ -158,12 +158,12 @@ const SettingsProfilePage = () => {
             onChange={(e) => setBio(e.target.value.slice(0, BIO_MAX))}
             maxLength={BIO_MAX}
             rows={3}
-            placeholder="Kendinizden kısaca bahsedin..."
+            placeholder="Tell us a little about yourself..."
             className="w-full resize-none rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
           <div className="mt-1 flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
-              Profilinizde görünecek kısa açıklama.
+              A short description shown on your profile.
             </span>
             <CharacterCounter current={bio.length} max={BIO_MAX} />
           </div>
@@ -179,12 +179,12 @@ const SettingsProfilePage = () => {
             {isSaving ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Kaydediliyor...
+                Saving...
               </>
             ) : (
               <>
                 <FiSave className="h-4 w-4" />
-                Değişiklikleri Kaydet
+                Save changes
               </>
             )}
           </button>

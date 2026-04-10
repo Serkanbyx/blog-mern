@@ -5,9 +5,9 @@ import { FiCheck } from "react-icons/fi";
 const POSTS_PER_PAGE_OPTIONS = [5, 10, 20, 30, 50];
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "En Yeni", description: "Yayınlanma tarihine göre en yeniler önce" },
-  { value: "popular", label: "En Popüler", description: "Beğeni sayısına göre en çok beğenilenler önce" },
-  { value: "mostCommented", label: "En Çok Yorumlanan", description: "Yorum sayısına göre en çok tartışılanlar önce" },
+  { value: "newest", label: "Newest first", description: "Most recently published posts first" },
+  { value: "popular", label: "Most popular", description: "Posts with the most likes first" },
+  { value: "mostCommented", label: "Most discussed", description: "Posts with the most comments first" },
 ];
 
 const SettingsContentPage = () => {
@@ -17,7 +17,7 @@ const SettingsContentPage = () => {
     try {
       await updatePreference(key, value);
     } catch {
-      toast.error("Ayar kaydedilemedi.");
+      toast.error("Could not save setting.");
     }
   };
 
@@ -25,15 +25,15 @@ const SettingsContentPage = () => {
     <div className="space-y-8">
       {/* Posts Per Page */}
       <section>
-        <h2 className="text-xl font-bold text-text mb-1">İçerik Ayarları</h2>
+        <h2 className="text-xl font-bold text-text mb-1">Content settings</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Ana sayfadaki içerik görünümünü özelleştirin.
+          Customize how content appears on the home page.
         </p>
 
         <div>
-          <h3 className="text-lg font-semibold text-text mb-1">Sayfa Başına Yazı</h3>
+          <h3 className="text-lg font-semibold text-text mb-1">Posts per page</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Ana sayfada sayfa başına gösterilecek yazı sayısı.
+            Number of posts to show per page on the home page.
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -60,9 +60,9 @@ const SettingsContentPage = () => {
 
       {/* Default Sort */}
       <section>
-        <h3 className="text-lg font-semibold text-text mb-1">Varsayılan Sıralama</h3>
+        <h3 className="text-lg font-semibold text-text mb-1">Default sort order</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Ana sayfayı açtığınızda varsayılan sıralama düzeni.
+          The default sort when you open the home page.
         </p>
 
         <div className="space-y-2">

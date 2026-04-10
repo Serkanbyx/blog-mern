@@ -26,18 +26,18 @@ const MESSAGE_MAX = 500;
 const BENEFITS = [
   {
     icon: FiEdit3,
-    title: "Blog Yazıları Yayınla",
-    description: "Kendi blog yazılarınızı oluşturun ve geniş bir kitleyle paylaşın.",
+    title: "Publish blog posts",
+    description: "Create your own posts and share them with a wide audience.",
   },
   {
     icon: FiUsers,
-    title: "Kitlenizi Büyütün",
-    description: "Yazılarınızla okuyucu kitlesi oluşturun ve topluluğa katkı sağlayın.",
+    title: "Grow your audience",
+    description: "Build a readership with your writing and contribute to the community.",
   },
   {
     icon: FiTrendingUp,
-    title: "Bilginizi Paylaşın",
-    description: "Uzmanlık alanınızdaki bilgi ve deneyimlerinizi diğerleriyle paylaşın.",
+    title: "Share your expertise",
+    description: "Share knowledge and experience from your field with others.",
   },
 ];
 
@@ -53,7 +53,7 @@ const BecomeAuthorPage = () => {
 
   useEffect(() => {
     if (isAuthor || isAdmin) {
-      toast("Zaten yazar/yönetici yetkiniz var.", { icon: "✅" });
+      toast("You already have author or admin access.", { icon: "✅" });
       navigate("/", { replace: true });
     }
   }, [isAuthor, isAdmin, navigate]);
@@ -77,7 +77,7 @@ const BecomeAuthorPage = () => {
         setStatus("no-request");
         setExistingRequest(null);
       } else {
-        toast.error("Başvuru durumu alınamadı.");
+        toast.error("Could not load application status.");
         setStatus("no-request");
       }
     }
@@ -94,7 +94,7 @@ const BecomeAuthorPage = () => {
 
     const trimmed = message.trim();
     if (trimmed.length < MESSAGE_MIN || trimmed.length > MESSAGE_MAX) {
-      toast.error(`Mesaj ${MESSAGE_MIN}-${MESSAGE_MAX} karakter arasında olmalıdır.`);
+      toast.error(`Message must be between ${MESSAGE_MIN} and ${MESSAGE_MAX} characters.`);
       return;
     }
 
@@ -104,9 +104,9 @@ const BecomeAuthorPage = () => {
       setExistingRequest(data.data);
       setStatus("pending");
       setMessage("");
-      toast.success("Başvurunuz başarıyla gönderildi!");
+      toast.success("Your application was submitted successfully!");
     } catch (error) {
-      toast.error(error.message || "Başvuru gönderilemedi. Lütfen tekrar deneyin.");
+      toast.error(error.message || "Could not submit application. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,9 +118,9 @@ const BecomeAuthorPage = () => {
       await cancelAuthorRequest();
       setExistingRequest(null);
       setStatus("no-request");
-      toast.success("Başvurunuz iptal edildi.");
+      toast.success("Your application was cancelled.");
     } catch (error) {
-      toast.error(error.message || "Başvuru iptal edilemedi.");
+      toast.error(error.message || "Could not cancel application.");
     } finally {
       setIsCancelling(false);
     }
@@ -147,9 +147,9 @@ const BecomeAuthorPage = () => {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100 dark:bg-primary-900/30">
           <FiBookOpen className="h-8 w-8 text-primary-600" />
         </div>
-        <h1 className="text-3xl font-bold text-text">Yazar Ol</h1>
+        <h1 className="text-3xl font-bold text-text">Become an author</h1>
         <p className="mt-2 text-muted-foreground">
-          Bilginizi paylaşın, blog yazıları yayınlayın, kitlenizi oluşturun.
+          Share your knowledge, publish posts, and grow your audience.
         </p>
       </div>
 
@@ -182,10 +182,10 @@ const BecomeAuthorPage = () => {
           {/* Application Form */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-card-foreground">
-              Başvuru Formu
+              Application form
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Neden yazar olmak istediğinizi bize anlatın.
+              Tell us why you want to become an author.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-5">
@@ -194,7 +194,7 @@ const BecomeAuthorPage = () => {
                   htmlFor="message"
                   className="mb-1.5 block text-sm font-medium text-card-foreground"
                 >
-                  Mesajınız
+                  Your message
                 </label>
                 <textarea
                   id="message"
@@ -203,7 +203,7 @@ const BecomeAuthorPage = () => {
                   required
                   minLength={MESSAGE_MIN}
                   maxLength={MESSAGE_MAX}
-                  placeholder="Neden yazar olmak istiyorsunuz? Hangi konularda yazı yazmayı planlıyorsunuz?"
+                  placeholder="Why do you want to be an author? What topics do you plan to write about?"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full resize-none rounded-lg border border-border bg-bg px-4 py-3 text-sm text-text placeholder:text-muted-foreground focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
@@ -211,8 +211,8 @@ const BecomeAuthorPage = () => {
                 <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground">
                   <span>
                     {message.trim().length < MESSAGE_MIN
-                      ? `En az ${MESSAGE_MIN} karakter gerekli`
-                      : "Harika görünüyor!"}
+                      ? `At least ${MESSAGE_MIN} characters required`
+                      : "Looks great!"}
                   </span>
                   <span
                     className={
@@ -234,12 +234,12 @@ const BecomeAuthorPage = () => {
                 {isSubmitting ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Gönderiliyor...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <FiSend className="h-4 w-4" />
-                    Başvuru Gönder
+                    Submit application
                   </>
                 )}
               </button>
@@ -257,17 +257,17 @@ const BecomeAuthorPage = () => {
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-                Başvurunuz İnceleniyor
+                Your application is under review
               </h2>
               <p className="mt-1 text-sm text-amber-700 dark:text-amber-400/80">
-                Başvurunuz bir yönetici tarafından incelenmektedir. İşlem
-                tamamlandığında bilgilendirileceksiniz.
+                An administrator is reviewing your application. You will be
+                notified when the process is complete.
               </p>
 
               {/* Submitted message */}
               <div className="mt-4 rounded-lg border border-amber-200 bg-white/60 p-4 dark:border-amber-800/30 dark:bg-amber-900/20">
                 <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                  Gönderilen Mesaj
+                  Submitted message
                 </p>
                 <p className="mt-1 text-sm text-amber-900 dark:text-amber-200">
                   {existingRequest.message}
@@ -276,7 +276,7 @@ const BecomeAuthorPage = () => {
 
               {/* Submitted date */}
               <p className="mt-3 text-xs text-amber-600 dark:text-amber-500">
-                Gönderim tarihi:{" "}
+                Submitted on:{" "}
                 {formatDateLong(existingRequest.createdAt)}
               </p>
 
@@ -290,12 +290,12 @@ const BecomeAuthorPage = () => {
                 {isCancelling ? (
                   <>
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
-                    İptal ediliyor...
+                    Cancelling...
                   </>
                 ) : (
                   <>
                     <FiXCircle className="h-4 w-4" />
-                    Başvuruyu İptal Et
+                    Cancel application
                   </>
                 )}
               </button>
@@ -314,17 +314,17 @@ const BecomeAuthorPage = () => {
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="text-lg font-semibold text-red-800 dark:text-red-300">
-                  Başvurunuz Onaylanmadı
+                  Your application was not approved
                 </h2>
                 <p className="mt-1 text-sm text-red-700 dark:text-red-400/80">
-                  Önceki başvurunuz onaylanmadı. Yeni bir başvuru gönderebilirsiniz.
+                  Your previous application was not approved. You may submit a new one.
                 </p>
 
                 {/* Rejection reason */}
                 {existingRequest.rejectionReason && (
                   <div className="mt-4 rounded-lg border border-red-200 bg-white/60 p-4 dark:border-red-800/30 dark:bg-red-900/20">
                     <p className="text-xs font-medium text-red-600 dark:text-red-400">
-                      Red Nedeni
+                      Reason for rejection
                     </p>
                     <p className="mt-1 text-sm text-red-900 dark:text-red-200">
                       {existingRequest.rejectionReason}
@@ -334,7 +334,7 @@ const BecomeAuthorPage = () => {
 
                 {/* Rejected date */}
                 <p className="mt-3 text-xs text-red-600 dark:text-red-500">
-                  Red tarihi:{" "}
+                  Rejected on:{" "}
                   {formatDateLong(existingRequest.updatedAt)}
                 </p>
 
@@ -345,7 +345,7 @@ const BecomeAuthorPage = () => {
                   className="mt-5 flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:ring-offset-2"
                 >
                   <FiRefreshCw className="h-4 w-4" />
-                  Yeni Başvuru Gönder
+                  Submit new application
                 </button>
               </div>
             </div>
@@ -356,8 +356,8 @@ const BecomeAuthorPage = () => {
       {/* Info footer */}
       {status === "no-request" && (
         <p className="mt-6 text-center text-xs text-muted-foreground/70">
-          Başvurunuz bir yönetici tarafından incelenecektir. Süreç genellikle 1-2
-          iş günü içinde tamamlanır.
+          Your application will be reviewed by an administrator. The process
+          usually completes within 1–2 business days.
         </p>
       )}
     </div>

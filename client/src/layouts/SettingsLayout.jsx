@@ -11,12 +11,12 @@ import {
 } from "react-icons/hi";
 
 const settingsLinks = [
-  { to: "/settings", label: "Profil", icon: HiOutlineUser, end: true },
-  { to: "/settings/account", label: "Hesap", icon: HiOutlineCog },
-  { to: "/settings/appearance", label: "Görünüm", icon: HiOutlineColorSwatch },
-  { to: "/settings/privacy", label: "Gizlilik", icon: HiOutlineShieldCheck },
-  { to: "/settings/notifications", label: "Bildirimler", icon: HiOutlineBell },
-  { to: "/settings/content", label: "İçerik", icon: HiOutlineDocumentText },
+  { to: "/settings", label: "Profile", icon: HiOutlineUser, end: true },
+  { to: "/settings/account", label: "Account", icon: HiOutlineCog },
+  { to: "/settings/appearance", label: "Appearance", icon: HiOutlineColorSwatch },
+  { to: "/settings/privacy", label: "Privacy", icon: HiOutlineShieldCheck },
+  { to: "/settings/notifications", label: "Notifications", icon: HiOutlineBell },
+  { to: "/settings/content", label: "Content", icon: HiOutlineDocumentText },
 ];
 
 const SettingsLayout = () => {
@@ -31,7 +31,7 @@ const SettingsLayout = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 lg:py-10">
-      <h1 className="text-2xl font-bold text-text mb-6">Ayarlar</h1>
+      <h1 className="text-2xl font-bold text-text mb-6">Settings</h1>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Mobile: Dropdown Toggle */}
@@ -40,7 +40,7 @@ const SettingsLayout = () => {
             onClick={() => setMobileNavOpen((prev) => !prev)}
             className="w-full flex items-center justify-between px-4 py-3 bg-card border border-border rounded-xl text-sm font-medium text-text cursor-pointer"
           >
-            Menü
+            Menu
             <HiChevronDown
               size={18}
               className={`transition-transform ${mobileNavOpen ? "rotate-180" : ""}`}

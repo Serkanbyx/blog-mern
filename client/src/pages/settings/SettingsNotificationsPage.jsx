@@ -7,18 +7,18 @@ import ToggleSwitch from "../../components/ui/ToggleSwitch";
 const NOTIFICATION_TOGGLES = [
   {
     key: "notifications.postApproved",
-    label: "Yazı onaylandı",
-    description: "Yazınız onaylandığında bildirim alın.",
+    label: "Post approved",
+    description: "Get notified when your post is approved.",
   },
   {
     key: "notifications.postRejected",
-    label: "Yazı reddedildi",
-    description: "Yazınız reddedildiğinde bildirim alın.",
+    label: "Post rejected",
+    description: "Get notified when your post is rejected.",
   },
   {
     key: "notifications.newCommentOnPost",
-    label: "Yazıma yeni yorum",
-    description: "Biri yazınıza yorum yaptığında bildirim alın.",
+    label: "New comment on my post",
+    description: "Get notified when someone comments on your post.",
   },
 ];
 
@@ -49,7 +49,7 @@ const SettingsNotificationsPage = () => {
           });
         }, 1500);
       } catch {
-        toast.error("Ayar kaydedilemedi.");
+        toast.error("Could not save setting.");
         setSavingKeys((prev) => {
           const next = { ...prev };
           delete next[key];
@@ -62,9 +62,9 @@ const SettingsNotificationsPage = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-text mb-1">Bildirim Ayarları</h2>
+      <h2 className="text-xl font-bold text-text mb-1">Notification settings</h2>
       <p className="text-sm text-muted-foreground mb-6">
-        Hangi durumlarda bildirim almak istediğinizi seçin.
+        Choose when you want to receive notifications.
       </p>
 
       <div className="space-y-3">
@@ -90,7 +90,7 @@ const SettingsNotificationsPage = () => {
                     ) : (
                       <FiCheck className="h-3.5 w-3.5 text-green-500" />
                     )}
-                    {status === "saving" ? "Kaydediliyor..." : "Kaydedildi"}
+                    {status === "saving" ? "Saving..." : "Saved"}
                   </span>
                 )}
 
@@ -110,8 +110,8 @@ const SettingsNotificationsPage = () => {
       <div className="mt-6 flex items-start gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
         <FiBell className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          Bildirim tercihleri gelecekteki kullanım için kaydedilir.
-          E-posta bildirimleri şu anda aktif değildir.
+          Notification preferences are saved for future use.
+          Email notifications are not enabled at this time.
         </p>
       </div>
     </div>

@@ -4,8 +4,8 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 const ConfirmModal = ({
   title,
   message,
-  confirmLabel = "Onayla",
-  cancelLabel = "İptal",
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   icon = HiOutlineExclamationCircle,
   variant = "danger",
   loading = false,
@@ -89,7 +89,7 @@ const ConfirmModal = ({
             {loading && (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
-            {loading ? "İşleniyor..." : confirmLabel}
+            {loading ? "Processing..." : confirmLabel}
           </button>
         </div>
       </div>

@@ -23,9 +23,9 @@ import { formatDate } from "../../utils/formatDate";
 import { getAvatarUrl } from "../../utils/helpers";
 
 const ROLE_FILTER_OPTIONS = [
-  { value: "", label: "Tüm Roller" },
-  { value: "user", label: "Kullanıcı" },
-  { value: "author", label: "Yazar" },
+  { value: "", label: "All roles" },
+  { value: "user", label: "User" },
+  { value: "author", label: "Author" },
   { value: "admin", label: "Admin" },
 ];
 
@@ -79,7 +79,7 @@ const AdminUsersPage = () => {
       setUsers(result.users || []);
       setTotalPages(result.totalPages || 1);
     } catch (err) {
-      setError(err.message || "Kullanıcılar yüklenirken bir hata oluştu.");
+      setError(err.message || "Something went wrong while loading users.");
     } finally {
       setLoading(false);
     }
@@ -105,10 +105,10 @@ const AdminUsersPage = () => {
       setActionLoading(userId);
       try {
         await updateUserRole(userId, newRole);
-        toast.success("Kullanıcı rolü güncellendi.");
+        toast.success("User role updated.");
         fetchUsers();
       } catch (err) {
-        toast.error(err.message || "Rol güncellenemedi.");
+        toast.error(err.message || "Could not update role.");
       } finally {
         setActionLoading(null);
       }
@@ -126,11 +126,11 @@ const AdminUsersPage = () => {
     setActionLoading(userId);
     try {
       await deleteUser(userId);
-      toast.success("Kullanıcı silindi.");
+      toast.success("User deleted.");
       setDeleteModal({ open: false, userId: null, userName: "" });
       fetchUsers();
     } catch (err) {
-      toast.error(err.message || "Kullanıcı silinemedi.");
+      toast.error(err.message || "Could not delete user.");
     } finally {
       setActionLoading(null);
     }
@@ -148,7 +148,7 @@ const AdminUsersPage = () => {
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">
-          Bir hata oluştu
+          Something went wrong
         </h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
@@ -159,9 +159,9 @@ const AdminUsersPage = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Kullanıcılar</h1>
+        <h1 className="text-2xl font-bold text-text">Users</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Tüm kullanıcıları yönetin, rolleri değiştirin veya hesapları silin.
+          Manage all users, change roles, or delete accounts.
         </p>
       </div>
 
@@ -171,7 +171,7 @@ const AdminUsersPage = () => {
           <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
-            placeholder="İsim veya e-posta ile ara..."
+            placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
@@ -197,11 +197,11 @@ const AdminUsersPage = () => {
       ) : users.length === 0 ? (
         <EmptyState
           icon={HiOutlineUsers}
-          title="Kullanıcı Bulunamadı"
+          title="No users found"
           message={
             debouncedSearch || roleFilter
-              ? "Arama kriterlerinize uygun kullanıcı bulunamadı."
-              : "Henüz kayıtlı kullanıcı yok."
+              ? "No users match your search criteria."
+              : "There are no registered users yet."
           }
         />
       ) : (
@@ -212,19 +212,19 @@ const AdminUsersPage = () => {
               <thead>
                 <tr className="border-b border-border bg-muted/50">
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tl-xl">
-                    Kullanıcı
+                    User
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    E-posta
+                    Email
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Rol
+                    Role
                   </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">
-                    Katılım
+                    Joined
                   </th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 rounded-tr-xl">
-                    İşlemler
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -314,9 +314,9 @@ const AdminUsersPage = () => {
       {/* Delete Confirm Modal */}
       {deleteModal.open && (
         <ConfirmModal
-          title="Kullanıcıyı Sil"
-          message={`"${deleteModal.userName}" adlı kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
-          confirmLabel="Evet, Sil"
+          title="Delete user"
+          message={`Are you sure you want to delete user "${deleteModal.userName}"? This action cannot be undone.`}
+          confirmLabel="Yes, delete"
           icon={HiOutlineTrash}
           variant="danger"
           loading={actionLoading === deleteModal.userId}
@@ -343,7 +343,7 @@ const ActionsDropdown = ({
 }) => {
   if (isSelf) {
     return (
-      <span className="text-xs text-muted-foreground italic px-2">Siz</span>
+      <span className="text-xs text-muted-foreground italic px-2">You</span>
     );
   }
 
@@ -360,7 +360,7 @@ const ActionsDropdown = ({
         }}
         disabled={isLoading}
         className="p-2 rounded-lg text-muted-foreground hover:text-text hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
-        aria-label="İşlemler"
+        aria-label="Actions"
       >
         {isLoading ? (
           <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -378,7 +378,7 @@ const ActionsDropdown = ({
               className="w-full text-left px-4 py-2 text-sm text-text hover:bg-muted transition-colors cursor-pointer flex items-center gap-2"
             >
               <HiOutlineShieldCheck className="w-4 h-4 text-muted-foreground" />
-              {ROLE_CONFIG[role].label} yap
+              Set as {ROLE_CONFIG[role].label}
             </button>
           ))}
 
@@ -389,7 +389,7 @@ const ActionsDropdown = ({
             className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer flex items-center gap-2"
           >
             <HiOutlineTrash className="w-4 h-4" />
-            Kullanıcıyı Sil
+            Delete user
           </button>
         </div>
       )}
@@ -438,7 +438,7 @@ const UserCard = ({
 
     <div className="flex items-center gap-3 text-xs text-muted-foreground">
       <RoleBadge role={user.role} />
-      <span>Katılım: {formatDate(user.createdAt)}</span>
+      <span>Joined: {formatDate(user.createdAt)}</span>
     </div>
   </div>
 );

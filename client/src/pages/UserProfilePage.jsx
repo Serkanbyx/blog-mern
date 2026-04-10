@@ -93,7 +93,7 @@ const UserProfilePage = () => {
         const isAuthorRole = data.user.role === "author" || data.user.role === "admin";
         setActiveTab(isAuthorRole && data.postCount > 0 ? "posts" : "posts");
       } catch {
-        setError("Kullanıcı bulunamadı.");
+        setError("User not found.");
       } finally {
         setLoading(false);
       }
@@ -188,12 +188,12 @@ const UserProfilePage = () => {
 
       const maxSize = 2 * 1024 * 1024;
       if (file.size > maxSize) {
-        toast.error("Dosya boyutu 2MB'dan küçük olmalıdır.");
+        toast.error("File size must be under 2MB.");
         return;
       }
 
       if (!file.type.startsWith("image/")) {
-        toast.error("Lütfen geçerli bir resim dosyası seçin.");
+        toast.error("Please select a valid image file.");
         return;
       }
 
@@ -203,9 +203,9 @@ const UserProfilePage = () => {
         await updateUser({ avatar: avatarUrl });
         setProfile((prev) => ({ ...prev, avatar: avatarUrl }));
         setShowAvatarModal(false);
-        toast.success("Profil fotoğrafı güncellendi.");
+        toast.success("Profile photo updated.");
       } catch {
-        toast.error("Fotoğraf yüklenirken bir hata oluştu.");
+        toast.error("Something went wrong while uploading the photo.");
       } finally {
         setAvatarUploading(false);
       }
@@ -229,7 +229,7 @@ const UserProfilePage = () => {
 
     tabList.push({
       id: "posts",
-      label: "Yazılar",
+      label: "Posts",
       icon: HiOutlineDocumentText,
       count: postCount,
     });
@@ -237,7 +237,7 @@ const UserProfilePage = () => {
     if (showLikedPosts) {
       tabList.push({
         id: "liked",
-        label: "Beğenilenler",
+        label: "Liked",
         icon: HiOutlineHeart,
       });
     }
@@ -245,7 +245,7 @@ const UserProfilePage = () => {
     if (showComments) {
       tabList.push({
         id: "comments",
-        label: "Yorumlar",
+        label: "Comments",
         icon: HiOutlineChatAlt,
         count: commentCount,
       });
@@ -267,7 +267,7 @@ const UserProfilePage = () => {
           to="/"
           className="text-primary-600 dark:text-primary-400 hover:underline mt-2"
         >
-          Ana sayfaya dön
+          Back to home
         </Link>
       </div>
     );
@@ -297,7 +297,7 @@ const UserProfilePage = () => {
             {isOwner && (
               <button
                 onClick={() => setShowAvatarModal(true)}
-                aria-label="Profil fotoğrafını değiştir"
+                aria-label="Change profile photo"
                 className="absolute bottom-0 right-0 w-9 h-9 bg-primary-600 hover:bg-primary-700 text-white rounded-full flex items-center justify-center shadow-md transition-colors cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100"
               >
                 <HiOutlineCamera className="w-4 h-4" />
@@ -320,14 +320,14 @@ const UserProfilePage = () => {
 
             <div className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-muted-foreground">
               <HiOutlineCalendar className="w-4 h-4" />
-              <span>{formatJoinDate(profile.createdAt)} tarihinden beri üye</span>
+              <span>Member since {formatJoinDate(profile.createdAt)}</span>
             </div>
 
             {/* Stats Row */}
             <div className="flex items-center justify-center sm:justify-start gap-5 pt-1">
-              <StatItem label="Yazı" value={postCount} />
+              <StatItem label="posts" value={postCount} />
               {commentCount !== null && (
-                <StatItem label="Yorum" value={commentCount} />
+                <StatItem label="comments" value={commentCount} />
               )}
             </div>
 
@@ -339,11 +339,11 @@ const UserProfilePage = () => {
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors"
                 >
                   <HiOutlinePencil className="w-4 h-4" />
-                  Profili Düzenle
+                  Edit profile
                 </Link>
                 <Link
                   to="/settings"
-                  aria-label="Ayarlar"
+                  aria-label="Settings"
                   className="inline-flex items-center justify-center w-10 h-10 border border-border rounded-xl text-muted-foreground hover:bg-muted hover:text-text transition-colors"
                 >
                   <HiOutlineCog className="w-5 h-5" />
@@ -361,7 +361,7 @@ const UserProfilePage = () => {
           className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
         >
           <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-            Yazı yazmak ister misiniz? Yazar olun
+            Want to write posts? Become an author
           </span>
           <HiOutlineArrowRight className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
         </Link>
@@ -375,7 +375,7 @@ const UserProfilePage = () => {
             className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
           >
             <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-              İlk yazınızı yazarak başlayın
+              Start by writing your first post
             </span>
             <HiOutlineArrowRight className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -383,7 +383,7 @@ const UserProfilePage = () => {
 
       {/* Tab Navigation */}
       <div className="border-b border-border">
-        <nav className="flex gap-1 -mb-px" aria-label="Profil sekmeleri">
+        <nav className="flex gap-1 -mb-px" aria-label="Profile tabs">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -481,7 +481,7 @@ const PostsTab = ({ posts, loading, page, totalPages, onPageChange }) => {
     return (
       <EmptyState
         icon={HiOutlineDocumentText}
-        message="Henüz yazı yayınlanmamış."
+        message="No posts published yet."
       />
     );
   }
@@ -516,7 +516,7 @@ const LikedPostsTab = ({
       <EmptyState
         icon={HiOutlineLockClosed}
         isPrivate
-        message="Bu içerik gizli."
+        message="This content is private."
       />
     );
   }
@@ -527,7 +527,7 @@ const LikedPostsTab = ({
     return (
       <EmptyState
         icon={HiOutlineHeart}
-        message="Henüz beğenilen yazı yok."
+        message="No liked posts yet."
       />
     );
   }
@@ -562,7 +562,7 @@ const CommentsTab = ({
       <EmptyState
         icon={HiOutlineLockClosed}
         isPrivate
-        message="Bu içerik gizli."
+        message="This content is private."
       />
     );
   }
@@ -573,7 +573,7 @@ const CommentsTab = ({
     return (
       <EmptyState
         icon={HiOutlineChatAlt}
-        message="Henüz yorum yapılmamış."
+        message="No comments yet."
       />
     );
   }
@@ -591,7 +591,7 @@ const CommentsTab = ({
                 to={`/posts/${comment.postId?.slug}`}
                 className="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline line-clamp-1"
               >
-                {comment.postId?.title || "Silinmiş yazı"}
+                {comment.postId?.title || "Deleted post"}
               </Link>
               <time className="text-xs text-muted-foreground shrink-0 ml-3">
                 {formatDate(comment.createdAt)}
@@ -620,10 +620,10 @@ const AvatarModal = ({ onClose, onUpload, uploading }) => (
       onClick={(e) => e.stopPropagation()}
     >
       <h3 className="text-lg font-semibold text-text">
-        Profil Fotoğrafını Güncelle
+        Update profile photo
       </h3>
       <p className="text-sm text-muted-foreground">
-        JPG, PNG veya WebP formatında, maksimum 2MB.
+        JPG, PNG, or WebP, up to 2MB.
       </p>
 
       <label
@@ -636,13 +636,13 @@ const AvatarModal = ({ onClose, onUpload, uploading }) => (
         {uploading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-            Yükleniyor...
+            Uploading...
           </div>
         ) : (
           <>
             <HiOutlineCamera className="w-8 h-8 text-muted-foreground mb-1" />
             <span className="text-sm text-muted-foreground">
-              Fotoğraf seç veya sürükle
+              Choose a photo or drag and drop
             </span>
           </>
         )}
@@ -660,7 +660,7 @@ const AvatarModal = ({ onClose, onUpload, uploading }) => (
         disabled={uploading}
         className="w-full py-2.5 text-sm font-medium text-muted-foreground border border-border rounded-xl hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
       >
-        İptal
+        Cancel
       </button>
     </div>
   </div>

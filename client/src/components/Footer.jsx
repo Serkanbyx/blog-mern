@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-border bg-card/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col items-center gap-2 text-sm text-muted-foreground">
-        <p>&copy; {currentYear} BlogMERN. Tüm hakları saklıdır.</p>
+        <p>&copy; {currentYear} BlogMERN. All rights reserved.</p>
         <p>
           Created by{" "}
           <a

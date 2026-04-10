@@ -36,9 +36,9 @@ const CreatePostPage = () => {
     try {
       const url = await uploadImage(file);
       setImageUrl(url);
-      toast.success("Görsel yüklendi.");
+      toast.success("Image uploaded.");
     } catch (err) {
-      toast.error(err.message || "Görsel yüklenemedi.");
+      toast.error(err.message || "Could not upload image.");
       setImagePreview("");
       setImageUrl("");
     } finally {
@@ -66,7 +66,7 @@ const CreatePostPage = () => {
 
       const available = TAGS_MAX - tags.length;
       if (available <= 0) {
-        toast.error(`En fazla ${TAGS_MAX} etiket ekleyebilirsiniz.`);
+        toast.error(`You can add up to ${TAGS_MAX} tags.`);
         setTagInput("");
         return;
       }
@@ -84,8 +84,8 @@ const CreatePostPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim()) return toast.error("Başlık zorunludur.");
-    if (!content.trim()) return toast.error("İçerik zorunludur.");
+    if (!title.trim()) return toast.error("Title is required.");
+    if (!content.trim()) return toast.error("Content is required.");
 
     setSubmitting(true);
     try {
@@ -103,12 +103,12 @@ const CreatePostPage = () => {
 
       toast.success(
         isAdmin
-          ? "Yazı yayınlandı!"
-          : "Yazı incelemeye gönderildi."
+          ? "Post published!"
+          : "Post sent for review."
       );
       navigate("/posts/mine");
     } catch (err) {
-      toast.error(err.message || "Yazı oluşturulamadı.");
+      toast.error(err.message || "Could not create post.");
     } finally {
       setSubmitting(false);
     }
@@ -120,9 +120,9 @@ const CreatePostPage = () => {
     <div className="py-8 max-w-3xl mx-auto space-y-6">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-text">Yeni Yazı Oluştur</h1>
+        <h1 className="text-3xl font-bold text-text">Create new post</h1>
         <p className="text-muted-foreground">
-          Yazınızı oluşturun ve yayına gönderin.
+          Write your post and send it for publication.
         </p>
       </div>
 
@@ -131,14 +131,14 @@ const CreatePostPage = () => {
         <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
           <HiOutlineShieldCheck className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
           <p className="text-sm text-green-700 dark:text-green-300">
-            Admin olarak yazılarınız doğrudan yayınlanır.
+            As an admin, your posts are published immediately.
           </p>
         </div>
       ) : (
         <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
           <HiOutlineInformationCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            Yazınız yayınlanmadan önce admin onayına gönderilecektir.
+            Your post will be sent for admin approval before it goes live.
           </p>
         </div>
       )}
@@ -149,7 +149,7 @@ const CreatePostPage = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="title" className="text-sm font-medium text-text">
-              Başlık
+              Title
             </label>
             <span
               className={`text-xs ${
@@ -166,7 +166,7 @@ const CreatePostPage = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
-            placeholder="Yazınıza bir başlık verin..."
+            placeholder="Give your post a title..."
             className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors"
           />
         </div>
@@ -174,13 +174,13 @@ const CreatePostPage = () => {
         {/* Content */}
         <div className="space-y-2">
           <label htmlFor="content" className="text-sm font-medium text-text">
-            İçerik
+            Content
           </label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Yazınızın içeriğini buraya yazın..."
+            placeholder="Write your post content here..."
             rows={12}
             className="w-full px-4 py-3 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors resize-y min-h-[200px]"
           />
@@ -189,14 +189,14 @@ const CreatePostPage = () => {
         {/* Image Upload */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-text">
-            Kapak Görseli
+            Cover image
           </label>
 
           {imagePreview ? (
             <div className="relative rounded-xl overflow-hidden border border-border">
               <img
                 src={imagePreview}
-                alt="Önizleme"
+                alt="Preview"
                 className="w-full max-h-64 object-cover"
               />
               {uploading && (
@@ -217,10 +217,10 @@ const CreatePostPage = () => {
             <label className="flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary-400 hover:bg-muted/50 transition-colors">
               <HiOutlinePhotograph className="w-10 h-10 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                Görsel yüklemek için tıklayın
+                Click to upload an image
               </span>
               <span className="text-xs text-muted-foreground/60">
-                JPEG, PNG veya WebP — Maks. 5 MB
+                JPEG, PNG, or WebP — Max. 5 MB
               </span>
               <input
                 type="file"
@@ -236,7 +236,7 @@ const CreatePostPage = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="tags" className="text-sm font-medium text-text">
-              Etiketler
+              Tags
             </label>
             <span className="text-xs text-muted-foreground">
               {tags.length}/{TAGS_MAX}
@@ -255,7 +255,7 @@ const CreatePostPage = () => {
                     type="button"
                     onClick={() => removeTag(tag)}
                     className="p-0.5 hover:text-primary-900 dark:hover:text-primary-100 cursor-pointer"
-                    aria-label={`${tag} etiketini kaldır`}
+                    aria-label={`Remove tag ${tag}`}
                   >
                     <HiOutlineX className="w-3.5 h-3.5" />
                   </button>
@@ -270,7 +270,7 @@ const CreatePostPage = () => {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleAddTag}
-            placeholder="Etiket yazın ve Enter'a basın (virgülle ayırarak da ekleyebilirsiniz)"
+            placeholder="Type tags and press Enter (comma-separated tags work too)"
             disabled={tags.length >= TAGS_MAX}
             className="w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           />
@@ -284,10 +284,10 @@ const CreatePostPage = () => {
             className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {submitting
-              ? "Gönderiliyor..."
+              ? "Submitting..."
               : isAdmin
-              ? "Yayınla"
-              : "İncelemeye Gönder"}
+              ? "Publish"
+              : "Submit for review"}
           </button>
         </div>
       </form>

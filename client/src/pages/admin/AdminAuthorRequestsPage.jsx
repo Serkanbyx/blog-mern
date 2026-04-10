@@ -40,7 +40,7 @@ const AdminAuthorRequestsPage = () => {
       const result = data.data || data;
       setRequests(result.requests || []);
     } catch (err) {
-      setError(err.message || "Başvurular yüklenirken bir hata oluştu.");
+      setError(err.message || "Something went wrong while loading applications.");
     } finally {
       setLoading(false);
     }
@@ -52,16 +52,16 @@ const AdminAuthorRequestsPage = () => {
 
   const handleApprove = useCallback(
     async (requestId) => {
-      if (!window.confirm("Bu başvuruyu onaylamak istediğinize emin misiniz?"))
+      if (!window.confirm("Are you sure you want to approve this application?"))
         return;
 
       setActionLoading(requestId);
       try {
         await approveAuthorRequest(requestId);
-        toast.success("Kullanıcı yazar olarak terfi ettirildi.");
+        toast.success("User promoted to author.");
         setRequests((prev) => prev.filter((r) => r._id !== requestId));
       } catch (err) {
-        toast.error(err.message || "Başvuru onaylanamadı.");
+        toast.error(err.message || "Could not approve the application.");
       } finally {
         setActionLoading(null);
       }
@@ -81,7 +81,7 @@ const AdminAuthorRequestsPage = () => {
 
   const handleReject = useCallback(async () => {
     if (!rejectionReason.trim()) {
-      toast.error("Ret sebebi zorunludur.");
+      toast.error("A rejection reason is required.");
       return;
     }
 
@@ -89,11 +89,11 @@ const AdminAuthorRequestsPage = () => {
     setActionLoading(requestId);
     try {
       await rejectAuthorRequest(requestId, rejectionReason.trim());
-      toast.success("Başvuru reddedildi.");
+      toast.success("Application rejected.");
       setRequests((prev) => prev.filter((r) => r._id !== requestId));
       closeRejectModal();
     } catch (err) {
-      toast.error(err.message || "Başvuru reddedilemedi.");
+      toast.error(err.message || "Could not reject the application.");
     } finally {
       setActionLoading(null);
     }
@@ -108,7 +108,7 @@ const AdminAuthorRequestsPage = () => {
           <HiOutlineExclamation className="w-7 h-7 text-red-500" />
         </div>
         <h3 className="text-lg font-semibold text-text mb-1">
-          Bir hata oluştu
+          Something went wrong
         </h3>
         <p className="text-sm text-muted-foreground">{error}</p>
       </div>
@@ -121,9 +121,9 @@ const AdminAuthorRequestsPage = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Yazar Başvuruları</h1>
+        <h1 className="text-2xl font-bold text-text">Author applications</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Bekleyen yazar başvurularını inceleyin ve onaylayın veya reddedin.
+          Review pending author applications, then approve or reject them.
         </p>
       </div>
 
@@ -185,12 +185,12 @@ const RequestCard = ({ request, isLoading, onApprove, onReject }) => {
             </span>
             <span className="flex items-center gap-1">
               <HiOutlineCalendar className="w-3.5 h-3.5" />
-              Katılım: {formatDate(user.createdAt)}
+              Joined: {formatDate(user.createdAt)}
             </span>
             {(request.stats || user.stats) && (
               <span className="flex items-center gap-1">
                 <HiOutlineChatAlt2 className="w-3.5 h-3.5" />
-                {(request.stats || user.stats)?.totalComments ?? 0} yorum
+                {(request.stats || user.stats)?.totalComments ?? 0} comments
               </span>
             )}
           </div>
@@ -200,16 +200,16 @@ const RequestCard = ({ request, isLoading, onApprove, onReject }) => {
       {/* Motivation Message */}
       <div className="bg-muted/50 rounded-lg p-4">
         <p className="text-xs font-medium text-muted-foreground mb-1.5">
-          Başvuru Mesajı
+          Application message
         </p>
         <p className="text-sm text-text leading-relaxed whitespace-pre-line">
-          {request.message || "Mesaj belirtilmemiş."}
+          {request.message || "No message provided."}
         </p>
       </div>
 
       {/* Request Date */}
       <p className="text-xs text-muted-foreground">
-        Başvuru tarihi: {formatDate(request.createdAt)}
+        Applied on: {formatDate(request.createdAt)}
       </p>
 
       {/* Actions */}
@@ -220,7 +220,7 @@ const RequestCard = ({ request, isLoading, onApprove, onReject }) => {
           className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
         >
           <HiOutlineCheck className="w-4 h-4" />
-          Onayla
+          Approve
         </button>
         <button
           onClick={() => onReject(request._id)}
@@ -228,7 +228,7 @@ const RequestCard = ({ request, isLoading, onApprove, onReject }) => {
           className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
         >
           <HiOutlineX className="w-4 h-4" />
-          Reddet
+          Reject
         </button>
       </div>
     </div>
@@ -246,16 +246,16 @@ const RejectModal = ({
     <div className="fixed inset-0 bg-black/50" onClick={onClose} />
     <div className="relative bg-card border border-border rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-text">Başvuruyu Reddet</h3>
+        <h3 className="text-lg font-semibold text-text">Reject application</h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Ret sebebini belirtin. Bu mesaj kullanıcıya iletilecektir.
+          Provide a rejection reason. This message will be sent to the user.
         </p>
       </div>
 
       <textarea
         value={rejectionReason}
         onChange={(e) => setRejectionReason(e.target.value)}
-        placeholder="Ret sebebini yazın..."
+        placeholder="Enter the rejection reason..."
         rows={4}
         className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-colors"
         autoFocus
@@ -267,7 +267,7 @@ const RejectModal = ({
           disabled={isLoading}
           className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-text transition-colors cursor-pointer disabled:opacity-50"
         >
-          İptal
+          Cancel
         </button>
         <button
           onClick={onConfirm}
@@ -277,12 +277,12 @@ const RejectModal = ({
           {isLoading ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Reddediliyor...
+              Rejecting...
             </>
           ) : (
             <>
               <HiOutlineX className="w-4 h-4" />
-              Reddet
+              Reject
             </>
           )}
         </button>
@@ -297,10 +297,10 @@ const EmptyState = () => (
       <HiOutlinePencilAlt className="w-7 h-7 text-muted-foreground" />
     </div>
     <h3 className="text-lg font-semibold text-text mb-1">
-      Bekleyen Başvuru Yok
+      No pending applications
     </h3>
     <p className="text-sm text-muted-foreground max-w-sm">
-      Şu anda onay bekleyen yazar başvurusu bulunmuyor.
+      There are no author applications awaiting approval right now.
     </p>
   </div>
 );

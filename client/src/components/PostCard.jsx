@@ -132,7 +132,7 @@ const PostCard = ({ post, onLikeUpdate }) => {
           <button
             onClick={handleLike}
             disabled={likeLoading}
-            aria-label={liked ? "Beğeniyi kaldır" : "Beğen"}
+            aria-label={liked ? "Remove like" : "Like"}
             className="flex items-center gap-1.5 text-sm transition-colors cursor-pointer group/like disabled:opacity-50"
           >
             {liked ? (
