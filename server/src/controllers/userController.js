@@ -159,8 +159,15 @@ const updatePreferences = async (req, res, next) => {
   }
 };
 
-// Resolve dot-notation paths from a nested object (e.g. "privacy.showEmail" → body.privacy.showEmail)
+// Resolve dot-notation paths supporting both flat keys ("privacy.showEmail": false)
+// and nested objects ({ privacy: { showEmail: false } })
 const getNestedValue = (obj, path) => {
+  if (obj == null || typeof obj !== "object") return undefined;
+
+  if (Object.prototype.hasOwnProperty.call(obj, path)) {
+    return obj[path];
+  }
+
   const keys = path.split(".");
   let current = obj;
 
