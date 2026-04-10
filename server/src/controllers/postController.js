@@ -42,7 +42,7 @@ const sanitizeContent = (rawContent) => {
 // POST /api/posts
 const createPost = async (req, res, next) => {
   try {
-    const { title, content, image, tags } = req.body;
+    const { title, content, image, tags, submit } = req.body;
 
     if (image && !isValidImageUrl(image)) {
       return res.status(400).json({
@@ -51,13 +51,18 @@ const createPost = async (req, res, next) => {
       });
     }
 
+    const isAdmin = req.user.role === "admin";
+    let status = "draft";
+    if (isAdmin) status = "published";
+    else if (submit) status = "pending";
+
     const postData = {
       title,
       content: sanitizeContent(content),
       image: image || "",
       tags: sanitizeTags(tags),
       author: req.user._id,
-      status: req.user.role === "admin" ? "published" : "draft",
+      status,
     };
 
     const post = new Post(postData);
@@ -228,7 +233,7 @@ const updatePost = async (req, res, next) => {
         .json({ success: false, message: "You can only edit your own posts." });
     }
 
-    const { title, content, image, tags } = req.body;
+    const { title, content, image, tags, submit } = req.body;
 
     if (image !== undefined && !isValidImageUrl(image)) {
       return res.status(400).json({
@@ -244,7 +249,12 @@ const updatePost = async (req, res, next) => {
 
     const isAdmin = req.user.role === "admin";
 
-    if (post.status === "published" && !isAdmin) {
+    if (isAdmin) {
+      // Admin edits keep current status (published stays published)
+    } else if (submit) {
+      post.status = "pending";
+      post.rejectionReason = "";
+    } else if (post.status === "published") {
       post.status = "draft";
     } else if (post.status === "pending") {
       post.status = "draft";

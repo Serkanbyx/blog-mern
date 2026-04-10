@@ -8,7 +8,7 @@ import {
 } from "react-icons/hi";
 import toast from "react-hot-toast";
 import useAuth from "../hooks/useAuth";
-import { createPost, submitPost } from "../api/services/postService";
+import { createPost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
 import { TITLE_MAX, TAGS_MAX } from "../utils/constants";
 
@@ -89,17 +89,13 @@ const CreatePostPage = () => {
 
     setSubmitting(true);
     try {
-      const { data } = await createPost({
+      await createPost({
         title: title.trim(),
         content: content.trim(),
         image: imageUrl,
         tags,
+        submit: !isAdmin,
       });
-
-      if (!isAdmin) {
-        const postId = data.post?._id || data._id;
-        await submitPost(postId);
-      }
 
       toast.success(
         isAdmin

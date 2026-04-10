@@ -10,7 +10,7 @@ import {
 } from "react-icons/hi";
 import toast from "react-hot-toast";
 import useAuth from "../hooks/useAuth";
-import { getMyPostById, updatePost, submitPost } from "../api/services/postService";
+import { getMyPostById, updatePost } from "../api/services/postService";
 import { uploadImage } from "../api/services/uploadService";
 import { TITLE_MAX, TAGS_MAX } from "../utils/constants";
 
@@ -123,10 +123,10 @@ const EditPostPage = () => {
         content: content.trim(),
         image: imageUrl,
         tags,
+        submit: shouldSubmit && !isAdmin,
       });
 
       if (shouldSubmit && !isAdmin) {
-        await submitPost(id);
         toast.success("Post sent for review.");
       } else if (shouldSubmit && isAdmin) {
         toast.success("Post updated and published.");
