@@ -7,8 +7,7 @@ const registerRules = [
   body("name")
     .trim()
     .isLength({ min: 2, max: 50 })
-    .withMessage("Name must be between 2 and 50 characters")
-    .escape(),
+    .withMessage("Name must be between 2 and 50 characters"),
   body("email")
     .isEmail()
     .withMessage("Please provide a valid email")
@@ -52,8 +51,7 @@ const createPostRules = [
     .trim()
     .isLength({ min: 3, max: 150 })
     .withMessage("Title must be between 3 and 150 characters")
-    .custom(slugifyTitle)
-    .escape(),
+    .custom(slugifyTitle),
   body("content")
     .trim()
     .isLength({ min: 10 })
@@ -66,8 +64,7 @@ const updatePostRules = [
     .trim()
     .isLength({ min: 3, max: 150 })
     .withMessage("Title must be between 3 and 150 characters")
-    .custom(slugifyTitle)
-    .escape(),
+    .custom(slugifyTitle),
   body("content")
     .optional()
     .trim()
@@ -81,8 +78,7 @@ const createCommentRules = [
   body("text")
     .trim()
     .isLength({ min: 1, max: 500 })
-    .withMessage("Comment must be between 1 and 500 characters")
-    .escape(),
+    .withMessage("Comment must be between 1 and 500 characters"),
 ];
 
 // ─── Author Requests ──────────────────────────────────────────
@@ -91,8 +87,7 @@ const authorRequestRules = [
   body("message")
     .trim()
     .isLength({ min: 10, max: 500 })
-    .withMessage("Message must be between 10 and 500 characters")
-    .escape(),
+    .withMessage("Message must be between 10 and 500 characters"),
 ];
 
 // ─── Admin ────────────────────────────────────────────────────
@@ -107,8 +102,7 @@ const rejectionRules = [
   body("rejectionReason")
     .trim()
     .isLength({ min: 1, max: 500 })
-    .withMessage("Rejection reason must be between 1 and 500 characters")
-    .escape(),
+    .withMessage("Rejection reason must be between 1 and 500 characters"),
 ];
 
 // ─── Preferences ─────────────────────────────────────────────

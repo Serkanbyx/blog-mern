@@ -32,19 +32,13 @@ export const PreferencesProvider = ({ children }) => {
     return getStoredPreferences();
   });
 
-  const [prevUser, setPrevUser] = useState(user);
-  const [prevIsAuthenticated, setPrevIsAuthenticated] = useState(isAuthenticated);
-
-  if (prevUser !== user || prevIsAuthenticated !== isAuthenticated) {
-    setPrevUser(user);
-    setPrevIsAuthenticated(isAuthenticated);
-
+  useEffect(() => {
     if (user?.preferences) {
       setPreferences({ ...DEFAULT_PREFERENCES, ...user.preferences });
     } else if (!isAuthenticated) {
       setPreferences(getStoredPreferences());
     }
-  }
+  }, [user, isAuthenticated]);
 
   // Apply theme to <html>
   useEffect(() => {
