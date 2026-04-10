@@ -21,7 +21,7 @@ export const approveAuthorRequest = (id) =>
   api.patch(`/admin/author-requests/${id}/approve`);
 
 export const rejectAuthorRequest = (id, reason) =>
-  api.patch(`/admin/author-requests/${id}/reject`, { reason });
+  api.patch(`/admin/author-requests/${id}/reject`, { rejectionReason: reason });
 
 // Post moderation
 export const getAllPostsAdmin = (params) =>
@@ -33,7 +33,7 @@ export const getPendingPosts = (params) =>
 export const approvePost = (id) => api.patch(`/admin/posts/${id}/approve`);
 
 export const rejectPost = (id, reason) =>
-  api.patch(`/admin/posts/${id}/reject`, { reason });
+  api.patch(`/admin/posts/${id}/reject`, { rejectionReason: reason });
 
 export const adminDeletePost = (id) => api.delete(`/admin/posts/${id}`);
 
