@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
@@ -231,26 +232,60 @@ const deleteUser = async (req, res, next) => {
       });
     }
 
-    // Cascade delete all related data
+    // Collect user's post IDs for cascade deletion
     const userPosts = await Post.find({ author: targetUser._id }).select("_id");
     const postIds = userPosts.map((p) => p._id);
 
-    const [deletedPosts, deletedComments, deletedGuestLikes, deletedRequests] =
-      await Promise.all([
-        Post.deleteMany({ author: targetUser._id }),
-        Comment.deleteMany({
-          $or: [{ user: targetUser._id }, { postId: { $in: postIds } }],
-        }),
-        GuestLike.deleteMany({ postId: { $in: postIds } }),
-        AuthorRequest.deleteMany({ user: targetUser._id }),
-        // Remove user from likes arrays on other posts
-        Post.updateMany(
-          { likes: targetUser._id },
-          { $pull: { likes: targetUser._id } }
-        ),
-      ]);
+    // Count this user's comments on OTHER people's posts (to fix their commentsCount)
+    const affectedPosts = await Comment.aggregate([
+      { $match: { user: targetUser._id, postId: { $nin: postIds } } },
+      { $group: { _id: "$postId", count: { $sum: 1 } } },
+    ]);
 
-    await User.findByIdAndDelete(targetUser._id);
+    const session = await mongoose.startSession();
+    let deletedPosts, deletedComments, deletedGuestLikes, deletedRequests;
+
+    try {
+      session.startTransaction();
+
+      [deletedPosts, deletedComments, deletedGuestLikes, deletedRequests] =
+        await Promise.all([
+          Post.deleteMany({ author: targetUser._id }, { session }),
+          Comment.deleteMany(
+            { $or: [{ user: targetUser._id }, { postId: { $in: postIds } }] },
+            { session }
+          ),
+          GuestLike.deleteMany({ postId: { $in: postIds } }, { session }),
+          AuthorRequest.deleteMany({ user: targetUser._id }, { session }),
+          Post.updateMany(
+            { likes: targetUser._id },
+            { $pull: { likes: targetUser._id } },
+            { session }
+          ),
+        ]);
+
+      // Recalculate commentsCount on other people's posts
+      if (affectedPosts.length > 0) {
+        await Post.bulkWrite(
+          affectedPosts.map(({ _id, count }) => ({
+            updateOne: {
+              filter: { _id },
+              update: { $inc: { commentsCount: -count } },
+            },
+          })),
+          { session }
+        );
+      }
+
+      await User.findByIdAndDelete(targetUser._id, { session });
+
+      await session.commitTransaction();
+    } catch (txError) {
+      await session.abortTransaction();
+      throw txError;
+    } finally {
+      session.endSession();
+    }
 
     res.json({
       success: true,

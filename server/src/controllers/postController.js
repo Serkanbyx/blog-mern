@@ -324,20 +324,14 @@ const deletePost = async (req, res, next) => {
         .json({ success: false, message: "You are not authorized to delete this post." });
     }
 
-    // Lazy-load to avoid issues if Comment/GuestLike models aren't created yet
-    let Comment, GuestLike;
-    try {
-      Comment = require("../models/Comment");
-    } catch { /* model not yet created */ }
-    try {
-      GuestLike = require("../models/GuestLike");
-    } catch { /* model not yet created */ }
+    const Comment = require("../models/Comment");
+    const GuestLike = require("../models/GuestLike");
 
-    const deletionTasks = [post.deleteOne()];
-    if (Comment) deletionTasks.push(Comment.deleteMany({ post: post._id }));
-    if (GuestLike) deletionTasks.push(GuestLike.deleteMany({ postId: post._id }));
-
-    await Promise.all(deletionTasks);
+    await Promise.all([
+      post.deleteOne(),
+      Comment.deleteMany({ postId: post._id }),
+      GuestLike.deleteMany({ postId: post._id }),
+    ]);
 
     res.json({ success: true, message: "Post deleted successfully." });
   } catch (error) {

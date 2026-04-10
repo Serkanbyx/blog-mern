@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const { setTokenCookie, clearTokenCookie } = require("../utils/cookieToken");
@@ -140,18 +141,66 @@ const deleteAccount = async (req, res, next) => {
       }
     }
 
-    // Lazy-load models to avoid circular dependency issues at startup
     const Post = require("../models/Post");
     const Comment = require("../models/Comment");
+    const GuestLike = require("../models/GuestLike");
     const AuthorRequest = require("../models/AuthorRequest");
 
-    await Promise.all([
-      Post.deleteMany({ author: user._id }),
-      Comment.deleteMany({ author: user._id }),
-      Post.updateMany({}, { $pull: { likes: user._id } }),
-      AuthorRequest.deleteMany({ user: user._id }),
-      user.deleteOne(),
+    // Collect user's post IDs for cascade deletion
+    const userPosts = await Post.find({ author: user._id }).select("_id");
+    const postIds = userPosts.map((p) => p._id);
+
+    // Count this user's comments on OTHER people's posts (to fix their commentsCount)
+    const affectedPosts = await Comment.aggregate([
+      { $match: { user: user._id, postId: { $nin: postIds } } },
+      { $group: { _id: "$postId", count: { $sum: 1 } } },
     ]);
+
+    const session = await mongoose.startSession();
+    try {
+      session.startTransaction();
+
+      // Delete comments authored by this user on all posts
+      await Comment.deleteMany({ user: user._id }, { session });
+
+      // Delete comments and guest likes on the user's own posts
+      if (postIds.length > 0) {
+        await Comment.deleteMany({ postId: { $in: postIds } }, { session });
+        await GuestLike.deleteMany({ postId: { $in: postIds } }, { session });
+      }
+
+      // Recalculate commentsCount on other people's posts
+      if (affectedPosts.length > 0) {
+        await Post.bulkWrite(
+          affectedPosts.map(({ _id, count }) => ({
+            updateOne: {
+              filter: { _id },
+              update: { $inc: { commentsCount: -count } },
+            },
+          })),
+          { session }
+        );
+      }
+
+      await Post.deleteMany({ author: user._id }, { session });
+
+      // Remove user from likes arrays — scoped to posts they actually liked
+      await Post.updateMany(
+        { likes: user._id },
+        { $pull: { likes: user._id } },
+        { session }
+      );
+
+      await AuthorRequest.deleteMany({ user: user._id }, { session });
+      await user.deleteOne({ session });
+
+      await session.commitTransaction();
+    } catch (txError) {
+      await session.abortTransaction();
+      throw txError;
+    } finally {
+      session.endSession();
+    }
 
     res.json({ success: true, message: "Account deleted successfully" });
   } catch (error) {
