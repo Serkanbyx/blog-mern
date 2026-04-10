@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 const User = require("../models/User");
@@ -129,26 +130,62 @@ const getUserComments = async (req, res, next) => {
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
-    const [comments, totalComments] = await Promise.all([
-      Comment.find({ user: userId })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate({
-          path: "postId",
-          select: "title slug status",
-          match: { status: "published" },
-        })
-        .populate("user", "name avatar"),
-      Comment.countDocuments({ user: userId }),
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const [result] = await Comment.aggregate([
+      { $match: { user: userObjectId } },
+      {
+        $lookup: {
+          from: "posts",
+          localField: "postId",
+          foreignField: "_id",
+          as: "post",
+        },
+      },
+      { $unwind: "$post" },
+      { $match: { "post.status": "published" } },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          metadata: [{ $count: "totalComments" }],
+          comments: [
+            { $skip: skip },
+            { $limit: limit },
+            {
+              $lookup: {
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "user",
+              },
+            },
+            { $unwind: "$user" },
+            {
+              $project: {
+                _id: 1,
+                text: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                "postId._id": "$post._id",
+                "postId.title": "$post.title",
+                "postId.slug": "$post.slug",
+                "postId.status": "$post.status",
+                "user._id": 1,
+                "user.name": 1,
+                "user.avatar": 1,
+              },
+            },
+          ],
+        },
+      },
     ]);
 
-    // Filter out comments whose post was not published (populate match returns null)
-    const filteredComments = comments.filter((c) => c.postId !== null);
+    const totalComments = result.metadata[0]?.totalComments || 0;
+    const comments = result.comments;
 
     res.json({
       success: true,
-      comments: filteredComments,
+      comments,
       page,
       totalPages: Math.ceil(totalComments / limit) || 1,
       totalComments,
