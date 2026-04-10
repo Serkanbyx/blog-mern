@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const sanitizeHtml = require("sanitize-html");
 const escapeRegex = require("../utils/escapeRegex");
+const { deleteCloudinaryAsset } = require("../utils/cloudinaryDelete");
 
 /**
  * Validates image URL — only allows internal /uploads/ paths or HTTP(S) URLs.
@@ -56,10 +57,13 @@ const createPost = async (req, res, next) => {
     if (isAdmin) status = "published";
     else if (submit) status = "pending";
 
+    const { imagePublicId } = req.body;
+
     const postData = {
       title,
       content: sanitizeContent(content),
       image: image || "",
+      imagePublicId: imagePublicId || "",
       tags: sanitizeTags(tags),
       author: req.user._id,
       status,
@@ -233,7 +237,7 @@ const updatePost = async (req, res, next) => {
         .json({ success: false, message: "You can only edit your own posts." });
     }
 
-    const { title, content, image, tags, submit } = req.body;
+    const { title, content, image, imagePublicId, tags, submit } = req.body;
 
     if (image !== undefined && !isValidImageUrl(image)) {
       return res.status(400).json({
@@ -244,7 +248,14 @@ const updatePost = async (req, res, next) => {
 
     if (title !== undefined) post.title = title;
     if (content !== undefined) post.content = sanitizeContent(content);
+
+    // Delete old Cloudinary image when replaced or removed
+    if (image !== undefined && image !== post.image && post.imagePublicId) {
+      await deleteCloudinaryAsset(post.imagePublicId);
+    }
     if (image !== undefined) post.image = image;
+    if (imagePublicId !== undefined) post.imagePublicId = imagePublicId || "";
+
     if (tags !== undefined) post.tags = sanitizeTags(tags);
 
     const isAdmin = req.user.role === "admin";
@@ -333,11 +344,17 @@ const deletePost = async (req, res, next) => {
     const Comment = require("../models/Comment");
     const GuestLike = require("../models/GuestLike");
 
+    const oldPublicId = post.imagePublicId;
+
     await Promise.all([
       post.deleteOne(),
       Comment.deleteMany({ postId: post._id }),
       GuestLike.deleteMany({ postId: post._id }),
     ]);
+
+    if (oldPublicId) {
+      await deleteCloudinaryAsset(oldPublicId);
+    }
 
     res.json({ success: true, message: "Post deleted successfully." });
   } catch (error) {

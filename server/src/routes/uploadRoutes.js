@@ -46,6 +46,7 @@ router.post("/", protect, (req, res) => {
       res.status(200).json({
         success: true,
         url: result.secure_url,
+        publicId: result.public_id,
       });
     } catch (error) {
       console.error("Cloudinary upload error:", error?.message || error);

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const { setTokenCookie, clearTokenCookie } = require("../utils/cookieToken");
+const { deleteCloudinaryAsset, deleteCloudinaryAssets } = require("../utils/cloudinaryDelete");
 
 // Format user payload for API response (never expose password)
 const formatUserResponse = (user) => ({
@@ -66,12 +67,20 @@ const getMe = async (req, res) => {
 // PUT /api/auth/me
 const updateProfile = async (req, res, next) => {
   try {
-    const allowedFields = ["name", "bio", "avatar"];
+    const allowedFields = ["name", "bio", "avatar", "avatarPublicId"];
     const updates = {};
 
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
+      }
+    }
+
+    // Delete the old Cloudinary avatar when a new one is uploaded
+    if (updates.avatar !== undefined && updates.avatar !== req.user.avatar) {
+      const currentUser = await User.findById(req.user._id).select("avatarPublicId");
+      if (currentUser?.avatarPublicId) {
+        await deleteCloudinaryAsset(currentUser.avatarPublicId);
       }
     }
 
@@ -121,7 +130,7 @@ const deleteAccount = async (req, res, next) => {
   try {
     const { password } = req.body;
 
-    const user = await User.findById(req.user._id).select("+password");
+    const user = await User.findById(req.user._id).select("+password avatarPublicId");
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
@@ -146,9 +155,15 @@ const deleteAccount = async (req, res, next) => {
     const GuestLike = require("../models/GuestLike");
     const AuthorRequest = require("../models/AuthorRequest");
 
-    // Collect user's post IDs for cascade deletion
-    const userPosts = await Post.find({ author: user._id }).select("_id");
+    // Collect user's posts for cascade deletion and Cloudinary cleanup
+    const userPosts = await Post.find({ author: user._id }).select("_id imagePublicId");
     const postIds = userPosts.map((p) => p._id);
+
+    // Collect all Cloudinary public IDs to delete (avatar + post images)
+    const cloudinaryIds = userPosts
+      .map((p) => p.imagePublicId)
+      .filter(Boolean);
+    if (user.avatarPublicId) cloudinaryIds.push(user.avatarPublicId);
 
     // Count this user's comments on OTHER people's posts (to fix their commentsCount)
     const affectedPosts = await Comment.aggregate([
@@ -208,6 +223,11 @@ const deleteAccount = async (req, res, next) => {
       throw txError;
     } finally {
       session.endSession();
+    }
+
+    // Delete Cloudinary assets after successful DB transaction
+    if (cloudinaryIds.length > 0) {
+      await deleteCloudinaryAssets(cloudinaryIds);
     }
 
     res.json({ success: true, message: "Account deleted successfully" });

@@ -27,6 +27,7 @@ const EditPostPage = () => {
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imagePublicId, setImagePublicId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -42,6 +43,7 @@ const EditPostPage = () => {
         setContent(postData.content || "");
         setTags(postData.tags || []);
         setImageUrl(postData.image || "");
+        setImagePublicId(postData.imagePublicId || "");
         setImagePreview(postData.image || "");
       } catch (err) {
         setError(err.message || "Could not load post.");
@@ -77,8 +79,9 @@ const EditPostPage = () => {
 
     setUploading(true);
     try {
-      const url = await uploadImage(file);
+      const { url, publicId } = await uploadImage(file);
       setImageUrl(url);
+      setImagePublicId(publicId);
       toast.success("Image uploaded.");
     } catch (err) {
       toast.error(err.message || "Could not upload image.");
@@ -95,6 +98,7 @@ const EditPostPage = () => {
     previewUrlRef.current = null;
     setImagePreview("");
     setImageUrl("");
+    setImagePublicId("");
   }, []);
 
   const handleAddTag = useCallback(
@@ -137,6 +141,7 @@ const EditPostPage = () => {
         title: title.trim(),
         content: content.trim(),
         image: imageUrl,
+        imagePublicId,
         tags,
         submit: shouldSubmit && !isAdmin,
       });

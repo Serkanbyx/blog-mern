@@ -60,15 +60,19 @@ const SettingsProfilePage = () => {
     setIsSaving(true);
     try {
       let avatarUrl = user?.avatar || "";
+      let avatarPublicId = user?.avatarPublicId || "";
 
       if (avatarFile) {
-        avatarUrl = await uploadImage(avatarFile);
+        const result = await uploadImage(avatarFile);
+        avatarUrl = result.url;
+        avatarPublicId = result.publicId;
       }
 
       await updateUser({
         name: trimmedName,
         bio: bio.trim(),
         avatar: avatarUrl,
+        avatarPublicId,
       });
 
       setAvatarFile(null);

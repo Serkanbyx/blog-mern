@@ -199,8 +199,8 @@ const UserProfilePage = () => {
 
       setAvatarUploading(true);
       try {
-        const avatarUrl = await uploadImage(file);
-        await updateUser({ avatar: avatarUrl });
+        const { url: avatarUrl, publicId: avatarPublicId } = await uploadImage(file);
+        await updateUser({ avatar: avatarUrl, avatarPublicId });
         setProfile((prev) => ({ ...prev, avatar: avatarUrl }));
         setShowAvatarModal(false);
         toast.success("Profile photo updated.");

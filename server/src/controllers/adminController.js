@@ -5,6 +5,7 @@ const Comment = require("../models/Comment");
 const AuthorRequest = require("../models/AuthorRequest");
 const GuestLike = require("../models/GuestLike");
 const escapeRegex = require("../utils/escapeRegex");
+const { deleteCloudinaryAsset, deleteCloudinaryAssets } = require("../utils/cloudinaryDelete");
 
 // ─── Dashboard ───────────────────────────────────────────────
 
@@ -232,9 +233,15 @@ const deleteUser = async (req, res, next) => {
       });
     }
 
-    // Collect user's post IDs for cascade deletion
-    const userPosts = await Post.find({ author: targetUser._id }).select("_id");
+    // Collect user's posts for cascade deletion and Cloudinary cleanup
+    const userPosts = await Post.find({ author: targetUser._id }).select("_id imagePublicId");
     const postIds = userPosts.map((p) => p._id);
+
+    // Collect all Cloudinary public IDs to delete (avatar + post images)
+    const cloudinaryIds = userPosts
+      .map((p) => p.imagePublicId)
+      .filter(Boolean);
+    if (targetUser.avatarPublicId) cloudinaryIds.push(targetUser.avatarPublicId);
 
     // Count this user's comments on OTHER people's posts (to fix their commentsCount)
     const affectedPosts = await Comment.aggregate([
@@ -294,6 +301,11 @@ const deleteUser = async (req, res, next) => {
       throw txError;
     } finally {
       session.endSession();
+    }
+
+    // Delete Cloudinary assets after successful DB transaction
+    if (cloudinaryIds.length > 0) {
+      await deleteCloudinaryAssets(cloudinaryIds);
     }
 
     res.json({
@@ -592,12 +604,18 @@ const adminDeletePost = async (req, res, next) => {
         .json({ success: false, message: "Post not found." });
     }
 
+    const oldPublicId = post.imagePublicId;
+
     const [deletedComments, deletedGuestLikes] = await Promise.all([
       Comment.deleteMany({ postId: post._id }),
       GuestLike.deleteMany({ postId: post._id }),
     ]);
 
     await Post.findByIdAndDelete(post._id);
+
+    if (oldPublicId) {
+      await deleteCloudinaryAsset(oldPublicId);
+    }
 
     res.json({
       success: true,

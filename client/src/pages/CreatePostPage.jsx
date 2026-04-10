@@ -22,6 +22,7 @@ const CreatePostPage = () => {
   const [tagInput, setTagInput] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imagePublicId, setImagePublicId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const previewUrlRef = useRef(null);
@@ -44,8 +45,9 @@ const CreatePostPage = () => {
 
     setUploading(true);
     try {
-      const url = await uploadImage(file);
+      const { url, publicId } = await uploadImage(file);
       setImageUrl(url);
+      setImagePublicId(publicId);
       toast.success("Image uploaded.");
     } catch (err) {
       toast.error(err.message || "Could not upload image.");
@@ -53,6 +55,7 @@ const CreatePostPage = () => {
       previewUrlRef.current = null;
       setImagePreview("");
       setImageUrl("");
+      setImagePublicId("");
     } finally {
       setUploading(false);
     }
@@ -63,6 +66,7 @@ const CreatePostPage = () => {
     previewUrlRef.current = null;
     setImagePreview("");
     setImageUrl("");
+    setImagePublicId("");
   }, []);
 
   const handleAddTag = useCallback(
@@ -107,6 +111,7 @@ const CreatePostPage = () => {
         title: title.trim(),
         content: content.trim(),
         image: imageUrl,
+        imagePublicId,
         tags,
         submit: !isAdmin,
       });
