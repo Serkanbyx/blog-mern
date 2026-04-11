@@ -2,6 +2,15 @@
   command = "npm run build"
   publish = "dist"
 
+# Proxy API requests to Render backend (must be BEFORE SPA fallback)
+[[redirects]]
+  from = "/api/*"
+  to = "https://blog-mern-lnre.onrender.com/api/:splat"
+  status = 200
+  force = true
+  headers = {X-Custom-Auth = "true"}
+
+# SPA fallback — serves index.html for all client-side routes
 [[redirects]]
   from = "/*"
   to = "/index.html"

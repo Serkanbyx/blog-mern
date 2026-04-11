@@ -5,7 +5,7 @@ const COOKIE_NAME = "jwt";
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: NODE_ENV === "production",
-  sameSite: NODE_ENV === "production" ? "none" : "lax",
+  sameSite: "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: "/",
 };
@@ -24,7 +24,7 @@ const clearTokenCookie = (res) => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
     secure: NODE_ENV === "production",
-    sameSite: NODE_ENV === "production" ? "none" : "lax",
+    sameSite: "lax",
     path: "/",
   });
 };
