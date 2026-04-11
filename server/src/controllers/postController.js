@@ -140,18 +140,29 @@ const getAllPosts = async (req, res, next) => {
   }
 };
 
-// GET /api/posts/:slug (public — published only)
+// GET /api/posts/:slug (public — published only, admins/authors can preview any status)
 const getPostBySlug = async (req, res, next) => {
   try {
     const post = await Post.findOne({
       slug: req.params.slug,
-      status: "published",
     }).populate("author", "name avatar bio");
 
     if (!post) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found." });
+    }
+
+    if (post.status !== "published") {
+      const isAdmin = req.user?.role === "admin";
+      const isOwner =
+        req.user && post.author._id.toString() === req.user._id.toString();
+
+      if (!isAdmin && !isOwner) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Post not found." });
+      }
     }
 
     const postObj = post.toObject();
