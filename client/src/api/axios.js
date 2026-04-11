@@ -29,9 +29,14 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const serverMessage = error.response.data?.message ?? "";
+      const requestUrl = error.config?.url ?? "";
+
+      // Skip redirect for session verification — AuthContext handles this gracefully
+      const isSessionCheck = requestUrl.includes("/auth/me") && error.config?.method === "get";
 
       if (
         TOKEN_FAILURE_MESSAGES.has(serverMessage) &&
+        !isSessionCheck &&
         window.location.pathname !== "/login"
       ) {
         window.location.href = "/login";
