@@ -1,15 +1,15 @@
 const ROLE_CONFIG = {
   user: {
     label: "User",
-    className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+    className: "bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
   },
   author: {
     label: "Author",
-    className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    className: "bg-blue-200 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
   },
   admin: {
     label: "Admin",
-    className: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+    className: "bg-purple-200 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
   },
 };
 

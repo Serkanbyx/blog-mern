@@ -287,8 +287,8 @@ const UserProfilePage = () => {
                 className="w-28 h-28 rounded-full object-cover border-2 border-border"
               />
             ) : (
-              <div className="w-28 h-28 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center border-2 border-border">
-                <span className="text-4xl font-bold text-primary-700 dark:text-primary-300">
+              <div className="w-28 h-28 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center border-2 border-primary-700 dark:border-border">
+                <span className="text-4xl font-bold text-white dark:text-primary-300">
                   {profile.name?.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -358,12 +358,12 @@ const UserProfilePage = () => {
       {isOwner && currentUser?.role === "user" && (
         <Link
           to="/become-author"
-          className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
+          className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-300 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
         >
-          <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+          <span className="text-sm font-medium text-primary-800 dark:text-primary-300">
             Want to write posts? Become an author
           </span>
-          <HiOutlineArrowRight className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
+          <HiOutlineArrowRight className="w-4 h-4 text-primary-700 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
         </Link>
       )}
 
@@ -372,12 +372,12 @@ const UserProfilePage = () => {
         postCount === 0 && (
           <Link
             to="/posts/new"
-            className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
+            className="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-300 dark:border-primary-800/40 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors group"
           >
-            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+            <span className="text-sm font-medium text-primary-800 dark:text-primary-300">
               Start by writing your first post
             </span>
-            <HiOutlineArrowRight className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
+            <HiOutlineArrowRight className="w-4 h-4 text-primary-700 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
           </Link>
         )}
 
@@ -401,9 +401,9 @@ const UserProfilePage = () => {
                 {tab.label}
                 {tab.count !== undefined && tab.count !== null && (
                   <span
-                    className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
                       isActive
-                        ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
+                        ? "bg-primary-600 text-white dark:bg-primary-900/40 dark:text-primary-300"
                         : "bg-muted text-muted-foreground"
                     }`}
                   >

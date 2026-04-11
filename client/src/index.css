@@ -31,13 +31,13 @@
   --color-background: #f8fafc;
   --color-foreground: #0f172a;
   --color-card-surface: #ffffff;
-  --color-card-text: #1e293b;
-  --color-muted-surface: #f1f5f9;
-  --color-muted-text: #64748b;
-  --color-accent-surface: #eff6ff;
-  --color-accent-text: #2563eb;
-  --color-border-line: #e2e8f0;
-  --color-destructive-surface: #ef4444;
+  --color-card-text: #0f172a;
+  --color-muted-surface: #eef2f7;
+  --color-muted-text: #475569;
+  --color-accent-surface: #eef4ff;
+  --color-accent-text: #1d4ed8;
+  --color-border-line: #cbd5e1;
+  --color-destructive-surface: #dc2626;
   --color-destructive-text: #ffffff;
 }
 

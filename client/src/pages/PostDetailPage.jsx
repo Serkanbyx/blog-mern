@@ -188,7 +188,7 @@ const PostDetailPage = () => {
               className="w-11 h-11 rounded-full object-cover border-2 border-border"
             />
           ) : (
-            <div className="w-11 h-11 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300">
+            <div className="w-11 h-11 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-white dark:text-primary-300">
               {post.author?.name?.charAt(0).toUpperCase()}
             </div>
           )}

@@ -533,15 +533,11 @@ blog-mern/
 1. Create a new site on [Netlify](https://app.netlify.com)
 2. Connect the GitHub repository
 3. Set **Base directory** to `client`, **Build command** to `npm run build`, **Publish directory** to `client/dist`
-4. Add environment variable:
+4. Update `netlify.toml` proxy target to your Render backend URL
+5. **Do NOT** set `VITE_API_URL` on Netlify — the `netlify.toml` proxy handles API routing automatically
+6. After deploy, update `CLIENT_URL` on Render to the Netlify URL for CORS
 
-| Variable | Value |
-| -------- | ----- |
-| `VITE_API_URL` | Your Render backend URL (e.g., `https://your-api.onrender.com/api`) |
-
-5. After deploy, update `CLIENT_URL` on Render to the Netlify URL for CORS
-
-> **Important:** The `netlify.toml` file handles SPA routing redirects automatically.
+> **Important:** The `netlify.toml` file handles both SPA routing and API proxying. All `/api/*` requests are proxied to the Render backend through the same domain, avoiding cross-origin cookie issues.
 
 ---
 

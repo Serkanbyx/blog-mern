@@ -157,7 +157,7 @@ const CommentSection = ({ postId }) => {
                 className="w-9 h-9 rounded-full object-cover border border-border shrink-0 mt-0.5"
               />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-semibold text-primary-700 dark:text-primary-300 shrink-0 mt-0.5">
+              <div className="w-9 h-9 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center text-xs font-semibold text-white dark:text-primary-300 shrink-0 mt-0.5">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
             )}
@@ -268,7 +268,7 @@ const CommentItem = ({ comment, currentUserId, isAdmin, onDelete }) => {
             className="w-9 h-9 rounded-full object-cover border border-border"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-semibold text-primary-700 dark:text-primary-300">
+          <div className="w-9 h-9 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center text-xs font-semibold text-white dark:text-primary-300">
             {comment.user?.name?.charAt(0).toUpperCase()}
           </div>
         )}

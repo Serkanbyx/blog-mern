@@ -34,7 +34,7 @@ const Navbar = () => {
   const navLinkClass = ({ isActive }) =>
     `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
       isActive
-        ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30"
+        ? "text-primary-700 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30"
         : "text-muted-foreground hover:text-text hover:bg-muted"
     }`;
 
@@ -45,7 +45,7 @@ const Navbar = () => {
           {/* Left: Logo */}
           <Link
             to="/"
-            className="text-xl font-bold text-primary-600 dark:text-primary-400 tracking-tight"
+            className="text-xl font-bold text-primary-700 dark:text-primary-400 tracking-tight"
           >
             BlogMERN
           </Link>
@@ -92,7 +92,7 @@ const Navbar = () => {
                       className="w-8 h-8 rounded-full object-cover border-2 border-border"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300">
+                    <div className="w-8 h-8 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-white dark:text-primary-300">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -200,7 +200,7 @@ const Navbar = () => {
                       className="w-10 h-10 rounded-full object-cover border-2 border-border"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-base font-semibold text-primary-700 dark:text-primary-300">
+                    <div className="w-10 h-10 rounded-full bg-primary-600 dark:bg-primary-900 flex items-center justify-center text-base font-semibold text-white dark:text-primary-300">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                   )}
