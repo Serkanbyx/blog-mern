@@ -1,15 +1,38 @@
-# 📝 Blog MERN
+<div align="center">
 
-A full-stack blog platform with role-based access control, post approval workflow, guest interactions, and a comprehensive admin panel. Built with the **MERN** stack (MongoDB, Express, React, Node.js). Features three-tier role system (User → Author → Admin), Cloudinary image uploads, dark/light theme, privacy controls, and a security-hardened backend.
+  <p>📝 <strong>Blog MERN</strong></p>
 
-[![Created by Serkanby](https://img.shields.io/badge/Created%20by-Serkanby-blue?style=flat-square)](https://serkanbayraktar.com/)
-[![GitHub](https://img.shields.io/badge/GitHub-Serkanbyx-181717?style=flat-square&logo=github)](https://github.com/Serkanbyx)
+  <h1>Blog MERN</h1>
+
+  <p><em>A full-stack blog platform with a three-tier role system, a post approval workflow, guest &amp; registered interactions, and a security-hardened MERN architecture.</em></p>
+
+  <p>
+    <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" />
+    <img src="https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen?style=flat-square" alt="Node.js version" />
+    <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React 19" />
+    <img src="https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white" alt="Express 5" />
+    <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB Atlas" />
+    <img src="https://img.shields.io/badge/Tailwind-v4-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" />
+    <img src="https://img.shields.io/badge/API-Render-46E3B7?style=flat-square&logo=render&logoColor=white" alt="API on Render" />
+    <img src="https://img.shields.io/badge/Web-Netlify-00C7B7?style=flat-square&logo=netlify&logoColor=white" alt="Web on Netlify" />
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs welcome" />
+  </p>
+
+  <p>
+    <a href="https://blog-mernn.netlify.app/">Live Demo</a> •
+    <a href="#features">Features</a> •
+    <a href="#installation">Quick Start</a> •
+    <a href="#api-endpoints">API Docs</a> •
+    <a href="#screenshots">Screenshots</a>
+  </p>
+
+</div>
 
 ---
 
 ## Features
 
-- **User Authentication** — Secure register and login system with JWT-based token authentication
+- **User Authentication** — Secure register and login system with the JWT stored in an httpOnly cookie
 - **Role-Based Access Control** — Three-tier role system: User → Author → Admin with middleware-enforced permissions
 - **Author Request System** — Users apply to become authors with a motivation message; admin reviews and approves or rejects
 - **Post Approval Workflow** — Authors submit posts (pending) → Admin reviews → Approve or reject with reason
@@ -18,13 +41,15 @@ A full-stack blog platform with role-based access control, post approval workflo
 - **Registered Comments** — Authenticated users can comment on published posts with optimistic UI updates
 - **User Profiles** — Comprehensive profiles with tabs for posts, liked posts, and comments
 - **Privacy Controls** — Users choose what's visible on their public profile (liked posts, comments, email)
-- **Settings Page** — Appearance, privacy, notifications, and content preferences with six dedicated sub-pages
-- **Theme System** — Dark / Light / System theme with persistent user preferences and CSS variable architecture
-- **Pagination & Sorting** — Newest, popular, most commented sorting with configurable posts per page
+- **Settings Page** — Appearance, privacy, notifications, and content preferences across six dedicated sub-pages
+- **Theme System** — Dark / Light / System theme with persistent user preferences and a CSS variable architecture
+- **Pagination & Sorting** — Newest, popular, and most-commented sorting with configurable posts per page
 - **Image Upload** — Cloudinary-powered image uploads with file type validation and size limits
-- **Responsive Design** — Mobile-first layout across all pages including admin panel with drawer navigation
+- **Interactive API Docs** — OpenAPI 3 documentation served through Swagger UI at `/api-docs`
+- **Responsive Design** — Mobile-first layout across all pages including an admin panel with drawer navigation
 - **Debounced Search** — Real-time post search with debounced input for optimal performance
 - **Toast Notifications** — User-friendly feedback with react-hot-toast for all operations
+- **Security Hardened** — Helmet, CORS whitelist, multi-tier rate limiting, NoSQL sanitization, HPP, and HTML sanitization
 
 ---
 
@@ -36,7 +61,54 @@ A full-stack blog platform with role-based access control, post approval workflo
 
 ## Screenshots
 
-> _Screenshots will be added soon._
+Screenshots are captured from the [live deployment](https://blog-mernn.netlify.app/) running against the seeded demo dataset and are stored under `assets/screenshots/`.
+
+> _Screenshots are being prepared and will be added to `assets/screenshots/` shortly. In the meantime, explore the [live demo](https://blog-mernn.netlify.app/) for the full experience._
+
+---
+
+## Architecture
+
+A high-level visual map of the system. Both diagrams render natively on GitHub thanks to Mermaid support.
+
+### Domain Model
+
+How the core collections relate to each other across the blog and moderation workflows.
+
+```mermaid
+graph LR
+  User(("User"))
+  Post(["Post"])
+  Comment(["Comment"])
+  GuestLike(["GuestLike"])
+  AuthorRequest(["AuthorRequest"])
+
+  User -- "authors" --> Post
+  User -- "writes" --> Comment
+  Post -- "receives" --> Comment
+  User -- "likes" --> Post
+  GuestLike -. "fingerprint like" .-> Post
+  User -- "submits" --> AuthorRequest
+  User -- "reviews (admin)" --> AuthorRequest
+```
+
+### Request Lifecycle
+
+How a single browser action travels through the stack.
+
+```mermaid
+flowchart LR
+  Browser["React 19 SPA<br/>(Vite + Tailwind)"]
+  API["Express 5 API<br/>(REST + JWT cookie)"]
+  DB[("MongoDB<br/>Mongoose 9")]
+  CDN[("Cloudinary<br/>images")]
+
+  Browser -- "Axios + httpOnly cookie" --> API
+  API -- "verify JWT &amp; enforce RBAC" --> API
+  API --> DB
+  API -- "stream upload" --> CDN
+  CDN -. "secure image URL" .-> Browser
+```
 
 ---
 
@@ -47,10 +119,11 @@ A full-stack blog platform with role-based access control, post approval workflo
 - **React 19**: Modern UI library with hooks, context API, and functional components
 - **React Router 7**: Client-side routing with nested layouts, route guards, and protected routes
 - **Vite 8**: Lightning-fast build tool and dev server with HMR
-- **Tailwind CSS 4**: Utility-first CSS framework with custom theme via CSS variables
-- **Axios 1.14**: Promise-based HTTP client with interceptors for JWT and error handling
+- **Tailwind CSS 4**: Utility-first CSS framework with a custom theme via CSS variables
+- **Axios 1.14**: Promise-based HTTP client with `withCredentials` and a 401 response interceptor
 - **React Hot Toast 2.6**: Lightweight toast notifications for user feedback
 - **React Icons 5.6**: Popular icon library for consistent iconography
+- **DOMPurify 3.3**: Client-side HTML sanitization for safely rendering rich content
 - **UUID 13**: Unique fingerprint generation for guest like tracking
 
 ### Backend
@@ -58,15 +131,19 @@ A full-stack blog platform with role-based access control, post approval workflo
 - **Node.js**: Server-side JavaScript runtime
 - **Express 5**: Minimal and flexible web application framework
 - **MongoDB (Mongoose 9)**: NoSQL database with elegant object modeling and schema validation
-- **JWT (jsonwebtoken 9)**: Stateless authentication with token-based sessions
+- **JWT (jsonwebtoken 9)**: Stateless authentication delivered via an httpOnly cookie
+- **cookie-parser 1.4**: Reads the httpOnly JWT cookie from incoming requests
 - **bcryptjs 3**: Secure password hashing with salt rounds
 - **Cloudinary 2.9**: Cloud-based image management and delivery
 - **Multer 2.1**: Middleware for handling multipart/form-data file uploads
+- **express-validator 7**: Declarative request validation and sanitization
+- **sanitize-html 2.17**: Server-side stripping of HTML from post content (stored XSS defense)
 - **Helmet 8**: Secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
 - **express-rate-limit 8**: Multi-tier rate limiting for API protection
 - **express-mongo-sanitize 2**: NoSQL injection prevention
 - **HPP 0.2**: HTTP parameter pollution protection
 - **Slugify 1.6**: URL-friendly slug generation for post URLs
+- **swagger-jsdoc 6 / swagger-ui-express 5**: OpenAPI 3 spec generation and interactive docs
 - **Nodemon 3**: Development auto-restart on file changes
 
 ---
@@ -75,8 +152,8 @@ A full-stack blog platform with role-based access control, post approval workflo
 
 ### Prerequisites
 
-- **Node.js** v18+ and **npm**
-- **MongoDB** — MongoDB Atlas (free tier) or local instance
+- **Node.js** v20+ and **npm**
+- **MongoDB** — MongoDB Atlas (free tier) or a local instance
 - **Cloudinary** — Free account for image uploads ([cloudinary.com](https://cloudinary.com/))
 
 ### Local Development
@@ -84,7 +161,7 @@ A full-stack blog platform with role-based access control, post approval workflo
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/Serkanbyx/blog-mern.git
+git clone https://github.com/serkanbyx/blog-mern.git
 cd blog-mern
 ```
 
@@ -116,9 +193,9 @@ CLOUDINARY_API_SECRET=your_api_secret
 | `NODE_ENV` | Application environment (`development` or `production`) |
 | `PORT` | Port number for the Express server |
 | `MONGO_URI` | MongoDB connection string (Atlas or local) |
-| `JWT_SECRET` | Secret key for signing JWT tokens (min 32 chars recommended) |
+| `JWT_SECRET` | Secret key for signing JWT tokens (min 32 chars required in production) |
 | `JWT_EXPIRES_IN` | Token expiration duration (e.g., `7d`, `24h`) |
-| `CLIENT_URL` | Frontend URL for CORS whitelist |
+| `CLIENT_URL` | Frontend URL for the CORS whitelist |
 | `ADMIN_EMAIL` | Email for the seeded admin account |
 | `ADMIN_PASSWORD` | Password for the seeded admin account |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name from dashboard |
@@ -142,14 +219,18 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-**4. Seed admin user:**
+**4. Seed the admin user:**
 
 ```bash
 cd server
 npm run seed:admin
 ```
 
-This creates the initial admin account using `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`.
+This creates the initial admin account using `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`. Optionally, seed sample posts for local development:
+
+```bash
+npm run seed:posts
+```
 
 **5. Run the application:**
 
@@ -163,6 +244,7 @@ cd client && npm run dev
 
 - Backend runs at `http://localhost:5000`
 - Frontend runs at `http://localhost:5173`
+- Interactive API docs at `http://localhost:5000/api-docs`
 
 ---
 
@@ -185,18 +267,17 @@ cd client && npm run dev
 
 ### Authentication Flow
 
-The application uses JWT-based stateless authentication. When a user registers or logs in, the server generates a signed JWT token containing the user ID. The token is stored in `localStorage` on the client side and attached to every API request via an Axios interceptor. On the server, the `protect` middleware verifies the token and attaches the user object to `req.user`.
+The application uses JWT-based stateless authentication delivered through an **httpOnly cookie**. When a user registers or logs in, the server signs a JWT containing the user ID and sets it as an httpOnly cookie (`sameSite: lax`, `secure` in production). Because the cookie is httpOnly, it is never exposed to JavaScript, which protects the token from XSS-based theft.
 
 ```javascript
-// Axios interceptor attaches JWT to every request
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+// Axios sends the httpOnly cookie automatically with every request
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "/api",
+  withCredentials: true,
 });
 ```
 
-On 401 responses, the interceptor automatically clears the token and redirects to the login page.
+On the server, the `protect` middleware reads the JWT from the cookie (falling back to an `Authorization: Bearer` header for API clients), verifies it, and attaches the user object to `req.user`. On `401` responses caused by an invalid or expired session, the Axios response interceptor redirects the user to the login page — while skipping the silent `/auth/me` session check so it can be handled gracefully by `AuthContext`. Logging out calls `POST /api/auth/logout`, which clears the cookie server-side.
 
 ### Role-Based Access Control
 
@@ -213,7 +294,7 @@ Admin-created posts are automatically published without the approval step.
 
 ### Data Flow
 
-The frontend uses React Context for global state (`AuthContext` for user/auth, `PreferencesContext` for theme/settings). API calls go through a centralized Axios instance with service modules for each resource. The backend follows MVC architecture with Express routes → controllers → Mongoose models.
+The frontend uses React Context for global state (`AuthContext` for user/auth, `PreferencesContext` for theme/settings). API calls go through a centralized Axios instance with service modules for each resource. The backend follows MVC architecture with Express routes → controllers → Mongoose models, and exposes an OpenAPI 3 specification rendered with Swagger UI.
 
 ---
 
@@ -240,18 +321,21 @@ The frontend uses React Context for global state (`AuthContext` for user/auth, `
 
 ## API Endpoints
 
-### Health
+### Health & Docs
 
 | Method | Endpoint | Auth | Description |
 | ------ | -------- | ---- | ----------- |
-| GET | `/api/health` | No | Health check |
+| GET | `/` | No | API welcome page with links |
+| GET | `/api/health` | No | Health check (status, version, uptime) |
+| GET | `/api-docs` | No | Interactive Swagger UI documentation |
 
 ### Auth
 
 | Method | Endpoint | Auth | Description |
 | ------ | -------- | ---- | ----------- |
-| POST | `/api/auth/register` | No | Register new user |
-| POST | `/api/auth/login` | No | Login and receive JWT |
+| POST | `/api/auth/register` | No | Register new user and set JWT cookie |
+| POST | `/api/auth/login` | No | Login and set JWT cookie |
+| POST | `/api/auth/logout` | No | Clear the JWT cookie |
 | GET | `/api/auth/me` | Yes | Get current user profile |
 | PUT | `/api/auth/me` | Yes | Update profile (name, bio, avatar) |
 | PUT | `/api/auth/me/password` | Yes | Change password |
@@ -311,7 +395,7 @@ The frontend uses React Context for global state (`AuthContext` for user/auth, `
 
 ### Admin
 
-All admin endpoints require authentication with `admin` role.
+All admin endpoints require authentication with the `admin` role.
 
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
@@ -331,164 +415,92 @@ All admin endpoints require authentication with `admin` role.
 | GET | `/api/admin/comments` | List all comments |
 | DELETE | `/api/admin/comments/:id` | Delete any comment |
 
-> Auth endpoints require `Authorization: Bearer <token>` header.
+> Authenticated requests rely on the httpOnly JWT cookie (sent automatically by the browser). API clients may alternatively send an `Authorization: Bearer <token>` header.
 
 ---
 
 ## Project Structure
 
+A clean monorepo layout with an explicit backend / frontend split. Each panel below is collapsible — expand the one you care about.
+
+<details open>
+<summary><b>Server</b> — Express 5 API</summary>
+
+```
+server/
+├── src/
+│   ├── config/          # env validation, db (retries), cloudinary, swagger
+│   ├── controllers/     # auth, post, like, comment, authorRequest, user, admin
+│   ├── docs/            # Swagger JSDoc annotations per resource group
+│   ├── middlewares/     # auth (JWT + RBAC), validate, upload, errorHandler
+│   ├── models/          # User, Post, Comment, GuestLike, AuthorRequest
+│   ├── routes/          # one router per resource group
+│   ├── scripts/         # seedAdmin, seedPosts, migrateTotalLikeCount
+│   ├── utils/           # cookieToken, generateToken, cloudinaryDelete, escapeRegex
+│   ├── validators.js    # express-validator schemas
+│   └── index.js         # Express app composition + middleware order
+├── .env.example
+└── package.json
+```
+
+</details>
+
+<details>
+<summary><b>Client</b> — React 19 + Vite SPA</summary>
+
+```
+client/
+├── public/              # favicon
+├── src/
+│   ├── api/             # Axios instance + service modules per resource
+│   ├── components/      # Navbar, Footer, PostCard, CommentSection, routes/, ui/
+│   ├── context/         # AuthContext, PreferencesContext
+│   ├── hooks/           # useAuth, usePreferences, useGuestFingerprint, useLocalStorage
+│   ├── layouts/         # MainLayout, AdminLayout, SettingsLayout
+│   ├── pages/           # public, author, settings/, admin/ pages
+│   ├── utils/           # constants, formatDate, guestLikes, helpers
+│   ├── App.jsx          # router + route guards
+│   ├── main.jsx         # entry point with providers
+│   └── index.css        # global styles, theme, Tailwind
+├── .env.example
+├── netlify.toml         # SPA fallback + API proxy to Render
+├── vite.config.js
+└── package.json
+```
+
+</details>
+
+<details>
+<summary><b>Repository root</b> — docs, governance &amp; shared config</summary>
+
 ```
 blog-mern/
-├── client/                              # React frontend (SPA)
-│   ├── src/
-│   │   ├── App.jsx                      # Root component with routing
-│   │   ├── main.jsx                     # Entry point with providers
-│   │   ├── index.css                    # Global styles, theme, Tailwind
-│   │   ├── api/
-│   │   │   ├── axios.js                 # Axios instance with interceptors
-│   │   │   └── services/                # API service modules
-│   │   │       ├── adminService.js      # Admin API calls
-│   │   │       ├── authService.js       # Auth API calls
-│   │   │       ├── authorRequestService.js
-│   │   │       ├── commentService.js    # Comment API calls
-│   │   │       ├── likeService.js       # Like API calls
-│   │   │       ├── postService.js       # Post API calls
-│   │   │       ├── uploadService.js     # Image upload API
-│   │   │       └── userService.js       # User API calls
-│   │   ├── components/
-│   │   │   ├── CommentSection.jsx       # Post comment list and form
-│   │   │   ├── Footer.jsx              # App footer
-│   │   │   ├── Navbar.jsx              # Navigation with auth state
-│   │   │   ├── Pagination.jsx          # Paginated navigation
-│   │   │   ├── PostCard.jsx            # Blog post card with like
-│   │   │   ├── ScrollToTop.jsx         # Scroll reset on navigation
-│   │   │   ├── routes/                  # Route guard components
-│   │   │   │   ├── AdminRoute.jsx       # Admin-only route guard
-│   │   │   │   ├── AuthorRoute.jsx      # Author+ route guard
-│   │   │   │   ├── GuestOnlyRoute.jsx   # Unauthenticated-only guard
-│   │   │   │   └── ProtectedRoute.jsx   # Authenticated-only guard
-│   │   │   └── ui/                      # Reusable UI components
-│   │   │       ├── CharacterCounter.jsx # Input character counter
-│   │   │       ├── ConfirmModal.jsx     # Confirmation dialog
-│   │   │       ├── EmptyState.jsx       # Empty content placeholder
-│   │   │       ├── PostCardSkeleton.jsx # Loading skeleton
-│   │   │       ├── RoleBadge.jsx        # User role badge
-│   │   │       ├── SelectableCard.jsx   # Selectable option card
-│   │   │       ├── Spinner.jsx          # Loading spinner
-│   │   │       ├── StatusBadge.jsx      # Post status badge
-│   │   │       └── ToggleSwitch.jsx     # Toggle switch control
-│   │   ├── context/
-│   │   │   ├── AuthContext.jsx          # Auth state management
-│   │   │   └── PreferencesContext.jsx   # User preferences state
-│   │   ├── hooks/
-│   │   │   ├── useAuth.js              # Auth context consumer
-│   │   │   ├── useGuestFingerprint.js   # Guest UUID generator
-│   │   │   ├── useLocalStorage.js       # localStorage sync hook
-│   │   │   └── usePreferences.js        # Preferences context consumer
-│   │   ├── layouts/
-│   │   │   ├── AdminLayout.jsx          # Admin panel layout + sidebar
-│   │   │   ├── MainLayout.jsx           # Public layout (Navbar + Footer)
-│   │   │   └── SettingsLayout.jsx       # Settings layout + side nav
-│   │   ├── pages/
-│   │   │   ├── BecomeAuthorPage.jsx     # Author request form
-│   │   │   ├── CreatePostPage.jsx       # New post creation
-│   │   │   ├── EditPostPage.jsx         # Post editing
-│   │   │   ├── HomePage.jsx             # Post listing with search/sort
-│   │   │   ├── LoginPage.jsx            # User login
-│   │   │   ├── MyPostsPage.jsx          # Author's post management
-│   │   │   ├── NotFoundPage.jsx         # 404 page
-│   │   │   ├── PostDetailPage.jsx       # Single post view
-│   │   │   ├── RegisterPage.jsx         # User registration
-│   │   │   ├── UserProfilePage.jsx      # Public user profile
-│   │   │   ├── admin/                   # Admin panel pages
-│   │   │   │   ├── AdminAuthorRequestsPage.jsx
-│   │   │   │   ├── AdminCommentsPage.jsx
-│   │   │   │   ├── AdminDashboardPage.jsx
-│   │   │   │   ├── AdminPendingPostsPage.jsx
-│   │   │   │   ├── AdminPostsPage.jsx
-│   │   │   │   ├── AdminUserDetailPage.jsx
-│   │   │   │   └── AdminUsersPage.jsx
-│   │   │   └── settings/               # Settings sub-pages
-│   │   │       ├── SettingsAccountPage.jsx
-│   │   │       ├── SettingsAppearancePage.jsx
-│   │   │       ├── SettingsContentPage.jsx
-│   │   │       ├── SettingsNotificationsPage.jsx
-│   │   │       ├── SettingsPrivacyPage.jsx
-│   │   │       └── SettingsProfilePage.jsx
-│   │   └── utils/
-│   │       ├── constants.js             # App-wide constants
-│   │       ├── formatDate.js            # Date formatting utility
-│   │       ├── guestLikes.js            # Guest like helpers
-│   │       └── helpers.js               # General helper functions
-│   ├── public/
-│   │   └── favicon.svg
-│   ├── .env.example
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── netlify.toml
-│   ├── vite.config.js
-│   └── package.json
-│
-├── server/                              # Express backend (REST API)
-│   ├── src/
-│   │   ├── index.js                     # Entry point, middleware setup
-│   │   ├── validators.js               # Request validation schemas
-│   │   ├── config/
-│   │   │   ├── cloudinary.js            # Cloudinary SDK configuration
-│   │   │   ├── db.js                    # MongoDB connection
-│   │   │   └── env.js                   # Environment variable validation
-│   │   ├── controllers/                 # Route handlers (business logic)
-│   │   │   ├── adminController.js       # Admin operations
-│   │   │   ├── authController.js        # Auth operations
-│   │   │   ├── authorRequestController.js
-│   │   │   ├── commentController.js     # Comment CRUD
-│   │   │   ├── likeController.js        # Like toggle logic
-│   │   │   ├── postController.js        # Post CRUD
-│   │   │   └── userController.js        # User profile & preferences
-│   │   ├── middlewares/
-│   │   │   ├── auth.js                  # JWT auth & role-based guards
-│   │   │   ├── errorHandler.js          # Global error handler
-│   │   │   ├── upload.js               # Multer file upload config
-│   │   │   └── validate.js             # Validation result handler
-│   │   ├── models/                      # Mongoose schemas
-│   │   │   ├── AuthorRequest.js         # Author request schema
-│   │   │   ├── Comment.js              # Comment schema
-│   │   │   ├── GuestLike.js            # Guest like schema
-│   │   │   ├── Post.js                 # Post schema with status
-│   │   │   └── User.js                 # User schema with preferences
-│   │   ├── routes/                      # Express route definitions
-│   │   │   ├── adminRoutes.js           # /api/admin/*
-│   │   │   ├── authRoutes.js            # /api/auth/*
-│   │   │   ├── authorRequestRoutes.js   # /api/author-requests/*
-│   │   │   ├── commentRoutes.js         # /api/posts/:postId/comments
-│   │   │   ├── likeRoutes.js            # /api/posts/:id/like
-│   │   │   ├── postRoutes.js            # /api/posts/*
-│   │   │   ├── uploadRoutes.js          # /api/upload
-│   │   │   └── userRoutes.js            # /api/users/*
-│   │   ├── scripts/
-│   │   │   └── seedAdmin.js             # Admin seed script
-│   │   └── utils/
-│   │       ├── escapeRegex.js           # Regex escape utility
-│   │       └── generateToken.js         # JWT token generator
-│   ├── .env.example
-│   ├── .gitignore
-│   └── package.json
-│
+├── client/              # → see Client panel above
+├── server/              # → see Server panel above
+├── .github/             # issue templates, PR template, governance docs
+│   ├── ISSUE_TEMPLATE/
+│   ├── CODE_OF_CONDUCT.md
+│   ├── CONTRIBUTING.md
+│   ├── SECURITY.md
+│   └── PULL_REQUEST_TEMPLATE.md
+├── docs/                # build-guide.md (original build playbook)
 ├── LICENSE
-├── STEPS.md
 └── README.md
 ```
+
+</details>
 
 ---
 
 ## Security
 
+- **httpOnly Cookie Auth** — JWT stored in an httpOnly, `sameSite=lax` cookie (`secure` in production), keeping the token inaccessible to JavaScript
 - **HTTP Headers** — Helmet.js sets secure headers including CSP, HSTS, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy
 - **Rate Limiting** — 4-tier rate limiting: global API (100/15min), auth (10/15min), admin (60/15min), guest-like (30/15min)
 - **NoSQL Injection Prevention** — `express-mongo-sanitize` strips `$` and `.` operators from request body, params, and query strings
-- **XSS Protection** — User input sanitized server-side; no raw HTML rendering on frontend
+- **XSS Protection** — Post content stripped of HTML server-side with `sanitize-html`; any rich HTML rendered on the client is first sanitized with DOMPurify (`SanitizedHtml` component)
 - **HTTP Parameter Pollution** — `hpp` middleware prevents duplicate parameter attacks
-- **JWT Security** — Strong secret key requirement, configurable expiration, token validation on every protected request
+- **JWT Security** — Strong secret key requirement (min 32 chars in production), configurable expiration, token validation on every protected request
 - **Body Size Limits** — Express body parser limited to 10KB to prevent payload-based attacks
 - **File Upload Validation** — File type whitelist, size limits, and extension checking via Multer middleware
 - **Mass Assignment Protection** — Only whitelisted fields accepted in update operations to prevent data injection
@@ -524,7 +536,7 @@ blog-mern/
 | `CLOUDINARY_API_KEY` | Your Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Your Cloudinary API secret |
 
-5. After first deploy, run `node src/scripts/seedAdmin.js` from the Render Shell tab
+5. After the first deploy, run `node src/scripts/seedAdmin.js` from the Render Shell tab
 
 > **Note:** Render's filesystem is ephemeral. All image storage is handled through Cloudinary (already integrated).
 
@@ -533,7 +545,7 @@ blog-mern/
 1. Create a new site on [Netlify](https://app.netlify.com)
 2. Connect the GitHub repository
 3. Set **Base directory** to `client`, **Build command** to `npm run build`, **Publish directory** to `client/dist`
-4. Update `netlify.toml` proxy target to your Render backend URL
+4. Update the `netlify.toml` proxy target to your Render backend URL
 5. **Do NOT** set `VITE_API_URL` on Netlify — the `netlify.toml` proxy handles API routing automatically
 6. After deploy, update `CLIENT_URL` on Render to the Netlify URL for CORS
 
@@ -545,7 +557,7 @@ blog-mern/
 
 ### Completed Features
 
-- ✅ JWT authentication with register, login, and auto-refresh
+- ✅ JWT authentication via httpOnly cookie with register, login, and logout
 - ✅ Three-tier role system (User, Author, Admin)
 - ✅ Author request and approval workflow
 - ✅ Post creation with draft, pending, published, rejected lifecycle
@@ -562,6 +574,7 @@ blog-mern/
 - ✅ Cloudinary image uploads for posts and avatars
 - ✅ Debounced search and multi-sort post listing
 - ✅ Pagination with configurable posts per page
+- ✅ Interactive Swagger API documentation
 - ✅ Responsive mobile-first design
 - ✅ Comprehensive input validation (express-validator)
 - ✅ Security hardening (Helmet, CORS, rate limiting, sanitization, HPP)
@@ -581,7 +594,7 @@ blog-mern/
 
 ## Contributing
 
-Contributions are welcome! Follow these steps:
+Contributions are welcome! Please read our [Contributing Guide](.github/CONTRIBUTING.md) and [Code of Conduct](.github/CODE_OF_CONDUCT.md) before getting started.
 
 1. **Fork** the repository
 2. **Create** a feature branch: `git checkout -b feat/amazing-feature`
@@ -632,7 +645,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-- 🐛 Issues: [GitHub Issues](https://github.com/Serkanbyx/blog-mern/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/serkanbyx/blog-mern/issues)
 - 📧 Email: [serkanbyx1@gmail.com](mailto:serkanbyx1@gmail.com)
 - 🌐 Website: [serkanbayraktar.com](https://serkanbayraktar.com/)
 

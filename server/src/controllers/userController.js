@@ -9,7 +9,7 @@ const PREFERENCE_VALIDATORS = {
   fontSize: (v) => ["small", "medium", "large"].includes(v),
   contentDensity: (v) => ["compact", "comfortable", "spacious"].includes(v),
   animationsEnabled: (v) => typeof v === "boolean",
-  language: (v) => ["en", "tr"].includes(v),
+  language: (v) => ["en"].includes(v),
   "privacy.showLikedPosts": (v) => typeof v === "boolean",
   "privacy.showComments": (v) => typeof v === "boolean",
   "privacy.showEmail": (v) => typeof v === "boolean",

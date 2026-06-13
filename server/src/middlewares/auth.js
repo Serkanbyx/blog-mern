@@ -66,9 +66,9 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
-// Restrict to admin role only
+// Restrict to admin role only — must run after `protect`
 const adminOnly = (req, res, next) => {
-  if (req.user.role !== "admin") {
+  if (req.user?.role !== "admin") {
     return res
       .status(403)
       .json({ success: false, message: "Admin access required." });
@@ -76,9 +76,9 @@ const adminOnly = (req, res, next) => {
   next();
 };
 
-// Restrict to author or admin roles
+// Restrict to author or admin roles — must run after `protect`
 const authorOrAdmin = (req, res, next) => {
-  if (req.user.role !== "author" && req.user.role !== "admin") {
+  if (req.user?.role !== "author" && req.user?.role !== "admin") {
     return res
       .status(403)
       .json({ success: false, message: "Author or admin access required." });

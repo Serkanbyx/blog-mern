@@ -16,6 +16,11 @@ const env = {
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 };
 
+// A missing database URI fails fast everywhere, not just in production
+if (!env.MONGO_URI) {
+  throw new Error("FATAL: MONGO_URI is required. Set it in your environment.");
+}
+
 // Prevent running production with weak/missing JWT secret
 if (env.NODE_ENV === "production") {
   if (!env.JWT_SECRET || env.JWT_SECRET.length < 32) {

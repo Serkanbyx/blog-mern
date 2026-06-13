@@ -57,7 +57,7 @@ const swaggerDefinition = {
           fontSize: { type: "string", enum: ["small", "medium", "large"], default: "medium" },
           contentDensity: { type: "string", enum: ["compact", "comfortable", "spacious"], default: "comfortable" },
           animationsEnabled: { type: "boolean", default: true },
-          language: { type: "string", enum: ["en", "tr"], default: "en" },
+          language: { type: "string", enum: ["en"], default: "en" },
           privacy: {
             type: "object",
             properties: {

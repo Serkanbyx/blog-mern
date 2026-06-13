@@ -8,7 +8,7 @@ const DEFAULT_PREFERENCES = {
   fontSize: "medium",
   contentDensity: "comfortable",
   animationsEnabled: true,
-  language: "tr",
+  language: "en",
   postsPerPage: 10,
   defaultSort: "newest",
 };

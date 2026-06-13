@@ -126,8 +126,8 @@ const preferencesRules = [
     .withMessage("Animations enabled must be a boolean"),
   body("language")
     .optional()
-    .isIn(["en", "tr"])
-    .withMessage("Language must be one of: en, tr"),
+    .isIn(["en"])
+    .withMessage("Language must be: en"),
   body("privacy.showLikedPosts")
     .optional()
     .isBoolean()

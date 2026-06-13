@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema(
       },
       language: {
         type: String,
-        enum: ["en", "tr"],
+        enum: ["en"],
         default: "en",
       },
       privacy: {
