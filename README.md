@@ -63,7 +63,11 @@
 
 Screenshots are captured from the [live deployment](https://blog-mernn.netlify.app/) running against the seeded demo dataset and are stored under `assets/screenshots/`.
 
-> _Screenshots are being prepared and will be added to `assets/screenshots/` shortly. In the meantime, explore the [live demo](https://blog-mernn.netlify.app/) for the full experience._
+| Home (post discovery) | Post detail | Author profile |
+| :---: | :---: | :---: |
+| ![Home page listing blog posts](assets/screenshots/home.png) | ![Single post reading view](assets/screenshots/post-detail.png) | ![Author profile with posts, liked, and comments tabs](assets/screenshots/profile.png) |
+| **Sign in** | **Sign up** | **404 Not Found** |
+| ![Sign in page](assets/screenshots/login.png) | ![Sign up page](assets/screenshots/register.png) | ![404 not found page](assets/screenshots/not-found.png) |
 
 ---
 
